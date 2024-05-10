@@ -2,6 +2,25 @@
   "expo": {
     "name": "hundredpay",
     "slug": "hundredpay",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/SpaceGroteskBold.ttf",
+            "./assets/fonts/SpaceGroteskLight.ttf",
+            "./assets/fonts/SpaceGroteskRegular.ttf",
+            "./assets/fonts/SpaceGroteskMedium.ttf",
+            "./assets/fonts/SpaceGroteskSemiBold.ttf"
+          ]
+        }
+      ],
+      "expo-router"
+    ],
+    "web": {
+      "output": "static",
+      "bundler": "metro"
+    }
   }
 }

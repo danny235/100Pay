@@ -106,9 +106,9 @@ const onRefresh = React.useCallback(() => {
         <TextInput
           placeholder="Search assets here"
           style={{
-            fontFamily: 'SpaceGrotesk-SemiBold',
+            fontFamily: "SpaceGrotesk-SemiBold",
             color: Colors.black,
-            width: '70%',
+            width: "70%",
             fontSize: 15 / fontScale,
           }}
           placeholderTextColor={Colors.grayText}
@@ -122,10 +122,12 @@ const onRefresh = React.useCallback(() => {
             refreshing={refreshing}
             onRefresh={onRefresh}
           />
-        }>
-        {bankAccountsLoading === 'loading' && (
+        }
+      >
+        {bankAccountsLoading === "loading" && (
           <View
-            style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+          >
             <ActivityIndicator color={Colors.primary} size={30} />
           </View>
         )}
@@ -136,10 +138,11 @@ const onRefresh = React.useCallback(() => {
               borderBottomColor: Colors.ash,
               borderBottomWidth: 1,
               paddingBottom: 10,
-              flexDirection: 'row',
-              alignItems: 'center',
+              flexDirection: "row",
+              alignItems: "center",
               gap: 10,
-            }}>
+            }}
+          >
             <Flashy color={Colors.primary} variant="TwoTone" size={24} />
             <MediumText
               style={{
@@ -147,28 +150,31 @@ const onRefresh = React.useCallback(() => {
                 borderLeftColor: Colors.ash,
                 borderLeftWidth: 1,
                 paddingLeft: 10,
-              }}>
+              }}
+            >
               Instant Payouts
             </MediumText>
-            <View style={{marginLeft: 'auto'}}>
+            <View style={{ marginLeft: "auto" }}>
               <Switch
                 value={instantPay}
                 onValueChange={toggleSwitch}
-                trackColor={{true: Colors.primaryLight, false: Colors.ash}}
+                trackColor={{ true: Colors.primaryLight, false: Colors.ash }}
                 thumbColor={Colors.white}
               />
             </View>
           </View>
-          <LightText style={{fontSize: 15 / fontScale, color: Colors.grayText}}>
+          <LightText
+            style={{ fontSize: 15 / fontScale, color: Colors.grayText }}
+          >
             Turn On/Off instant payout. instant payout moves money sent to you
             directly to your bank account, if this option is “off” the process
             can still be done manually
           </LightText>
         </View>
 
-        <View style={{gap: 20}}>
+        <View style={{ gap: 20 }}>
           {bankAccounts?.length === 0 && (
-            <MediumText style={{textAlign: 'center'}}>
+            <MediumText style={{ textAlign: "center" }}>
               No bank accounts added
             </MediumText>
           )}
@@ -178,7 +184,7 @@ const onRefresh = React.useCallback(() => {
                 <View style={styles.acctDetContainer}>
                   <View style={styles.topAccDet}>
                     <Image
-                      style={{width: 20, height: 20, borderRadius: 20}}
+                      style={{ width: 20, height: 20, borderRadius: 20 }}
                       source={Paylogo}
                     />
                     <LightText
@@ -188,16 +194,20 @@ const onRefresh = React.useCallback(() => {
                         borderLeftColor: Colors.ash,
                         borderLeftWidth: 1,
                         paddingLeft: 10,
-                      }}>
+                      }}
+                    >
                       {account.bank_name}
                     </LightText>
-                    {i === 0 && <StarIcon />}
+                    {account._id === activeUserApp.instantPayoutAccountId && (
+                      <StarIcon />
+                    )}
                   </View>
                   <View style={styles.bottomAccDet}>
                     <MediumText
                       style={{
                         fontSize: 17 / fontScale,
-                      }}>
+                      }}
+                    >
                       {userProfile?.first_name} {userProfile?.last_name}
                     </MediumText>
                     <LightText
@@ -207,8 +217,9 @@ const onRefresh = React.useCallback(() => {
                         borderLeftWidth: 1,
                         borderLeftColor: Colors.ash,
                         paddingLeft: 10,
-                        borderStyle: 'solid',
-                      }}>
+                        borderStyle: "solid",
+                      }}
+                    >
                       {account.account_number}
                     </LightText>
                   </View>
@@ -228,11 +239,12 @@ const onRefresh = React.useCallback(() => {
         isLarge={false}
         isWide={true}
         style={{
-          marginTop: 'auto',
+          marginTop: "auto",
           marginBottom: 30,
         }}
-        onPress={() => navigation.navigate('AddBank')}>
-        <MediumText style={{color: Colors.white, fontSize: 15 / fontScale}}>
+        onPress={() => navigation.navigate("AddBank")}
+      >
+        <MediumText style={{ color: Colors.white, fontSize: 15 / fontScale }}>
           Add Bank Account
         </MediumText>
         <AddCircle size={24} color={Colors.white} variant="TwoTone" />
@@ -249,42 +261,46 @@ const onRefresh = React.useCallback(() => {
           handleIndicatorStyle={{
             borderWidth: 3,
             borderColor: Colors.ash,
-            width: '20%',
+            width: "20%",
           }}
-          backdropComponent={({animatedIndex, style}) => (
+          backdropComponent={({ animatedIndex, style }) => (
             <CustomBackdrop
               onPress={handlePresentModalClose}
               animatedIndex={animatedIndex}
               style={style}
             />
           )}
-          animateOnMount={true}>
-          <View style={{paddingHorizontal: 20, paddingVertical: 20, gap: 20}}>
-            <SemiBoldText style={{fontSize: 17 / fontScale}}>
+          animateOnMount={true}
+        >
+          <View style={{ paddingHorizontal: 20, paddingVertical: 20, gap: 20 }}>
+            <SemiBoldText style={{ fontSize: 17 / fontScale }}>
               More Actions
             </SemiBoldText>
 
             <Pressable
               onPress={handlePresentModalClose}
-              style={styles.moreActionsContainer}>
+              style={styles.moreActionsContainer}
+            >
               <Star color={Colors.primary} size={24} />
-              <MediumText style={{fontSize: 17 / fontScale}}>
+              <MediumText style={{ fontSize: 17 / fontScale }}>
                 Make Defualt Payout Account
               </MediumText>
             </Pressable>
             <Pressable
               onPress={handlePresentModalClose}
-              style={styles.moreActionsContainer}>
+              style={styles.moreActionsContainer}
+            >
               <Edit color={Colors.primary} size={24} />
-              <MediumText style={{fontSize: 17 / fontScale}}>
+              <MediumText style={{ fontSize: 17 / fontScale }}>
                 Edit Bank Account Details
               </MediumText>
             </Pressable>
             <Pressable
               onPress={handlePresentModalClose}
-              style={styles.moreActionsContainer}>
+              style={styles.moreActionsContainer}
+            >
               <Edit color={Colors.primary} size={24} />
-              <MediumText style={{fontSize: 17 / fontScale}}>
+              <MediumText style={{ fontSize: 17 / fontScale }}>
                 Delete Bank Account
               </MediumText>
             </Pressable>

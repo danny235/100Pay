@@ -55,19 +55,46 @@ type UserAppType = {
   description: string;
   fiat_balance: number;
   gateways: {
-    name: string;
+    description: string;
+    enabled: boolean;
     id: string;
+    logo: string;
+    name: string;
     publicKey: string;
     secretKey: string;
     // Add more properties as needed
   }[];
+  instantPayout: boolean;
+  instantPayoutAccountId: string;
   keys: {
     pub_keys: {
       value: string;
+      domain: string;
+      label: string;
+      status: string;
+      key_type: string;
+      services: {
+        name: string;
+        permission: {
+          active: boolean;
+          name: "read";
+        }[];
+      }[];
     }[];
 
     sk_keys: {
       value: string;
+      domain: string;
+      label: string;
+      status: string;
+      key_type: string;
+      services: {
+        name: string;
+        permission: {
+          active: boolean;
+          name: "read";
+        }[];
+      }[];
     }[];
   };
   kycVerified: boolean;

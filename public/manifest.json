@@ -1,6 +1,11 @@
 {
   "short_name": "100Pay App",
   "name": "100Pay App",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#ffffff",
+  "background_color": "#F20732",
   "icons": [
     {
       "src": "favicon.ico",
@@ -18,8 +23,67 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#ffffff",
-  "background_color": "#F20732"
+
+  "screenshots": [
+    {
+      "src": "/images/screenshots/1.jpg",
+      "sizes": "800x1024",
+      "type": "image/jpeg",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/images/screenshots/2.jpg",
+      "sizes": "800x1024",
+      "type": "image/jpeg",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/images/screenshots/3.jpg",
+      "sizes": "800x1024",
+      "type": "image/jpeg",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/images/screenshots/4.jpg",
+      "sizes": "800x1024",
+      "type": "image/jpeg",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/images/screenshots/5.jpg",
+      "sizes": "800x1024",
+      "type": "image/jpeg",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/images/screenshots/1.jpg",
+      "sizes": "800x1024",
+      "type": "image/jpeg",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/images/screenshots/2.jpg",
+      "sizes": "800x1024",
+      "type": "image/jpeg",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/images/screenshots/3.jpg",
+      "sizes": "800x1024",
+      "type": "image/jpeg",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/images/screenshots/4.jpg",
+      "sizes": "800x1024",
+      "type": "image/jpeg",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/images/screenshots/5.jpg",
+      "sizes": "800x1024",
+      "type": "image/jpeg",
+      "form_factor": "wide"
+    }
+  ]
 }

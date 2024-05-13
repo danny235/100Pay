@@ -1,4 +1,4 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createBottomTabNavigator, useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import {Colors} from '../components/Colors';
@@ -9,10 +9,12 @@ import {
   HomeStackScreen,
   SettingsStackScreen,
 } from './AppStacks';
+import { useWindowDimensions } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
 export default function MainTabs(): React.JSX.Element {
+  const {fontScale} = useWindowDimensions()
   useEffect(()=> {
     let x = 1
     x++
@@ -20,14 +22,20 @@ export default function MainTabs(): React.JSX.Element {
   return (
     <Tab.Navigator
       
+      
       screenOptions={{
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.grayText,
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 12  / fontScale,
           letterSpacing: 0.5,
-          fontFamily: 'SpaceGrotesk-Bold',
+          fontFamily: 'SpaceGroteskBold',
         },
+        tabBarItemStyle: {
+          paddingVertical: 5, 
+        },
+        tabBarAllowFontScaling: true,
+        
         
       }}>
       <Tab.Screen

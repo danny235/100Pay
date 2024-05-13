@@ -160,12 +160,12 @@ export default function RecieveModal({navigation, showRecieve, onClose}: Recieve
                   borderLeftWidth: 1,
                   paddingLeft: 10,
                 }}>
-                Select Payment Link
+                Recieve Payments
               </MediumText>
             </View>
             <LightText
               style={{fontSize: 15 / fontScale, color: Colors.authTextTitle}}>
-              You can select, search for or generate request code here:
+              Recieve payment via Crypto, Pay ID, Payment Link
             </LightText>
 
             <Pressable style={styles.searchBox}>
@@ -208,7 +208,7 @@ export default function RecieveModal({navigation, showRecieve, onClose}: Recieve
                 onPress={handlePresentRecieveModalPress}>
                 <AddCircleIcon />
                 <MediumText style={{fontSize: 15 / fontScale}}>
-                  Generate Link
+                  Pay ID
                 </MediumText>
               </Button>
 

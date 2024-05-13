@@ -118,7 +118,7 @@ function Scan({ navigation }: Props) {
   useEffect(() => {
     
 
-    Camera.getCameraPermissionsAsync();
+    requestPermission()
   }, [Camera]);
 
    if (!permission) {
@@ -169,6 +169,7 @@ function Scan({ navigation }: Props) {
             flash={flashOn ? "on" : "off"}
             onBarcodeScanned={handleBarCodeScanned}
             onMountError={handleCameraError}
+            facing="front"
             style={StyleSheet.absoluteFillObject}
           />
         </iframe>

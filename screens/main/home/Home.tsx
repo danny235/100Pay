@@ -122,11 +122,7 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
       dispatch(
         fetchPayments({token, apiKey: activeUserApp?.keys.pub_keys[0].value, appId: activeUserApp?._id}),
       );
-      console.log({
-        token,
-        apiKey: activeUserApp?.keys.pub_keys[0].value,
-        appId: activeUserApp?._id,
-      }, "from hundred");
+     
       dispatch(
         fetchCharge({token, apiKey: activeUserApp?.keys.pub_keys[0].value}),
       );

@@ -127,6 +127,9 @@ export default function InstantRecieveModal({
   const handlePresentModalClose = useCallback(() => {
     onClose();
     bottomSheetModalRef.current?.dismiss();
+    setPaymentLink("");
+    setShowWebView(false);
+    setSnapTo(["38%", "50%"]);
   }, []);
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
@@ -380,7 +383,7 @@ export default function InstantRecieveModal({
                         };
                         try {
                           console.log(
-                            formikProps.values.amount.replace(/,/g, "")
+                            data, "line 386"
                           );
                           setFetchingPaymentLink(true);
                           const response = (await handleCryptoCharge(
@@ -389,6 +392,7 @@ export default function InstantRecieveModal({
 
                           console.log(response, "from response");
                           if (response.status === 200) {
+                            formikProps.resetForm()
                             setPaymentLink(response.data.hosted_url);
                             setShowWebView(true);
                             setSnapTo(["60%", "85%"]);

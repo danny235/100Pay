@@ -12,8 +12,9 @@ import { RootStackParamList } from '../../../routes/AppStacks';
 import { useDispatch, useSelector } from 'react-redux';
 import { Login, LoginCurve } from 'iconsax-react-native';
 import { addToken, logOut, toggleIsLoggedIn } from '../../../features/user/userSlice';
-import { RootState } from '../../../app/store';
+import { RootState, logoutUser } from '../../../app/store';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { clearAccount } from '../../../features/account/accountSlice';
 
 type SettingsT = {
   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -26,9 +27,8 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
     useSelector((state: RootState) => state.user);
   const dispatch = useDispatch()
   const logout = () => {
-    dispatch(toggleIsLoggedIn(false))
     dispatch(logOut())
-
+    dispatch(clearAccount())
   }
   const settingList = [
     {
@@ -83,7 +83,7 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
   ];
   const copyToClipboard = async() => {
     await Clipboard.setStringAsync(`${activeUserApp?.referralCode}`);
-    showToast('Copied successfully');
+    showToast('Copied successfully', "success");
   };
   return (
     <CustomView>

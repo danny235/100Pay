@@ -9,10 +9,16 @@ import {
   ScrollView,
   Image,
   Pressable,
-} from 'react-native';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import CustomView from '../../../components/Views/CustomView';
-import CustomHeader from '../../../components/headers/CustomHeaders';
+} from "react-native";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import CustomView from "../../../components/Views/CustomView";
+import CustomHeader from "../../../components/headers/CustomHeaders";
 import {
   Add,
   AddCircle,
@@ -22,44 +28,61 @@ import {
   More,
   Star,
   StarSlash,
-} from 'iconsax-react-native';
-import {NavigationProp} from '@react-navigation/native';
-import {RootStackParamList} from '../../../routes/AppStacks';
-import {Colors} from '../../../components/Colors';
-import {CircleIcon, StarIcon} from '../../../components/SvgAssets';
+} from "iconsax-react-native";
+import { NavigationProp } from "@react-navigation/native";
+import { RootStackParamList } from "../../../routes/AppStacks";
+import { Colors } from "../../../components/Colors";
+import { CircleIcon, StarIcon } from "../../../components/SvgAssets";
 import {
   LightText,
   MediumText,
   SemiBoldText,
-} from '../../../components/styles/styledComponents';
-import AccessBankLogo from '../../../assets/images/accessBank.png';
-import {Button} from '../../../components/Button/Button';
-import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
-import {CustomBackdrop} from '../../../components/ChooseAccountBalance/ChooseAccountBalance';
-import { RootState } from '../../../app/store';
-import { useDispatch, useSelector } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
-import Paylogo from "../../../assets/images/paytoken.png"
-import { fetchBanks } from '../../../features/account/accountSlice';
-import { RefreshControl } from 'react-native-gesture-handler';
-import { ActivityIndicator } from 'react-native';
+} from "../../../components/styles/styledComponents";
+import AccessBankLogo from "../../../assets/images/accessBank.png";
+import { Button } from "../../../components/Button/Button";
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
+import { CustomBackdrop } from "../../../components/ChooseAccountBalance/ChooseAccountBalance";
+import { RootState } from "../../../app/store";
+import { useDispatch, useSelector } from "react-redux";
+import { ThunkDispatch } from "redux-thunk";
+import Paylogo from "../../../assets/images/paytoken.png";
+import {
+  fetchBanks,
+  updateActiveBankId,
+} from "../../../features/account/accountSlice";
+import { RefreshControl } from "react-native-gesture-handler";
+import { ActivityIndicator } from "react-native";
+import updateDashboardRequest from "../../../apis/instantPayouts";
+import { useToast } from "../../../components/CustomToast/ToastContext";
+import { UserAppType, updateActiveApps } from "../../../features/user/userSlice";
 
 type PayoutsT = {
   navigation: NavigationProp<RootStackParamList>;
 };
 
-export default function Payouts({navigation}: PayoutsT) {
-  const {fontScale} = useWindowDimensions();
-  const [instantPay, setInstantPay] = useState(false);
-  const {userProfile, userApps, activeUserApp, userAppsError, userAppsLoading, token} =
-    useSelector((state: RootState) => state.user);
-  const { bankAccounts, bankAccountsLoading} = useSelector(
-    (state: RootState) => state.account,
+export default function Payouts({ navigation }: PayoutsT) {
+  const { fontScale } = useWindowDimensions();
+  const {
+    userProfile,
+    userApps,
+    activeUserApp,
+    userAppsError,
+    userAppsLoading,
+    token,
+  } = useSelector((state: RootState) => state.user);
+  const { bankAccounts, bankAccountsLoading, activeBankId } = useSelector(
+    (state: RootState) => state.account
   );
+  const [currentBankId, setCurrentBankId] = useState("");
+  const [instantPay, setInstantPay] = useState(activeUserApp.instantPayout);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const [snapTo, setSnapTo] = useState(['38%', '50%']);
+  const [snapTo, setSnapTo] = useState(["38%", "50%"]);
   const snapPoints = useMemo(() => snapTo, [snapTo]);
+  const { showToast } = useToast();
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
@@ -67,33 +90,62 @@ export default function Payouts({navigation}: PayoutsT) {
     bottomSheetModalRef.current?.dismiss();
   }, []);
   const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
+    console.log("handleSheetChanges", index);
   }, []);
 
+  const toggleSwitch = async ({ bankAccountId, payout }) => {
+    if (activeBankId === "" || activeBankId === "false") {
+      showToast("Please select a bank below or add a new bank account😢", "info");
+      return;
+    }
+    setInstantPay(payout);
+    try {
+      const values = {
+        instantPayoutAccountId: payout ? bankAccountId : "false",
+        instantPayout: payout,
+      };
+      const response:UserAppType = await updateDashboardRequest({
+        data: { ...activeUserApp, ...values },
+        token,
+        apiKey: activeUserApp?.keys.pub_keys[0].value,
+      });
 
-  const toggleSwitch = () => setInstantPay(previousState => !previousState);
+      if (response._id) {
+        setInstantPay(response.instantPayout)
+        dispatch(updateActiveApps(response))
+        if(response.instantPayout) {
+          dispatch(updateActiveBankId(response.instantPayoutAccountId));
+          
+        }
+        dispatch(updateActiveBankId(""));
+        
+        showToast(`Instant Payout is turned ${response.instantPayout ? "on" : "off"}`, "success")
+      }
+    } catch (err) {
+      showToast(err.message, "error")
+      console.log(err.message);
+    }
+  };
 
-const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-const onRefresh = React.useCallback(() => {
-  setRefreshing(true);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
 
-  setTimeout(() => {
-    setRefreshing(false);
-    
+    setTimeout(() => {
+      setRefreshing(false);
+
+      dispatch(
+        fetchBanks({ token, apiKey: activeUserApp?.keys.pub_keys[0].value })
+      );
+    }, 3000);
+  }, []);
+
+  useEffect(() => {
     dispatch(
-      fetchBanks({token, apiKey: activeUserApp?.keys.pub_keys[0].value}),
+      fetchBanks({ token, apiKey: activeUserApp?.keys.pub_keys[0].value })
     );
-  
-  }, 3000);
-}, []);
-
-  useEffect(()=>{
-    dispatch(
-      fetchBanks({token, apiKey: activeUserApp?.keys.pub_keys[0].value}),
-    );
-  }, [])
-
+  }, []);
 
   return (
     <CustomView>
@@ -157,7 +209,12 @@ const onRefresh = React.useCallback(() => {
             <View style={{ marginLeft: "auto" }}>
               <Switch
                 value={instantPay}
-                onValueChange={toggleSwitch}
+                onValueChange={() =>
+                  toggleSwitch({
+                    bankAccountId: activeBankId,
+                    payout: !instantPay,
+                  })
+                }
                 trackColor={{ true: Colors.primaryLight, false: Colors.ash }}
                 thumbColor={Colors.white}
               />
@@ -179,6 +236,7 @@ const onRefresh = React.useCallback(() => {
             </MediumText>
           )}
           {bankAccounts?.map((account, i) => {
+            // console.log(account._id, activeBankId);
             return (
               <Pressable key={account._id} style={styles.acctContainer}>
                 <View style={styles.acctDetContainer}>
@@ -198,7 +256,7 @@ const onRefresh = React.useCallback(() => {
                     >
                       {account.bank_name}
                     </LightText>
-                    {account._id === activeUserApp.instantPayoutAccountId && (
+                    {account._id === activeBankId && (
                       <StarIcon />
                     )}
                   </View>
@@ -225,7 +283,12 @@ const onRefresh = React.useCallback(() => {
                   </View>
                 </View>
 
-                <Pressable onPress={handlePresentModalPress}>
+                <Pressable
+                  onPress={() => {
+                    handlePresentModalPress();
+                    setCurrentBankId(account._id);
+                  }}
+                >
                   <More color={Colors.ash} size={24} />
                 </Pressable>
               </Pressable>
@@ -278,7 +341,13 @@ const onRefresh = React.useCallback(() => {
             </SemiBoldText>
 
             <Pressable
-              onPress={handlePresentModalClose}
+              onPress={() => {
+                if(instantPay) {
+                  showToast("Please disable intant payout to switch banks", "info")
+                }
+                handlePresentModalClose();
+                dispatch(updateActiveBankId(currentBankId));
+              }}
               style={styles.moreActionsContainer}
             >
               <Star color={Colors.primary} size={24} />
@@ -286,7 +355,7 @@ const onRefresh = React.useCallback(() => {
                 Make Defualt Payout Account
               </MediumText>
             </Pressable>
-            <Pressable
+            {/* <Pressable
               onPress={handlePresentModalClose}
               style={styles.moreActionsContainer}
             >
@@ -303,7 +372,7 @@ const onRefresh = React.useCallback(() => {
               <MediumText style={{ fontSize: 17 / fontScale }}>
                 Delete Bank Account
               </MediumText>
-            </Pressable>
+            </Pressable> */}
           </View>
         </BottomSheetModal>
       </BottomSheetModalProvider>
@@ -313,13 +382,13 @@ const onRefresh = React.useCallback(() => {
 
 const styles = StyleSheet.create({
   searchBox: {
-    paddingVertical: Platform.OS === 'android' ? 2 : 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    paddingVertical: Platform.OS === "android" ? 2 : 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
     borderWidth: 1,
     borderColor: Colors.ash,
     borderRadius: 50,
-    alignItems: 'center',
+    alignItems: "center",
     paddingHorizontal: 20,
   },
   grayBg: {
@@ -334,29 +403,29 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.ash,
     borderBottomWidth: 1,
     paddingBottom: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   acctDetContainer: {
     gap: 10,
     flex: 1,
   },
   topAccDet: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
   bottomAccDet: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
   moreActionsContainer: {
     borderBottomColor: Colors.ash,
     borderBottomWidth: 1,
     paddingBottom: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 20,
   },
 });

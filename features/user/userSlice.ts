@@ -24,7 +24,7 @@ export const fetchUserData = createAsyncThunk(
   },
 );
 
-type AccountBalanceType = 'naira' | 'pay-token';
+type AccountBalanceType = 'naira' | 'pay-token' | "";
 
 interface User {
   avatar: string;
@@ -42,7 +42,7 @@ interface User {
   __v: number;
 }
 
-type UserAppType = {
+export type UserAppType = {
   address: string;
   admins: any[]; // Assuming this can be an array of any type
   app_name: string;
@@ -130,11 +130,11 @@ interface UserState {
 }
 
 const initialState: UserState = {
-  accountBalance: 1000,
+  accountBalance: 0,
   token: '',
   isLoggedIn: false,
   userOnboarded: false,
-  accountBalanceType: 'naira',
+  accountBalanceType: '',
   userProfile: null,
   userProfileLoading: 'idle',
   userProfileError: '',
@@ -165,7 +165,8 @@ export const userSlice = createSlice({
       state.token = '';
       state.userProfile = null
       state.userApps = null
-      state.activeUserApp = null
+      state.activeUserApp = null;
+      state.isLoggedIn = false;
     },
     updateAccountBalanceType: (state, action) => {
       state.accountBalanceType = action.payload;

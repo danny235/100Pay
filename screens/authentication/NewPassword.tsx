@@ -77,72 +77,79 @@ export default function NewPassword({
 
       <Formik
         initialValues={{
-          password: '',
-          confirmPassword: '',
+          password: "",
+          confirmPassword: "",
         }}
         onSubmit={async (values, actions) => {
           console.log(values);
           toggleSuccessModal(); // Show success modal
         }}
-        validationSchema={setPasswordSchema}>
-        {formikProps => (
-          <View style={{gap: 12, marginTop: 24}}>
+        validationSchema={setPasswordSchema}
+      >
+        {(formikProps) => (
+          <View style={{ gap: 12, marginTop: 24 }}>
             <View>
-              <View style={{position: 'relative', marginBottom: 12}}>
+              <View style={{ position: "relative", marginBottom: 12 }}>
                 <Input
                   formikProps={formikProps}
                   formikKey="password"
                   placeholder="*********"
                   value={formikProps.values.password}
                   secureTextEntry={showPassword ? false : true}
-                  style={{paddingRight: 80}}
+                  style={{ paddingRight: 80 }}
                   label="Password"
                   placeholderTextColor={Colors?.ash}
                 />
 
                 <Pressable
                   style={{
-                    position: 'absolute',
-                    bottom: Platform.OS === 'ios' ? 37 : 45,
+                    position: "absolute",
+                    top:
+                      Platform.OS === "ios" || Platform.OS === "web" ? 40 : 48,
                     right: 10,
                   }}
-                  onPress={() => setShowPassword(!showPassword)}>
+                  onPress={() => setShowPassword(!showPassword)}
+                >
                   {showPassword ? <EyeLineIcon /> : <EyeIcon />}
                 </Pressable>
               </View>
 
-              <View style={{position: 'relative'}}>
+              <View style={{ position: "relative" }}>
                 <Input
                   formikProps={formikProps}
                   formikKey="confirmPassword"
                   placeholder="*********"
                   value={formikProps.values.confirmPassword}
                   secureTextEntry={showPassword ? false : true}
-                  style={{paddingRight: 80}}
+                  style={{ paddingRight: 80 }}
                   label="Confirm Password"
                   placeholderTextColor={Colors?.ash}
                 />
                 <Pressable
                   style={{
-                    position: 'absolute',
-                    bottom: Platform.OS === 'ios' ? 37 : 45,
+                    position: "absolute",
+                    top:
+                      Platform.OS === "ios" || Platform.OS === "web" ? 40 : 48,
                     right: 10,
                   }}
-                  onPress={() => setShowPassword(!showPassword)}>
+                  onPress={() => setShowPassword(!showPassword)}
+                >
                   {showPassword ? <EyeLineIcon /> : <EyeIcon />}
                 </Pressable>
               </View>
             </View>
-            <View style={{marginLeft: 'auto'}}>
+            <View style={{ marginLeft: "auto" }}>
               <Button
                 variant="primary"
                 isLarge={false}
                 isWide={false}
                 onPress={() => {
                   formikProps.handleSubmit();
-                }}>
+                }}
+              >
                 <MediumText
-                  style={{color: Colors.white, fontSize: 15 / fontScale}}>
+                  style={{ color: Colors.white, fontSize: 15 / fontScale }}
+                >
                   Continue
                 </MediumText>
                 <ArrowRightIcon />
@@ -156,37 +163,41 @@ export default function NewPassword({
       <Modal
         animationType="fade"
         transparent={true}
-        visible={isSuccessModalVisible}>
+        visible={isSuccessModalVisible}
+      >
         <View style={styles.modalContainer}>
           <View style={styles.popup}>
             <View
               style={{
                 flex: 1,
                 gap: 24,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <CheckVerify color={'red'} width={50} height={50} />
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <CheckVerify color={"red"} width={50} height={50} />
               <View>
                 <BoldText
                   style={{
-                    fontFamily: 'SpaceGrotesk-Medium',
-                    textAlign: 'center',
+                    fontFamily: "SpaceGrotesk-Medium",
+                    textAlign: "center",
                     fontSize: 18 / fontScale,
                     color: Colors?.authTextTitle,
                     marginTop: 12,
                     marginBottom: 4,
-                  }}>
+                  }}
+                >
                   All Set
                 </BoldText>
                 <Pressable onPress={toggleSuccessModal}>
                   <LightText
                     style={{
-                      fontFamily: 'SpaceGrotesk-Medium',
-                      textAlign: 'center',
+                      fontFamily: "SpaceGrotesk-Medium",
+                      textAlign: "center",
                       fontSize: 14 / fontScale,
                       color: Colors?.grayText,
-                    }}>
+                    }}
+                  >
                     You have successfully reset your password, login to continue
                   </LightText>
                 </Pressable>
@@ -199,9 +210,11 @@ export default function NewPassword({
                 onPress={() => {
                   toggleSuccessModal();
                   toggleImageModal();
-                }}>
+                }}
+              >
                 <MediumText
-                  style={{color: Colors.white, fontSize: 15 / fontScale}}>
+                  style={{ color: Colors.white, fontSize: 15 / fontScale }}
+                >
                   Continue
                 </MediumText>
                 <ArrowRightIcon />
@@ -215,37 +228,41 @@ export default function NewPassword({
       <Modal
         animationType="fade"
         transparent={true}
-        visible={isImageModalVisible}>
+        visible={isImageModalVisible}
+      >
         <View style={styles.modalContainer}>
           <View style={styles.popups}>
             <View
               style={{
                 flex: 1,
                 gap: 24,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Image source={AuthMemoji} style={{width: 140, height: 130}} />
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Image source={AuthMemoji} style={{ width: 140, height: 130 }} />
               <View>
                 <BoldText
                   style={{
-                    fontFamily: 'SpaceGrotesk-Medium',
-                    textAlign: 'center',
+                    fontFamily: "SpaceGrotesk-Medium",
+                    textAlign: "center",
                     fontSize: 18 / fontScale,
                     color: Colors?.authTextTitle,
                     marginBottom: 4,
-                  }}>
+                  }}
+                >
                   Welcome Ikenna
                 </BoldText>
                 <LightText
                   style={{
-                    fontFamily: 'SpaceGrotesk-Medium',
-                    textAlign: 'center',
+                    fontFamily: "SpaceGrotesk-Medium",
+                    textAlign: "center",
                     fontSize: 14 / fontScale,
                     color: Colors?.grayText,
-                  }}>
+                  }}
+                >
                   Your account has successfully been created and your now ready
-                  to go!{' '}
+                  to go!{" "}
                 </LightText>
               </View>
 
@@ -256,9 +273,11 @@ export default function NewPassword({
                 onPress={() => {
                   toggleSuccessModal();
                   toggleImageModal();
-                }}>
+                }}
+              >
                 <MediumText
-                  style={{color: Colors.white, fontSize: 15 / fontScale}}>
+                  style={{ color: Colors.white, fontSize: 15 / fontScale }}
+                >
                   Continue
                 </MediumText>
                 <ArrowRightIcon />

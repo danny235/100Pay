@@ -1,34 +1,33 @@
-import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {formatDateString} from '../../utils';
-import {GetApp} from '../../apis/getuserdata';
-import {getUserData} from '../../apis/auth/loginuser';
-import {getPayments, getPaymentsT} from '../../apis/getpayments';
-import {ChargeT, getCharge} from '../../apis/gettransactions';
-import {getBankRequest, GetBankT} from '../../apis/createbank';
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { formatDateString } from "../../utils";
+import { GetApp } from "../../apis/getuserdata";
+import { getUserData } from "../../apis/auth/loginuser";
+import { getPayments, getPaymentsT } from "../../apis/getpayments";
+import { ChargeT, getCharge } from "../../apis/gettransactions";
+import { getBankRequest, GetBankT } from "../../apis/createbank";
 
 export const fetchPayments = createAsyncThunk(
-  'user/fetchPayments',
-  async ({token, apiKey, appId}: getPaymentsT) => {
-    console.log({ token, apiKey, appId }, "from thunk");
-    const response = await getPayments({token, apiKey, appId});
+  "user/fetchPayments",
+  async ({ token, apiKey, appId }: getPaymentsT) => {
+    const response = await getPayments({ token, apiKey, appId });
     return response;
-  },
+  }
 );
 
 export const fetchCharge = createAsyncThunk(
-  'user/fetchCharge',
-  async ({token, apiKey}: ChargeT) => {
-    const response = await getCharge({token, apiKey});
+  "user/fetchCharge",
+  async ({ token, apiKey }: ChargeT) => {
+    const response = await getCharge({ token, apiKey });
     return response;
-  },
+  }
 );
 
 export const fetchBanks = createAsyncThunk(
-  'user/fetchBanks',
-  async ({token, apiKey}: GetBankT) => {
-    const response = await getBankRequest({token, apiKey});
+  "user/fetchBanks",
+  async ({ token, apiKey }: GetBankT) => {
+    const response = await getBankRequest({ token, apiKey });
     return response;
-  },
+  }
 );
 
 type BillingType = {
@@ -141,38 +140,50 @@ type AccountType = {
   bankAccounts: BankType[] | null;
   bankAccountsLoading: string;
   bankAccountsError: string | undefined;
+  activeBankId: string | undefined;
 };
 
 const initialState: AccountType = {
   charges: null,
-  chargesLoading: 'idle',
-  chargesError: '',
+  chargesLoading: "idle",
+  chargesError: "",
   payments: null,
-  paymentsLoading: 'idle',
-  paymentsError: '',
+  paymentsLoading: "idle",
+  paymentsError: "",
   bankAccounts: null,
-  bankAccountsLoading: 'idle',
-  bankAccountsError: '',
+  bankAccountsLoading: "idle",
+  bankAccountsError: "",
+  activeBankId: "",
 };
 
 export const accountSlice = createSlice({
-  name: 'account',
+  name: "account",
   initialState,
-  reducers: {},
+  reducers: {
+    updateActiveBankId: (state, action) => {
+      state.activeBankId = action.payload;
+    },
+    clearAccount: (state) => {
+      state.charges = null;
+      state.payments = null;
+      state.bankAccounts = null;
+      state.activeBankId = "";
+    },
+  },
 
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     /*----- Get Charge ---------*/
     builder.addCase(fetchCharge.pending, (state, action) => {
-      state.chargesLoading = 'loading';
+      state.chargesLoading = "loading";
     });
 
     builder.addCase(fetchCharge.fulfilled, (state, action) => {
-      state.chargesLoading = 'success';
+      state.chargesLoading = "success";
       state.charges = action.payload.slice().reverse();
     });
 
     builder.addCase(fetchCharge.rejected, (state, action) => {
-      state.chargesLoading = 'rejected';
+      state.chargesLoading = "rejected";
       state.chargesError = action.error.message;
     });
 
@@ -180,16 +191,16 @@ export const accountSlice = createSlice({
 
     /*----- Get payments ---------*/
     builder.addCase(fetchPayments.pending, (state, action) => {
-      state.paymentsLoading = 'loading';
+      state.paymentsLoading = "loading";
     });
 
     builder.addCase(fetchPayments.fulfilled, (state, action) => {
-      state.paymentsLoading = 'success';
+      state.paymentsLoading = "success";
       state.payments = action.payload.slice().reverse();
     });
 
     builder.addCase(fetchPayments.rejected, (state, action) => {
-      state.paymentsLoading = 'rejected';
+      state.paymentsLoading = "rejected";
       state.paymentsError = action.error.message;
     });
 
@@ -197,24 +208,24 @@ export const accountSlice = createSlice({
 
     /*----- Get banks ---------*/
     builder.addCase(fetchBanks.pending, (state, action) => {
-      state.bankAccountsLoading = 'loading';
+      state.bankAccountsLoading = "loading";
     });
 
     builder.addCase(fetchBanks.fulfilled, (state, action) => {
-      state.bankAccountsLoading = 'success';
+      state.bankAccountsLoading = "success";
       state.bankAccounts = action.payload;
     });
 
     builder.addCase(fetchBanks.rejected, (state, action) => {
-      state.bankAccountsLoading = 'rejected';
+      state.bankAccountsLoading = "rejected";
       state.bankAccountsError = action.error.message;
-      console.log(action.error.message);
+     
     });
 
     /*-----------*/
   },
 });
 
-export const {} = accountSlice.actions;
+export const { updateActiveBankId, clearAccount } = accountSlice.actions;
 
 export default accountSlice.reducer;

@@ -139,27 +139,37 @@ function Scan({ navigation }: Props) {
 
   if (!permission.granted)
   return (
-    <View
-      style={{
-        justifyContent: 'center',
-        alignItems: 'center',
-        flex: 1,
-        backgroundColor: Colors.white
-      }}>
-      <RegularText
+    <View style={{ flex: 1, backgroundColor: Colors.white }}>
+      <CustomHeader
+        text="Scan QR code"
+        icon={<ScanRedIcon color={Colors.primary} />}
+        onPress={() => navigation.goBack()}
+        
+      />
+      <View
         style={{
-          fontSize: 20 / fontScale,
-          textAlign: 'center',
-        }}>
-        No camera device please grant access!
-      </RegularText>
+          justifyContent: "center",
+          alignItems: "center",
+          flex: 1,
+          backgroundColor: Colors.white,
+        }}
+      >
+        <RegularText
+          style={{
+            fontSize: 20 / fontScale,
+            textAlign: "center",
+          }}
+        >
+          No camera device please grant access!
+        </RegularText>
+      </View>
     </View>
   );
 
   return (
     <CustomView>
       {Platform.OS === "web" ? (
-        <iframe allow="microphone; camera;">
+        <iframe allow="camera;">
           <CameraView
             barcodeScannerSettings={{
               barcodeTypes: ["qr"],
@@ -169,7 +179,6 @@ function Scan({ navigation }: Props) {
             flash={flashOn ? "on" : "off"}
             onBarcodeScanned={handleBarCodeScanned}
             onMountError={handleCameraError}
-            facing="front"
             style={StyleSheet.absoluteFillObject}
           />
         </iframe>

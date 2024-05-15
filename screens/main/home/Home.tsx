@@ -130,7 +130,7 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
   }, []);
   const copyToClipboard = async () => {
      await Clipboard.setStringAsync(`${activeUserApp?.referralCode}`);
-    showToast('Copied successfully');
+    showToast('Copied successfully', "success");
   };
 
   const handleShowModal = () => {

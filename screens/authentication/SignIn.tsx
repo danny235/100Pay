@@ -101,7 +101,7 @@ export default function SignIn({navigation}: RootAuthI): React.JSX.Element {
                 <Pressable
                   style={{
                     position: 'absolute',
-                    top: Platform.OS === 'ios' ? 40 : 48,
+                    top: Platform.OS === 'ios' || Platform.OS === "web" ? 40 : 48,
                     right: 10,
                   }}
                   onPress={() => setShowPassword(!showPassword)}>

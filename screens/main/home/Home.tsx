@@ -43,6 +43,7 @@ import {
   fetchBanks,
   fetchCharge,
   fetchPayments,
+  fetchPaymentsLinks,
 } from '../../../features/account/accountSlice';
 import {ThunkDispatch} from 'redux-thunk';
 import {GenerateArray} from '../../../utils';
@@ -126,6 +127,9 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
       dispatch(
         fetchCharge({token, apiKey: activeUserApp?.keys.pub_keys[0].value}),
       );
+      dispatch(
+        fetchPaymentsLinks({token, apiKey: activeUserApp?.keys.pub_keys[0].value}),
+      );
     }, 3000);
   }, []);
   const copyToClipboard = async () => {
@@ -137,11 +141,17 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
     setShowSwithBalanceModal(true);
   };
   useEffect(() => {
+    dispatch(fetchUserApps(token));
+    dispatch(fetchUserData(token));
     dispatch(
       fetchBanks({token, apiKey: activeUserApp?.keys.pub_keys[0].value}),
     );
-    dispatch(fetchUserApps(token));
-    dispatch(fetchUserData(token));
+    dispatch(
+       fetchPaymentsLinks({
+         token,
+         apiKey: activeUserApp?.keys.pub_keys[0].value,
+       })
+     );
   }, []);
 
   // console.log(activeUserApp?.keys.pub_keys[0].value)

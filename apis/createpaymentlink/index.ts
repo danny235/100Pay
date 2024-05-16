@@ -7,6 +7,11 @@ const axiosInstance = axios.create({
   baseURL: BASE_API,
 });
 
+export type PaymentT = {
+  token: string;
+  apiKey: string | undefined;
+};
+
 let token: string | null;
 if (typeof window !== "undefined") token = localStorage.getItem("token");
 
@@ -71,5 +76,23 @@ export const createPaymentLinkRequest = async (
     console.log(err.response.data);
 
     throw Error(err.response.data);
+  }
+};
+
+export const getPaymentLinks = async ({token, apiKey}: PaymentT) => {
+  try {
+    const response = await axios.get(
+      "https://api.100pay.co/api/v1/pay/payment_page",
+      {
+        headers: {
+          "Auth-Token": token,
+          "Api-Key": apiKey
+        },
+      }
+    );
+
+    return response.data;
+  } catch (err) {
+    return err;
   }
 };

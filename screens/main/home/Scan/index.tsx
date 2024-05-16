@@ -110,14 +110,9 @@ function toggleCameraFacing() {
   setFacing((current) => (current === "back" ? "front" : "back"));
 }
    const handleBarCodeScanned = async ({data}) => {
-
-    try {
-
-      setScanned(true);
-      console.log("called")
-    } catch (err) {
-      console.log(err)
-    }
+     
+           setScanned(true);
+           console.log("called")
     //  await alert(`Bar code with type ${type} and data ${data} has been scanned!`);
    };
   // useEffect(() => {
@@ -220,7 +215,7 @@ function toggleCameraFacing() {
       )} */}
       <CameraView
         barcodeScannerSettings={{
-          barcodeTypes: ["qr", "codabar", "aztec"],
+          barcodeTypes: ["qr"],
         }}
         facing={facing}
         flash={flashOn ? "on" : "off"}

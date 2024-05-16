@@ -5,6 +5,7 @@ import { getUserData } from "../../apis/auth/loginuser";
 import { getPayments, getPaymentsT } from "../../apis/getpayments";
 import { ChargeT, getCharge } from "../../apis/gettransactions";
 import { getBankRequest, GetBankT } from "../../apis/createbank";
+import { getPaymentLinks } from "../../apis/createpaymentlink";
 
 export const fetchPayments = createAsyncThunk(
   "user/fetchPayments",
@@ -18,6 +19,13 @@ export const fetchCharge = createAsyncThunk(
   "user/fetchCharge",
   async ({ token, apiKey }: ChargeT) => {
     const response = await getCharge({ token, apiKey });
+    return response;
+  }
+);
+export const fetchPaymentsLinks = createAsyncThunk(
+  "user/fetchPaymentsLinks",
+  async ({ token, apiKey }: ChargeT) => {
+    const response = await getPaymentLinks({ token, apiKey });
     return response;
   }
 );
@@ -130,6 +138,22 @@ type PaymentType = {
   __v: number;
 };
 
+type PaymentLinkType = {
+  amount: string
+  app_id: string
+  business_name: string
+  call_back_url: string
+  code: string
+  createdAt: string
+  currency: string
+  custom_fields: any
+  description: string 
+  link_name: string
+  userId: string
+  __v: number
+  _id: string
+}
+
 type AccountType = {
   charges: ChargeType[] | null;
   chargesLoading: string;
@@ -141,6 +165,9 @@ type AccountType = {
   bankAccountsLoading: string;
   bankAccountsError: string | undefined;
   activeBankId: string | undefined;
+  paymentLinks: PaymentLinkType[] | null;
+  paymentLinksLoading: string;
+  paymentLinksError: string | undefined;
 };
 
 const initialState: AccountType = {
@@ -154,6 +181,9 @@ const initialState: AccountType = {
   bankAccountsLoading: "idle",
   bankAccountsError: "",
   activeBankId: "",
+  paymentLinks: null,
+  paymentLinksLoading: "idle",
+  paymentLinksError: ""
 };
 
 export const accountSlice = createSlice({
@@ -218,6 +248,24 @@ export const accountSlice = createSlice({
 
     builder.addCase(fetchBanks.rejected, (state, action) => {
       state.bankAccountsLoading = "rejected";
+      state.bankAccountsError = action.error.message;
+     
+    });
+
+    /*-----------*/
+
+    /*----- Get payment links ---------*/
+    builder.addCase(fetchPaymentsLinks.pending, (state, action) => {
+      state.paymentLinksLoading = "loading";
+    });
+
+    builder.addCase(fetchPaymentsLinks.fulfilled, (state, action) => {
+      state.paymentLinksLoading = "success";
+      state.paymentLinks = action.payload;
+    });
+
+    builder.addCase(fetchPaymentsLinks.rejected, (state, action) => {
+      state.paymentLinksLoading = "rejected";
       state.bankAccountsError = action.error.message;
      
     });

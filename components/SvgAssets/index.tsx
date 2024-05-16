@@ -1792,3 +1792,21 @@ export const DotIcon = ({width = 6, height = 7, color = '#F20831'}: Props) => {
   );
 };
 
+export const GreenNairaIcon = ({width = 23, height = 22, color = "#16A34A"}: Props) => {
+  return (
+    <Svg
+      width={width}
+      height={height}
+      viewBox="0 0 23 22"
+      fill="none"
+    >
+      <Path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M3.10442 13.25V9.75H0V7.25H3.10442V0.5H10.9476L12.5496 7.25H15.8534V0.5H19.9156V7.25H23V9.75H19.9156V13.25H23V15.75H19.9156V21.5H12.0725L10.7077 15.75H7.1666V21.5H3.10442V15.75H0V13.25H3.10442ZM7.1666 13.25H10.1144L9.28367 9.75H7.1666V13.25ZM14.5671 15.75L15.291 18.8H15.8534V15.75H14.5671ZM15.8534 13.25H13.9737L13.143 9.75H15.8534V13.25ZM8.69031 7.25H7.1666V3.2H7.72906L8.69031 7.25Z"
+        fill={color}
+      />
+    </Svg>
+  );
+};
+

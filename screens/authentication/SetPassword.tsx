@@ -1,34 +1,34 @@
-import {Formik} from 'formik';
-import React, {useState} from 'react';
-import {Platform, Pressable, View, useWindowDimensions} from 'react-native';
-import * as yup from 'yup';
-import {Button} from '../../components/Button/Button';
-import {Colors} from '../../components/Colors';
+import { Formik } from "formik";
+import React, { useState } from "react";
+import { Platform, Pressable, View, useWindowDimensions } from "react-native";
+import * as yup from "yup";
+import { Button } from "../../components/Button/Button";
+import { Colors } from "../../components/Colors";
 import {
   ArrowRightIcon,
   EyeIcon,
   EyeLineIcon,
   MailIcon,
-} from '../../components/SvgAssets';
-import CustomView from '../../components/Views/CustomView';
+} from "../../components/SvgAssets";
+import CustomView from "../../components/Views/CustomView";
 import {
   MediumText,
   RegularText,
-} from '../../components/styles/styledComponents';
-import {NavigationProp} from '@react-navigation/native';
-import Input from '../../components/Input';
-import Header from '../../components/headers/AuthHeader';
-import AuthTitleText from '../../components/headers/AuthTitleText';
+} from "../../components/styles/styledComponents";
+import { NavigationProp } from "@react-navigation/native";
+import Input from "../../components/Input";
+import Header from "../../components/headers/AuthHeader";
+import AuthTitleText from "../../components/headers/AuthTitleText";
 
 const setPasswordSchema = yup.object().shape({
   password: yup
     .string()
-    .required('Password is required')
-    .min(8, 'Password must be at least 8 characters long'),
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters long"),
   confirmPassword: yup
     .string()
-    .required('Confirm Password is required')
-    .oneOf([yup.ref('password')], 'Passwords must match'),
+    .required("Confirm Password is required")
+    .oneOf([yup.ref("password")], "Passwords must match"),
 });
 
 interface RootAuthI {
@@ -39,7 +39,7 @@ export default function SetPassword({
   navigation,
 }: RootAuthI): React.JSX.Element {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const {fontScale} = useWindowDimensions();
+  const { fontScale } = useWindowDimensions();
 
   return (
     <CustomView>

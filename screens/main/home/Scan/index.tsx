@@ -37,6 +37,8 @@ import {
 } from "../../../../components/styles/styledComponents";
 import { RootStackParamList } from "../../../../routes/AppStacks";
 import { CameraView, Camera, useCameraPermissions, CameraNativeProps } from "expo-camera";
+import { Button } from "../../../../components/Button/Button";
+import { I3DRotate } from "iconsax-react-native";
 
 type Props = {
   navigation: NavigationProp<RootStackParamList>;
@@ -53,6 +55,7 @@ function Scan({ navigation }: Props) {
   const [scannedData, setScannedData] = useState("");
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>()
+  const [facing, setFacing] = useState<string | any>("back");
   // const device = useCameraDevice('back', {
   //   physicalDevices: [
   //     'ultra-wide-angle-camera',
@@ -103,10 +106,19 @@ function Scan({ navigation }: Props) {
   const handleCameraError = (e: any) => {
     console.log("error", e);
   };
+function toggleCameraFacing() {
+  setFacing((current) => (current === "back" ? "front" : "back"));
+}
+   const handleBarCodeScanned = async ({data}) => {
 
-   const handleBarCodeScanned = ({ type, data }) => {
-     setScanned(true);
-     alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    try {
+
+      setScanned(true);
+      console.log("called")
+    } catch (err) {
+      console.log(err)
+    }
+    //  await alert(`Bar code with type ${type} and data ${data} has been scanned!`);
    };
   // useEffect(() => {
   //   (async () => {
@@ -119,6 +131,8 @@ function Scan({ navigation }: Props) {
     
 
     requestPermission()
+    
+
   }, [Camera]);
 
    if (!permission) {
@@ -144,7 +158,6 @@ function Scan({ navigation }: Props) {
         text="Scan QR code"
         icon={<ScanRedIcon color={Colors.primary} />}
         onPress={() => navigation.goBack()}
-        
       />
       <View
         style={{
@@ -152,6 +165,7 @@ function Scan({ navigation }: Props) {
           alignItems: "center",
           flex: 1,
           backgroundColor: Colors.white,
+          gap: 10
         }}
       >
         <RegularText
@@ -162,6 +176,15 @@ function Scan({ navigation }: Props) {
         >
           No camera device please grant access!
         </RegularText>
+        <Button isLarge={false} isWide={false} variant="primary" onPress={requestPermission}>
+          <RegularText
+            style={{
+              fontSize: 15 / fontScale,
+              textAlign: "center",
+              color: Colors.white
+            }}
+          >Grant access</RegularText>
+        </Button>
       </View>
     </View>
   );
@@ -169,20 +192,24 @@ function Scan({ navigation }: Props) {
   return (
     <CustomView>
       {Platform.OS === "web" ? (
-        <iframe allow="camera;">
-          <CameraView
-            barcodeScannerSettings={{
-              barcodeTypes: ["qr"],
-            }}
-            ref={cameraRef}
-            enableTorch={flashOn}
-            flash={flashOn ? "on" : "off"}
-            onBarcodeScanned={handleBarCodeScanned}
-            onMountError={handleCameraError}
-            style={StyleSheet.absoluteFillObject}
-          />
-        </iframe>
+        <CameraView
+          barcodeScannerSettings={{
+            barcodeTypes: ["qr", "codabar", "aztec"],
+          }}
+
+          ref={cameraRef}
+          
+          facing={facing}
+          flash={flashOn ? "on" : "off"}
+          onBarcodeScanned={handleBarCodeScanned}
+          // onBarcodeScanned={({data})=> console.log(data)}
+          style={StyleSheet.absoluteFill}
+          onCameraReady={()=>console.log("camera ready")}
+          onMountError={()=>console.log("There is an error")}
+        />
       ) : (
+        // <iframe src="..." style={{ flex: 1, borderWidth: 0 }} allow="microphone; camera;">
+        // </iframe>
         <CameraView
           barcodeScannerSettings={{
             barcodeTypes: ["qr"],
@@ -260,6 +287,7 @@ function Scan({ navigation }: Props) {
                 marginVertical: 20,
                 paddingHorizontal: 20,
                 paddingVertical: 20,
+                width: "100%",
               }}
             >
               <View
@@ -267,7 +295,7 @@ function Scan({ navigation }: Props) {
                   width: "100%",
                   backgroundColor: Colors.white,
                   opacity: 0.1,
-                  borderRadius: 10,
+                  borderRadius: 20,
                   height: height / 2.8,
                 }}
               />
@@ -283,8 +311,11 @@ function Scan({ navigation }: Props) {
               paddingHorizontal: 70,
             }}
           >
-            <Pressable style={[styles.ctaBtns, {}]}>
-              <GalleryIcon />
+            <Pressable
+              onPress={toggleCameraFacing}
+              style={[styles.ctaBtns, {}]}
+            >
+              <I3DRotate size={34} color={Colors.white} variant="TwoTone" />
             </Pressable>
 
             <Pressable

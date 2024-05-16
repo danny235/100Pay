@@ -192,7 +192,7 @@ export default function Home({navigation}: HomeProps): React.JSX.Element {
                     fontSize: 12 / fontScale,
                     color: Colors.grayText,
                   }}>
-                  Pay ID:{' '}
+                  Pay ID🪪:{' '}
                   {userAppsLoading === 'loading' ||
                   userAppsLoading === 'rejected'
                     ? '*****'

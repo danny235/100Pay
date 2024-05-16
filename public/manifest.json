@@ -26,63 +26,63 @@
 
   "screenshots": [
     {
-      "src": "/images/screenshots/1.jpg",
+      "src": "1.png",
       "sizes": "800x1024",
-      "type": "image/jpeg",
+      "type": "image/png",
       "form_factor": "narrow"
     },
     {
-      "src": "/images/screenshots/2.jpg",
+      "src": "2.png",
       "sizes": "800x1024",
-      "type": "image/jpeg",
+      "type": "image/png",
       "form_factor": "narrow"
     },
     {
-      "src": "/images/screenshots/3.jpg",
+      "src": "3.png",
       "sizes": "800x1024",
-      "type": "image/jpeg",
+      "type": "image/png",
       "form_factor": "narrow"
     },
     {
-      "src": "/images/screenshots/4.jpg",
+      "src": "4.png",
       "sizes": "800x1024",
-      "type": "image/jpeg",
+      "type": "image/png",
       "form_factor": "narrow"
     },
     {
-      "src": "/images/screenshots/5.jpg",
+      "src": "5.png",
       "sizes": "800x1024",
-      "type": "image/jpeg",
+      "type": "image/png",
       "form_factor": "narrow"
     },
     {
-      "src": "/images/screenshots/1.jpg",
+      "src": "1.png",
       "sizes": "800x1024",
-      "type": "image/jpeg",
+      "type": "image/png",
       "form_factor": "wide"
     },
     {
-      "src": "/images/screenshots/2.jpg",
+      "src": "2.png",
       "sizes": "800x1024",
-      "type": "image/jpeg",
+      "type": "image/png",
       "form_factor": "wide"
     },
     {
-      "src": "/images/screenshots/3.jpg",
+      "src": "3.png",
       "sizes": "800x1024",
-      "type": "image/jpeg",
+      "type": "image/png",
       "form_factor": "wide"
     },
     {
-      "src": "/images/screenshots/4.jpg",
+      "src": "4.png",
       "sizes": "800x1024",
-      "type": "image/jpeg",
+      "type": "image/png",
       "form_factor": "wide"
     },
     {
-      "src": "/images/screenshots/5.jpg",
+      "src": "5.png",
       "sizes": "800x1024",
-      "type": "image/jpeg",
+      "type": "image/png",
       "form_factor": "wide"
     }
   ]

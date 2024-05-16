@@ -191,14 +191,11 @@ function toggleCameraFacing() {
 
   return (
     <CustomView>
-      {Platform.OS === "web" ? (
+      {/* {Platform.OS === "web" ? (
         <CameraView
           barcodeScannerSettings={{
             barcodeTypes: ["qr", "codabar", "aztec"],
           }}
-
-          ref={cameraRef}
-          
           facing={facing}
           flash={flashOn ? "on" : "off"}
           onBarcodeScanned={handleBarCodeScanned}
@@ -210,17 +207,29 @@ function toggleCameraFacing() {
       ) : (
         // <iframe src="..." style={{ flex: 1, borderWidth: 0 }} allow="microphone; camera;">
         // </iframe>
-        <CameraView
-          barcodeScannerSettings={{
-            barcodeTypes: ["qr"],
-          }}
-          ref={cameraRef}
-          enableTorch={true}
-          flash={flashOn ? "on" : "off"}
-          onBarcodeScanned={({ data }) => console.log(data)}
-          style={StyleSheet.absoluteFillObject}
-        />
-      )}
+      <CameraView
+        barcodeScannerSettings={{
+          barcodeTypes: ["qr"],
+        }}
+        ref={cameraRef}
+        enableTorch={true}
+        flash={flashOn ? "on" : "off"}
+        onBarcodeScanned={({ data }) => console.log(data)}
+        style={StyleSheet.absoluteFillObject}
+      />
+      )} */}
+      <CameraView
+        barcodeScannerSettings={{
+          barcodeTypes: ["qr", "codabar", "aztec"],
+        }}
+        facing={facing}
+        flash={flashOn ? "on" : "off"}
+        onBarcodeScanned={handleBarCodeScanned}
+        // onBarcodeScanned={({data})=> console.log(data)}
+        style={StyleSheet.absoluteFill}
+        onCameraReady={() => console.log("camera ready")}
+        onMountError={() => console.log("There is an error")}
+      />
       {/* <Camera
         style={StyleSheet.absoluteFillObject}
         codeScanner={codeScanner}

@@ -66,7 +66,7 @@ export default function RecieveModal({
   const { userApps, activeUserApp, userAppsError, userAppsLoading, token } =
     useSelector((state: RootState) => state.user);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const [snapTo, setSnapTo] = useState(["38%", "70%"]);
+  const [snapTo, setSnapTo] = useState(["38%", "80%"]);
   const [showInstantRecieve, setShowInstantRecieve] = useState(false);
   const snapPoints = useMemo(() => snapTo, [snapTo]);
   const handlePresentModalPress = useCallback(() => {
@@ -83,7 +83,7 @@ export default function RecieveModal({
 
   // Recieve Via Options
   const recieveSheetModalRef = useRef<BottomSheetModal>(null);
-  const [recieveSnapTo, setRecieveSnapTo] = useState(["38%", "40%"]);
+  const [recieveSnapTo, setRecieveSnapTo] = useState(["38%", "50%"]);
   const recieveSnapPoints = useMemo(() => recieveSnapTo, [recieveSnapTo]);
   const handlePresentRecieveModalPress = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
@@ -181,7 +181,7 @@ export default function RecieveModal({
           )}
           animateOnMount={true}
         >
-          <View style={{ paddingVertical: 20, gap: 20, paddingHorizontal: 20 }}>
+          <View style={{ paddingVertical: 20, gap: 20, paddingHorizontal: 20, flex: 1 }}>
               <View style={{ gap: 20, flexDirection: "row" }}>
                 <SelectIcon />
                 <MediumText
@@ -207,7 +207,7 @@ export default function RecieveModal({
                 <LightText>Search request code here...</LightText>
                 <CircleIcon color={Colors.grayText} />
               </Pressable>
-            <ScrollView>
+            <ScrollView contentContainerStyle={{gap: 10}}>
 
 
               {paymentLinksLoading === "loading" && (
@@ -279,11 +279,12 @@ export default function RecieveModal({
                   flexDirection: "row",
                   gap: 10,
                   width: "100%",
-                  marginTop: "auto",
+                  marginHorizontal: 10
+                
                 }}
               >
                 <Button
-                  style={{ flexBasis: 50, flexGrow: 1 }}
+                  style={{ flexBasis: 40, flexGrow: 1 }}
                   variant="secondary"
                   isLarge={false}
                   isWide={false}
@@ -296,7 +297,7 @@ export default function RecieveModal({
                 </Button>
 
                 <Button
-                  style={{ flexBasis: 60, flexGrow: 1 }}
+                  style={{ flexBasis: 40, flexGrow: 1 }}
                   variant="primary"
                   isLarge={false}
                   isWide={false}
@@ -390,7 +391,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.ash,
     borderRadius: 50,
-    flexGrow: 1,
     alignItems: "center",
     paddingHorizontal: 20,
   },

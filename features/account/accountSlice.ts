@@ -243,7 +243,7 @@ export const accountSlice = createSlice({
 
     builder.addCase(fetchBanks.fulfilled, (state, action) => {
       state.bankAccountsLoading = "success";
-      state.bankAccounts = action.payload;
+      state.bankAccounts = action.payload.slice().reverse();
     });
 
     builder.addCase(fetchBanks.rejected, (state, action) => {
@@ -261,7 +261,7 @@ export const accountSlice = createSlice({
 
     builder.addCase(fetchPaymentsLinks.fulfilled, (state, action) => {
       state.paymentLinksLoading = "success";
-      state.paymentLinks = action.payload;
+      state.paymentLinks = action.payload.slice().reverse();
     });
 
     builder.addCase(fetchPaymentsLinks.rejected, (state, action) => {

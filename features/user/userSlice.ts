@@ -192,8 +192,6 @@ export const userSlice = createSlice({
     builder.addCase(fetchUserApps.fulfilled, (state, action) => {
       state.userAppsLoading = 'success';
       state.userApps = action.payload;
-      if (state.activeUserApp !== null && state.activeUserApp !== undefined)
-        return;
       state.activeUserApp = action.payload[0];
       // console.log(action.payload[0]);
     });

@@ -47,9 +47,13 @@ import {
   PaymentDataResponse,
 } from "../../../../components/types/payment";
 import { RootState } from "../../../../app/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AxiosError, AxiosResponse } from "axios";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useToast } from "../../../../components/CustomToast/ToastContext";
+import { ThunkDispatch } from "redux-thunk";
+import { fetchUserApps } from "../../../../features/user/userSlice";
+import { fetchCharge } from "../../../../features/account/accountSlice";
 
 const formatNumberWithCommas = (number: number) => {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -75,6 +79,9 @@ export default function InstantRecieveModal({
   onClose,
 }: RecieveModalT) {
   const { fontScale, height } = useWindowDimensions();
+  
+  const {charges} = useSelector((state: RootState) => state.account);
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const keyboardHeight = useKeyboard();
   const [checked, setChecked] = useState(false);
   const [showAdditionalDetails, setShowAdditionalDetails] = useState(false);
@@ -83,6 +90,7 @@ export default function InstantRecieveModal({
   const [paymentLink, setPaymentLink] = useState("");
   const [webViewLoading, setWebViewLoading] = useState(false);
   const webViewRef = useRef<WebView>(null);
+  const {showToast} = useToast()
   const {
     userApps,
     activeUserApp,
@@ -112,6 +120,24 @@ export default function InstantRecieveModal({
       console.log(err.message);
     }
   };
+
+  /* Handle message for the iframe*/ 
+
+ const handleMessage = (data) => {
+  // Check if the data contains "100PAY-PAYMENT-REF"
+  if (typeof data === "string" && data.includes("100PAY-PAYMENT-REF")) {
+    // Do something when the condition is met
+    showToast("Payment successful 🎉", "success");
+    dispatch(fetchUserApps(token));
+    dispatch(
+      fetchCharge({ token, apiKey: activeUserApp?.keys.pub_keys[0].value })
+    );
+    handlePresentModalClose()
+  }
+};
+
+  /* ------------------------------- */ 
+
   const [fetchingPaymentLink, setFetchingPaymentLink] = useState(false);
   const scrollToInput = (reactNode: any) => {
     if (scrollRef.current) {
@@ -188,6 +214,16 @@ export default function InstantRecieveModal({
                   onLoad={() => setWebViewLoading(false)}
                   onLoadStart={() => setWebViewLoading(true)}
                   onError={(e) => console.error("iframe error:", e)}
+                  ref={(iframe) => {
+                  
+                    if (iframe) {
+                      
+                       window.addEventListener(
+                         "message",
+                         (e) => handleMessage(e.data)
+                       );
+                    }
+                  }}
                 ></iframe>
               ) : (
                 <WebView
@@ -382,9 +418,7 @@ export default function InstantRecieveModal({
                           call_back_url: "https://100pay.co",
                         };
                         try {
-                          console.log(
-                            data, "line 386"
-                          );
+                          console.log(data, "line 386");
                           setFetchingPaymentLink(true);
                           const response = (await handleCryptoCharge(
                             data
@@ -392,7 +426,7 @@ export default function InstantRecieveModal({
 
                           console.log(response, "from response");
                           if (response.status === 200) {
-                            formikProps.resetForm()
+                            formikProps.resetForm();
                             setPaymentLink(response.data.hosted_url);
                             setShowWebView(true);
                             setSnapTo(["60%", "85%"]);

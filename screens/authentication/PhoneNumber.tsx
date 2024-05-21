@@ -1,5 +1,5 @@
-import {NavigationProp} from '@react-navigation/native';
-import React, {useState} from 'react';
+import { NavigationProp } from "@react-navigation/native";
+import React, { useState } from "react";
 import {
   FlatList,
   Modal,
@@ -11,33 +11,39 @@ import {
   TextInput,
   View,
   useWindowDimensions,
-} from 'react-native';
-import * as yup from 'yup';
-import {Button} from '../../components/Button/Button';
-import {Colors} from '../../components/Colors';
-import CustomNumberKeypad from '../../components/Keypad/CustomNumberKeypad';
+} from "react-native";
+import * as yup from "yup";
+import { Button } from "../../components/Button/Button";
+import { Colors } from "../../components/Colors";
+import CustomNumberKeypad from "../../components/Keypad/CustomNumberKeypad";
 import {
   ArrowForwardIcon,
   ArrowRightIcon,
   CircleIcon,
   NigeriaFlag,
   PhoneIcon,
-} from '../../components/SvgAssets';
-import CustomView from '../../components/Views/CustomView';
-import Header from '../../components/headers/AuthHeader';
-import AuthTitleText from '../../components/headers/AuthTitleText';
+} from "../../components/SvgAssets";
+import CustomView from "../../components/Views/CustomView";
+import Header from "../../components/headers/AuthHeader";
+import AuthTitleText from "../../components/headers/AuthTitleText";
 import {
   BoldText,
   LightText,
   MediumText,
-} from '../../components/styles/styledComponents';
-import {CountryPicker} from 'react-native-country-codes-picker';
+} from "../../components/styles/styledComponents";
+import { CountryPicker } from "react-native-country-codes-picker";
+import { useDispatch, useSelector } from "react-redux";
+import { ThunkDispatch } from "redux-thunk";
+import { RootState } from "../../app/store";
+import { updateFormInput } from "../../features/auth/authSlice";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../routes/AppStacks";
 
 const loginSchema = yup.object().shape({
   phoneNumber: yup
     .string()
-    .required('Phone number is required')
-    .matches(/^[0-9]{10}$/, 'Phone number must be 10 digits'),
+    .required("Phone number is required")
+    .matches(/^[0-9]{10}$/, "Phone number must be 10 digits"),
 });
 
 interface Country {
@@ -47,73 +53,39 @@ interface Country {
 }
 
 interface RootAuthI {
-  navigation: NavigationProp<any>;
+  navigation: NativeStackNavigationProp<RootStackParamList>;
 }
 
-interface CountryInfo {
-  code: string;
-  dial_code: string;
-  flag: string;
-  name: {
-    ar: string;
-    bg: string;
-    by: string;
-    cn: string;
-    cz: string;
-    da: string;
-    de: string;
-    ee: string;
-    el: string;
-    en: string;
-    es: string;
-    fr: string;
-    he: string;
-    it: string;
-    jp: string;
-    nl: string;
-    pl: string;
-    pt: string;
-    ro: string;
-    ru: string;
-    tr: string;
-    ua: string;
-    zh: string;
-  };
-}
 
 export default function PhoneNumber({
   navigation,
 }: RootAuthI): React.JSX.Element {
-  const {fontScale, width} = useWindowDimensions();
-  const [showPopup, setShowPopup] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState('');
-  const [selectedCountryName, setSelectedCountryName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [phoneNumberError, setPhoneNumberError] = useState('');
-  const [flag, setFlag] = useState('');
+  const { fontScale, width } = useWindowDimensions();
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const { phone, country, countryDialCode, countryFlag, countryName } = useSelector((state: RootState) => state.auth);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumberError, setPhoneNumberError] = useState("");
   /*-- -- -- -- -- - --- -- */
   const [showKeypad, setShowKeypad] = useState(false);
-  const [inputValue, setInputValue] = useState('');
   const [show, setShow] = useState(false);
-  const [countryCode, setCountryCode] = useState('');
 
   const handleKeypadToggle = () => {
-    setShowKeypad(prevValue => !prevValue);
+    setShowKeypad((prevValue) => !prevValue);
   };
 
   const handleKeypadKeyPress = (value: string) => {
-    if (inputValue.length < 11) {
-      setInputValue(prevValue => prevValue + value);
-      setPhoneNumberError('');
-    } else if (inputValue.length === 10) {
-      setPhoneNumberError('Phone number must be 10 digits');
+    if (phone.length < 11) {
+      dispatch(updateFormInput({ phone: phone + value }));
+      setPhoneNumberError("");
+    } else if (phone.length === 10) {
+      setPhoneNumberError("Phone number must be 10 digits");
     } else {
-      setPhoneNumberError('Phone number must be 10 digits');
+      return null
     }
   };
 
   const handleBackspace = () => {
-    setInputValue(prevValue => prevValue.slice(0, -1));
+    dispatch(updateFormInput({ phone: phone.slice(0, -1) }));
   };
 
   /*  -- ------- --- -- -*/
@@ -125,37 +97,37 @@ export default function PhoneNumber({
 
   const onCountrySelection = (item: any) => {
     // Define your logic when a country is selected
-    setSelectedCountry(item.dial_code);
-    setSelectedCountryName(item.name.en);
-    setFlag(item.flag);
-
+    dispatch(updateFormInput({ countryDialCode: item.dial_code }));
+    dispatch(updateFormInput({countryName: item.name.en}))
+    dispatch(updateFormInput({countryFlag: item.flag}))
+    dispatch(updateFormInput({ country: item.code }));
     togglePopup();
   };
 
   const handleKeyPress = (key: number) => {
     if (phoneNumber.length < 10) {
-      setPhoneNumber(prevPhoneNumber => prevPhoneNumber + key);
-      setPhoneNumberError('Phone number must be 10 digits');
+      setPhoneNumber((prevPhoneNumber) => prevPhoneNumber + key);
+      setPhoneNumberError("Phone number must be 10 digits");
     } else if (phoneNumber.length === 10) {
-      setPhoneNumberError('');
+      setPhoneNumberError("");
     } else {
-      setPhoneNumberError('Phone number must be 10 digits');
+      setPhoneNumberError("Phone number must be 10 digits");
     }
   };
 
   const handleDelete = () => {
-    setPhoneNumber(prevPhoneNumber => {
+    setPhoneNumber((prevPhoneNumber) => {
       if (prevPhoneNumber.length > 0) {
         return prevPhoneNumber.slice(0, -1);
       } else if (phoneNumber.length < 11) {
-        setPhoneNumberError('Phone number must be 11 digits');
+        setPhoneNumberError("Phone number must be 11 digits");
       }
       return prevPhoneNumber;
     });
-    setPhoneNumberError('');
+    setPhoneNumberError("");
   };
   const handleClearPin = (): void => {
-    setPhoneNumber('');
+    setPhoneNumber("");
   };
 
   return (
@@ -173,44 +145,51 @@ export default function PhoneNumber({
           <Pressable
             style={styles.countryButton}
             onPress={() => {
-              console.log('win');
               togglePopup();
-            }}>
+            }}
+          >
             <MediumText
-              style={[styles.countryButtonText, {fontSize: 15 / fontScale}]}>
-              {selectedCountry ? (
+              style={[styles.countryButtonText, { fontSize: 15 / fontScale }]}
+            >
+              {country ? (
                 <View
-                  style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-                  <MediumText>{flag}</MediumText>
-                  <MediumText>{selectedCountryName}</MediumText>
-                  <MediumText>{selectedCountry}</MediumText>
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
+                  <MediumText>{countryFlag}</MediumText>
+                  <MediumText>{countryName}</MediumText>
+                  <MediumText>{countryDialCode}</MediumText>
                 </View>
               ) : (
-                'Country'
+                "Country"
               )}
             </MediumText>
             <ArrowForwardIcon color={Colors?.grayText} />
           </Pressable>
 
-          
           <BoldText
             style={{
               color: Colors?.grayText,
               fontSize: 16 / fontScale,
               marginBottom: 4,
               marginTop: 32,
-            }}>
+            }}
+          >
             Phone Number
           </BoldText>
           <View>
             <View
-              style={[styles.inputText, {flexDirection: 'row', padding: 16}]}>
+              style={[styles.inputText, { flexDirection: "row", padding: 16 }]}
+            >
               <View style={styles.displayCode}>
-                <MediumText>{selectedCountry}</MediumText>
+                <MediumText>{countryDialCode}</MediumText>
               </View>
               <Pressable onPress={handleKeypadToggle}>
-                <BoldText style={{color: Colors.grayText, fontSize: 16}}>
-                  {inputValue ? inputValue : 'Enter your Phone Number'}
+                <BoldText style={{ color: Colors.grayText, fontSize: 16 }}>
+                  {phone ? phone : "Enter your Phone Number"}
                 </BoldText>
               </Pressable>
             </View>
@@ -218,7 +197,7 @@ export default function PhoneNumber({
 
           <LightText>
             {phoneNumberError ? (
-              <LightText style={{color: 'red'}}>{phoneNumberError}</LightText>
+              <LightText style={{ color: "red" }}>{phoneNumberError}</LightText>
             ) : null}
           </LightText>
           <View style={styles.buttonContainer}>
@@ -227,8 +206,9 @@ export default function PhoneNumber({
               isLarge={false}
               isWide={false}
               onPress={() => {
-                navigation.navigate('Referral');
-              }}>
+                navigation.navigate("PersonalInfo");
+              }}
+            >
               <MediumText style={styles.buttonText}>Continue</MediumText>
               <ArrowRightIcon />
             </Button>
@@ -237,11 +217,12 @@ export default function PhoneNumber({
 
         <CountryPicker
           show={show}
-          lang={'en'}
+          lang={"en"}
           ListHeaderComponent={() => {
             return (
               <MediumText
-                style={[styles.countryButtonText, {fontSize: 15 / fontScale}]}>
+                style={[styles.countryButtonText, { fontSize: 15 / fontScale }]}
+              >
                 Search
               </MediumText>
             );
@@ -257,9 +238,9 @@ export default function PhoneNumber({
             // Dial code styles [Text]
             dialCode: {
               fontFamily:
-                Platform.OS === 'ios'
-                  ? 'SpaceGrotesk-Regular'
-                  : 'SpaceGroteskRegular',
+                Platform.OS === "ios"
+                  ? "SpaceGrotesk-Regular"
+                  : "SpaceGroteskRegular",
               color: Colors.balanceBlack,
               fontSize: 14 / fontScale,
               borderRightColor: Colors.ash,
@@ -269,9 +250,9 @@ export default function PhoneNumber({
             // Country name styles [Text]
             countryName: {
               fontFamily:
-                Platform.OS === 'ios'
-                  ? 'SpaceGrotesk-Regular'
-                  : 'SpaceGroteskRegular',
+                Platform.OS === "ios"
+                  ? "SpaceGrotesk-Regular"
+                  : "SpaceGroteskRegular",
               color: Colors.balanceBlack,
             },
           }}
@@ -291,8 +272,8 @@ export default function PhoneNumber({
 
 const styles = StyleSheet.create({
   countryContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     marginBottom: 10,
     gap: 10,
     padding: 10,
@@ -301,40 +282,40 @@ const styles = StyleSheet.create({
   countryCodeContainer: {
     borderLeftWidth: 1,
     borderLeftColor: Colors.modernBlack,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     paddingLeft: 10,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     marginLeft: 6,
   },
   buttonRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
     marginTop: 20,
   },
   grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
     marginTop: 24,
     marginHorizontal: -24,
     borderRadius: 24,
   },
   gridItem: {
-    width: '28%',
+    width: "28%",
     height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
     margin: 8,
     borderRadius: 12,
   },
   gridItemText: {
     fontSize: 18,
-    fontFamily: 'SpaceGrotesk-Medium',
+    fontFamily: "SpaceGrotesk-Medium",
     //backgroundColor: Colors?.searchInput,
-    width: '100%',
-    textAlign: 'center',
+    width: "100%",
+    textAlign: "center",
     paddingVertical: 24,
   },
   clearButton: {
@@ -342,27 +323,27 @@ const styles = StyleSheet.create({
   },
   clearButtonText: {
     fontSize: 16,
-    fontFamily: 'MontserratRegular',
+    fontFamily: "MontserratRegular",
   },
 
   key: {
     // backgroundColor: Colors?.searchInput,
-    height: '80%',
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    textAlign: 'center',
+    height: "80%",
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
     fontSize: 16,
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
     borderRadius: 24,
-    fontFamily: 'SpaceGrotesk-Medium',
+    fontFamily: "SpaceGrotesk-Medium",
   },
 
   countryButton: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
     padding: 13,
     borderColor: Colors?.ash,
     borderWidth: 1,
@@ -374,18 +355,18 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    backgroundColor: 'rgba(55, 65, 81, 0.30);',
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
+    backgroundColor: "rgba(55, 65, 81, 0.30);",
     ...StyleSheet.absoluteFillObject,
     zIndex: 10,
   },
   popup: {
     zIndex: 44,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     padding: 20,
     borderRadius: 10,
-    width: '100%',
+    width: "100%",
     flex: 0.5,
     gap: 24,
   },
@@ -394,15 +375,16 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   buttonContainer: {
-    marginLeft: 'auto',
+    marginLeft: "auto",
+    marginVertical: 20
   },
   buttonText: {
     color: Colors.white,
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderColor: '#ccc',
+    flexDirection: "row",
+    alignItems: "center",
+    borderColor: "#ccc",
     borderWidth: 0,
     borderRadius: 12,
     paddingVertical: 8,
@@ -416,9 +398,9 @@ const styles = StyleSheet.create({
     padding: 13,
     borderWidth: 1,
     borderColor: Colors?.ash,
-    width: '100%',
-    fontFamily: 'SpaceGrotesk-Medium',
-    alignItems: 'center',
+    width: "100%",
+    fontFamily: "SpaceGrotesk-Medium",
+    alignItems: "center",
     borderRadius: 8,
     height: 54,
     marginBottom: 4,
@@ -426,10 +408,10 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 18,
     padding: 8,
-    width: '100%',
-    fontFamily: 'SpaceGrotesk-Medium',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: "100%",
+    fontFamily: "SpaceGrotesk-Medium",
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 13,
   },
   flag: {
@@ -439,22 +421,22 @@ const styles = StyleSheet.create({
     borderRadius: 23,
   },
   textContainer: {
-    flexDirection: 'column',
+    flexDirection: "column",
   },
   countryName: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   countryCode: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
   },
   displayCode: {
     color: Colors?.grayText,
     borderRightWidth: 1.2,
     borderRightColor: Colors?.grayText,
-    alignItems: 'stretch',
-    width: 'auto',
+    alignItems: "stretch",
+    width: "auto",
     paddingRight: 12,
     marginRight: 12,
   },

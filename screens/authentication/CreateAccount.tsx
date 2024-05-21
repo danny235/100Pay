@@ -11,6 +11,10 @@ import {NavigationProp} from '@react-navigation/native';
 import Input from '../../components/Input';
 import Header from '../../components/headers/AuthHeader';
 import AuthTitleText from '../../components/headers/AuthTitleText';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateFormInput } from '../../features/auth/authSlice';
+import { ThunkDispatch } from 'redux-thunk';
+import { RootState } from '../../app/store';
 
 const loginSchema = yup.object().shape({
   email: yup.string().required().label('Email').email(),
@@ -24,6 +28,9 @@ export default function CreateAccount({
   navigation,
 }: RootAuthI): React.JSX.Element {
   const {fontScale} = useWindowDimensions();
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>()
+  const {email} = useSelector((state: RootState)=>state.auth)
+
 
   return (
     <CustomView>
@@ -38,21 +45,22 @@ export default function CreateAccount({
 
       <Formik
         initialValues={{
-          email: '',
+          email: email,
         }}
         onSubmit={async (values, actions) => {
-          console.log('Form values:', values);
+          console.log("Form values:", values);
           try {
             await loginSchema.validate(values);
-            console.log('Form validation passed. Navigating to PhoneNumber...');
-            navigation.navigate('PhoneNumber');
+            console.log("Form validation passed. Navigating to PhoneNumber...");
+            navigation.navigate("PhoneNumber");
           } catch (error) {
-            console.error('Form validation failed:', error);
+            console.error("Form validation failed:", error);
           }
         }}
-        validationSchema={loginSchema}>
-        {formikProps => (
-          <View style={{gap: 12, marginTop: 24}}>
+        validationSchema={loginSchema}
+      >
+        {(formikProps) => (
+          <View style={{ gap: 12, marginTop: 24 }}>
             <View>
               <Input
                 placeholder="johndoe@example.com"
@@ -63,18 +71,24 @@ export default function CreateAccount({
                 keyboardType="email-address"
                 label="Email"
                 placeholderTextColor={Colors?.grayText}
+                onChangeText={(text) => {
+                  formikProps.handleChange("email")(text);
+                  dispatch(updateFormInput({ email: text }));
+                }}
               />
             </View>
-            <View style={{marginLeft: 'auto'}}>
+            <View style={{ marginLeft: "auto" }}>
               <Button
                 variant="primary"
                 isLarge={false}
                 isWide={false}
                 onPress={() => {
                   formikProps.handleSubmit();
-                }}>
+                }}
+              >
                 <MediumText
-                  style={{color: Colors.white, fontSize: 15 / fontScale}}>
+                  style={{ color: Colors.white, fontSize: 15 / fontScale }}
+                >
                   Continue
                 </MediumText>
                 <ArrowRightIcon />

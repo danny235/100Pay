@@ -4,6 +4,7 @@ import { createTransform, persistReducer, persistStore } from "redux-persist";
 import userReducer, { logOut } from "../features/user/userSlice";
 import accountReducer from "../features/account/accountSlice";
 import { thunk } from "redux-thunk";
+import authReducer from "../features/auth/authSlice"
 
 const persistConfig = {
   key: "hundred-pay",
@@ -13,6 +14,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   user: userReducer,
   account: accountReducer,
+  auth: authReducer
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

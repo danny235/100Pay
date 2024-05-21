@@ -39,6 +39,7 @@ import { NavigationState, useNavigation } from '@react-navigation/native';
 import { useEffect } from 'react';
 import { RootState } from '../app/store';
 import { ChargeType } from '../features/account/accountSlice';
+import PersonalInfo from '../screens/authentication/PersonalInfo';
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -47,9 +48,10 @@ export type RootStackParamList = {
   Dashboard: undefined;
   CreateAccount: undefined;
   PhoneNumber: undefined;
+  SetPassword: undefined;
+  PersonalInfo: undefined
   DiscoverS: undefined;
   Referral: undefined;
-  SetPassword: undefined;
   ForgotPassword: undefined;
   SecureCode: undefined;
   NewPassword: undefined;
@@ -216,8 +218,9 @@ export default function NavigationContent() {
           <Stack.Screen name="SignIn" component={SignIn} />
           <Stack.Screen name="CreateAccount" component={CreateAccount} />
           <Stack.Screen name="PhoneNumber" component={PhoneNumber} />
-          <Stack.Screen name="Referral" component={Referral} />
+          <Stack.Screen name="PersonalInfo"  component={PersonalInfo} />
           <Stack.Screen name="SetPassword" component={SetPassword} />
+          <Stack.Screen name="Referral" component={Referral} />
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
           <Stack.Screen name="SecureCode" component={SecureCode} />
           <Stack.Screen name="NewPassword" component={NewPassword} />

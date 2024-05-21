@@ -280,7 +280,6 @@ export default function RecieveModal({
                   gap: 10,
                   width: "100%",
                   marginHorizontal: 10
-                
                 }}
               >
                 <Button

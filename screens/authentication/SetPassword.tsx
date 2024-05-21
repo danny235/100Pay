@@ -19,6 +19,13 @@ import { NavigationProp } from "@react-navigation/native";
 import Input from "../../components/Input";
 import Header from "../../components/headers/AuthHeader";
 import AuthTitleText from "../../components/headers/AuthTitleText";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../routes/AppStacks";
+import { PasswordCheck } from "iconsax-react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { ThunkDispatch } from "redux-thunk";
+import { RootState } from "../../app/store";
+import { updateFormInput } from "../../features/auth/authSlice";
 
 const setPasswordSchema = yup.object().shape({
   password: yup
@@ -32,14 +39,19 @@ const setPasswordSchema = yup.object().shape({
 });
 
 interface RootAuthI {
-  navigation: NavigationProp<any>;
+  navigation: NativeStackNavigationProp<RootStackParamList>;
 }
 
 export default function SetPassword({
   navigation,
 }: RootAuthI): React.JSX.Element {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
   const { fontScale } = useWindowDimensions();
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const { password, confirmPassword } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   return (
     <CustomView>
@@ -48,18 +60,18 @@ export default function SetPassword({
       <AuthTitleText
         text="Secure your account by entering a password exclusive to you only"
         title="Your Password"
-        icon={<MailIcon />}
+        icon={<PasswordCheck color={Colors.primary} variant="TwoTone" />}
         marginTop={24}
       />
 
       <Formik
         initialValues={{
-          password: "",
-          confirmPassword: "",
+          password,
+          confirmPassword,
         }}
         onSubmit={async (values, actions) => {
           console.log(values);
-          //navigation.navigate('ForgotPassword')
+          navigation.navigate("Referral");
         }}
         validationSchema={setPasswordSchema}
       >
@@ -76,6 +88,10 @@ export default function SetPassword({
                   style={{ paddingRight: 80 }}
                   label="Password"
                   placeholderTextColor={Colors?.ash}
+                  onChangeText={(text) => {
+                    formikProps.handleChange("password")(text);
+                    dispatch(updateFormInput({ password: text }));
+                  }}
                 />
 
                 <Pressable
@@ -97,10 +113,14 @@ export default function SetPassword({
                   formikKey="confirmPassword"
                   placeholder="*********"
                   value={formikProps.values.confirmPassword}
-                  secureTextEntry={showPassword ? false : true}
+                  secureTextEntry={showConfirmPassword ? false : true}
                   style={{ paddingRight: 80 }}
                   label="Confirm Password"
                   placeholderTextColor={Colors?.ash}
+                  onChangeText={(text) => {
+                    formikProps.handleChange("confirmPassword")(text);
+                    dispatch(updateFormInput({ confirmPassword: text }));
+                  }}
                 />
 
                 <Pressable
@@ -110,9 +130,9 @@ export default function SetPassword({
                       Platform.OS === "ios" || Platform.OS === "web" ? 40 : 48,
                     right: 10,
                   }}
-                  onPress={() => setShowPassword(!showPassword)}
+                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
-                  {showPassword ? <EyeLineIcon /> : <EyeIcon />}
+                  {showConfirmPassword ? <EyeLineIcon /> : <EyeIcon />}
                 </Pressable>
               </View>
             </View>

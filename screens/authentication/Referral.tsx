@@ -41,7 +41,7 @@ export default function Referral({navigation}: RootAuthI): React.JSX.Element {
         }}
         onSubmit={async (values, actions) => {
           console.log('Form values:', values);
-          navigation.navigate('SetPassword');
+          // navigation.navigate('SetPassword');
         }}
         validationSchema={loginSchema}>
         {formikProps => (

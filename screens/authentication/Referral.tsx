@@ -1,6 +1,6 @@
 import {Formik} from 'formik';
-import React, {useState} from 'react';
-import {Pressable, View, useWindowDimensions} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {KeyboardAvoidingView, Pressable, View, useWindowDimensions} from 'react-native';
 import * as yup from 'yup';
 import {Button} from '../../components/Button/Button';
 import {Colors} from '../../components/Colors';
@@ -12,6 +12,7 @@ import Input from '../../components/Input';
 import Header from '../../components/headers/AuthHeader';
 import AuthTitleText from '../../components/headers/AuthTitleText';
 import { Icon, ProfileAdd } from 'iconsax-react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const loginSchema = yup.object().shape({
   invitationCode: yup.string().label('invitationCode'),
@@ -22,7 +23,15 @@ interface RootAuthI {
 }
 
 export default function Referral({navigation}: RootAuthI): React.JSX.Element {
-  const {fontScale} = useWindowDimensions();
+  const {fontScale, height} = useWindowDimensions();
+
+  let scrollRef = useRef<KeyboardAwareScrollView>(null);
+
+  const scrollToInput = (reactNode: any) => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollToFocusedInput(reactNode);
+    }
+  };
 
   return (
     <CustomView>
@@ -34,61 +43,74 @@ export default function Referral({navigation}: RootAuthI): React.JSX.Element {
         icon={<ProfileAdd variant="TwoTone" color={Colors.primary} size={24} />}
         marginTop={24}
       />
+      <KeyboardAwareScrollView>
 
-      <Formik
-        initialValues={{
-          invitationCode: '',
-        }}
-        onSubmit={async (values, actions) => {
-          console.log('Form values:', values);
-          // navigation.navigate('SetPassword');
-        }}
-        validationSchema={loginSchema}>
-        {formikProps => (
-          <View style={{gap: 12, marginTop: 24}}>
-            <View>
-              <Input
-                placeholder="ID: P1234GH6"
-                formikProps={formikProps}
-                formikKey="invitationCode"
-                value={formikProps.values.invitationCode}
-                autoCapitalize="none"
-                label="Invitation Code"
-                placeholderTextColor={Colors?.grayText}
-              />
+        <Formik
+          initialValues={{
+            invitationCode: "",
+          }}
+          onSubmit={async (values, actions) => {
+            console.log("Form values:", values);
+            // navigation.navigate('SetPassword');
+          }}
+          validationSchema={loginSchema}
+        >
+          {(formikProps) => (
+            <View style={{ gap: 12, marginTop: 24 }}>
+              <View style={{height: height / 1.5}}>
+                <Input
+                  placeholder="ID: P1234GH6"
+                  formikProps={formikProps}
+                  formikKey="invitationCode"
+                  value={formikProps.values.invitationCode}
+                  autoCapitalize="none"
+                  label="Invitation Code"
+                  placeholderTextColor={Colors?.grayText}
+                />
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginTop: "auto",
+                }}
+              >
+                <Button
+                  variant="secondary"
+                  isLarge={false}
+                  isWide={false}
+                  style={{ width: "48.5%" }}
+                  onPress={() => {
+                    navigation.navigate("SetPassword");
+                  }}
+                >
+                  <MediumText
+                    style={{ color: Colors.black, fontSize: 15 / fontScale }}
+                  >
+                    Skip
+                  </MediumText>
+                </Button>
+                <Button
+                  variant="primary"
+                  isLarge={false}
+                  isWide={false}
+                  style={{ width: "48.5%" }}
+                  onPress={() => {
+                    formikProps.handleSubmit();
+                  }}
+                >
+                  <MediumText
+                    style={{ color: Colors.white, fontSize: 15 / fontScale }}
+                  >
+                    Continue
+                  </MediumText>
+                  <ArrowRightIcon />
+                </Button>
+              </View>
             </View>
-            <View style={{flexDirection: 'row', justifyContent: "space-between", marginTop: "auto"}}>
-              <Button
-                variant="secondary"
-                isLarge={false}
-                isWide={false}
-                style={{width: '48.5%'}}
-                onPress={() => {
-                  navigation.navigate('SetPassword');
-                }}>
-                <MediumText
-                  style={{color: Colors.black, fontSize: 15 / fontScale}}>
-                  Skip
-                </MediumText>
-              </Button>
-              <Button
-                variant="primary"
-                isLarge={false}
-                isWide={false}
-                style={{width: '48.5%'}}
-                onPress={() => {
-                  formikProps.handleSubmit();
-                }}>
-                <MediumText
-                  style={{color: Colors.white, fontSize: 15 / fontScale}}>
-                  Continue
-                </MediumText>
-                <ArrowRightIcon />
-              </Button>
-            </View>
-          </View>
-        )}
-      </Formik>
+          )}
+        </Formik>
+      </KeyboardAwareScrollView>
     </CustomView>
   );
 }

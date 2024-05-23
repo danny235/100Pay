@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 10,
     backgroundColor: Colors.searchInput,
-    aspectRatio: 1 / 0.35,
+    height: 50
   },
   inActiveButton: {
     flex: 1,

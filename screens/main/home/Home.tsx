@@ -116,7 +116,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     userAppsLoading,
     token,
     userProfile,
-    userProfileLoading
+    userProfileLoading,
   } = useSelector((state: RootState) => state.user);
   const { charges } = useSelector((state: RootState) => state.account);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
@@ -138,7 +138,6 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
       showToast("Pin doesn't match", "error");
       return;
     } else {
-
       console.log("PIN submitted:", pin);
       setIsConfirmPinSheetVisible(false);
     }
@@ -186,16 +185,34 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     dispatch(
       fetchBanks({ token, apiKey: activeUserApp?.keys.pub_keys[0].value })
     );
+    
+  }, []);
+  useEffect(() => {
+    if (!activeUserApp?.keys?.pub_keys[0]?.value) return;
     dispatch(
       fetchPaymentsLinks({
         token,
-        apiKey: activeUserApp?.keys.pub_keys[0].value,
+        apiKey: activeUserApp?.keys?.pub_keys[0].value,
       })
     );
+  }, [activeUserApp?.keys?.pub_keys[0].value]);
+  useEffect(() => {
+    dispatch(fetchUserApps(token));
+    dispatch(fetchUserData(token));
+    dispatch(
+      fetchBanks({ token, apiKey: activeUserApp?.keys.pub_keys[0].value })
+    );
+    if (activeUserApp?.keys?.pub_keys[0]?.value) 
+      dispatch(
+        fetchPaymentsLinks({
+          token,
+          apiKey: activeUserApp?.keys.pub_keys[0].value,
+        })
+      );
   }, []);
 
   useEffect(() => {
-    if(userProfileLoading === "loading") return
+    if (userProfileLoading === "loading") return;
     if (userProfile?.hasSetPin) return;
     setIsPinSheetVisible(true);
   }, [isPinSheetVisible, userProfile?.hasSetPin, userProfileLoading]);
@@ -337,6 +354,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
       )} */}
 
       <PinInputBottomSheet
+        key={1}
         mainTxt="Create Payment Pin"
         subTxt="Enter a transaction pin to secure your payments"
         isVisible={isPinSheetVisible}
@@ -344,6 +362,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
         onSubmit={handlePinSubmit}
       />
       <PinInputBottomSheet
+        key={2}
         mainTxt="Confirm Payment Pin"
         subTxt="Confirm your transaction pin to continue"
         isVisible={isConfirmPinSheetVisible}
@@ -351,9 +370,11 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
         onSubmit={handleConfirmPinSubmit}
       />
 
-
-
-      <Loader visible={userProfileLoading === "loading" && userAppsLoading === "loading"} />
+      <Loader
+        visible={
+          userProfileLoading === "loading" && userAppsLoading === "loading"
+        }
+      />
     </CustomView>
   );
 }

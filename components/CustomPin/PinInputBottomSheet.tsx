@@ -36,9 +36,9 @@ const PinInputBottomSheet = ({
   onSubmit,
 }) => {
   const { fontScale, height, width } = useWindowDimensions();
-  const [pin, setPin] = useState("");
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const [snapTo, setSnapTo] = useState(["38%", `${height / 14}%`]);
+  const [snapTo, setSnapTo] = useState(["38%", `${height <= 800 ? height :(height) / 13}%`]);
+  const [pin, setPin] = useState("");
   const snapPoints = useMemo(() => snapTo, [snapTo]);
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
@@ -76,6 +76,7 @@ const PinInputBottomSheet = ({
     }
   }, [isVisible]);
 
+
   return (
     <BottomSheetModalProvider>
       <BottomSheetModal
@@ -90,6 +91,7 @@ const PinInputBottomSheet = ({
           borderColor: Colors.ash,
           width: "20%",
         }}
+        style={{zIndex: 2000}}
         backdropComponent={({ animatedIndex, style }) => (
           <CustomBackdrop
             onPress={()=>null}

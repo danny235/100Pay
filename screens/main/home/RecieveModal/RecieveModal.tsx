@@ -207,7 +207,7 @@ export default function RecieveModal({
                 <LightText>Search request code here...</LightText>
                 <CircleIcon color={Colors.grayText} />
               </Pressable>
-            <ScrollView contentContainerStyle={{gap: 10}}>
+            <ScrollView style={{flex: 1}} contentContainerStyle={{gap: 10, flex: 1}}>
 
 
               {paymentLinksLoading === "loading" && (
@@ -273,12 +273,11 @@ export default function RecieveModal({
                   </LightText>
                 </View>
               )}
-            </ScrollView>
               <View
                 style={{
                   flexDirection: "row",
                   gap: 10,
-                  width: "100%",
+              
                   marginHorizontal: 10
                 }}
               >
@@ -313,6 +312,7 @@ export default function RecieveModal({
                   </MediumText>
                 </Button>
               </View>
+            </ScrollView>
           </View>
         </BottomSheetModal>
       </BottomSheetModalProvider>

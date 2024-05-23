@@ -29,6 +29,7 @@ import Input from '../../components/Input';
 import Header from '../../components/headers/AuthHeader';
 import AuthTitleText from '../../components/headers/AuthTitleText';
 import {NavigationProp} from '@react-navigation/native';
+import { PasswordCheck } from 'iconsax-react-native';
 const AuthMemoji = require('../../assets/images/AuthMemoji.png');
 
 const setPasswordSchema = yup.object().shape({
@@ -71,7 +72,7 @@ export default function NewPassword({
       <AuthTitleText
         text="Enter & confirm your new password here."
         title="Enter New Password"
-        icon={<ForgotPasswordIcon />}
+        icon={<PasswordCheck color={Colors.primary} variant="TwoTone" />}
         marginTop={24}
       />
 

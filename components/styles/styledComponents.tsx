@@ -1,7 +1,61 @@
 import { Platform, Pressable, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { Colors } from "../Colors";
+import { Svg, G, Path } from "react-native-svg";
+import { css, keyframes } from "styled-components";
 import React from "react";
+
+const offsetAnimation = `
+  0% {
+    stroke-dashoffset: 197;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+`;
+
+const offsetAnimation2 = `
+  0% {
+    stroke-dashoffset: 118;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+`;
+
+const StyledPath1 = styled(Path)`
+  fill: none;
+  stroke: #f20831;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 8px;
+  stroke-dasharray: 197;
+  ${({ theme }) => css`
+    animation: ${offsetAnimation} 3s linear alternate-reverse infinite;
+  `}
+`;
+
+const StyledPath2 = styled(Path)`
+  fill: #e4e9ef;
+  stroke-width: 0px;
+`;
+
+const StyledPath3 = styled(Path)`
+  fill: #fff;
+  stroke-width: 0px;
+`;
+
+const StyledPath5 = styled(Path)`
+  fill: none;
+  stroke: #f20831;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 8px;
+  stroke-dasharray: 118;
+  ${({ theme }) => css`
+    animation: ${offsetAnimation2} 3s linear alternate-reverse infinite;
+  `}
+`;
 
 type IndicatorT = {
     isActive: boolean
@@ -87,5 +141,9 @@ export {
     LightText,
     MediumText,
     SemiBoldText,
-    BorderPressable
+    BorderPressable,
+    StyledPath1,
+    StyledPath2,
+    StyledPath3,
+    StyledPath5
 }

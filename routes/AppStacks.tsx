@@ -33,7 +33,7 @@ import ConfirmPayment from '../screens/main/home/PayFlow/ConfirmPayment';
 import PayHome from '../screens/main/home/PayFlow/Pay';
 import SendPayment from '../screens/main/home/PayFlow/SendPayment';
 import MainTabs from './MainTabs';
-import Referral from '../screens/authentication/Referral';
+import Invitation from '../screens/authentication/Invitation';
 import { useSelector } from 'react-redux';
 import { NavigationState, useNavigation } from '@react-navigation/native';
 import { useEffect } from 'react';
@@ -44,6 +44,7 @@ import PersonalInfo from '../screens/authentication/PersonalInfo';
 export type RootStackParamList = {
   Onboarding: undefined;
   RootAuth: undefined;
+  Invitation: undefined;
   SignIn: undefined;
   Dashboard: undefined;
   CreateAccount: undefined;
@@ -220,7 +221,7 @@ export default function NavigationContent() {
           <Stack.Screen name="PhoneNumber" component={PhoneNumber} />
           <Stack.Screen name="PersonalInfo"  component={PersonalInfo} />
           <Stack.Screen name="SetPassword" component={SetPassword} />
-          <Stack.Screen name="Referral" component={Referral} />
+          <Stack.Screen name="Invitation" component={Invitation} />
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
           <Stack.Screen name="SecureCode" component={SecureCode} />
           <Stack.Screen name="NewPassword" component={NewPassword} />

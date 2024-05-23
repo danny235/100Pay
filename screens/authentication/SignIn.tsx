@@ -17,6 +17,7 @@ import Header from '../../components/headers/AuthHeader';
 import { logInUserRequest } from '../../apis/auth/loginuser';
 import { useDispatch } from 'react-redux';
 import { addToken, toggleIsLoggedIn } from '../../features/user/userSlice';
+import { useToast } from '../../components/CustomToast/ToastContext';
 
 const loginSchema = yup.object().shape({
   email: yup.string().required().label('Email').email(),
@@ -36,6 +37,7 @@ export default function SignIn({navigation}: RootAuthI): React.JSX.Element {
   const {fontScale} = useWindowDimensions();
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
+  const { showToast } = useToast();
   return (
     <CustomView>
       <Header />
@@ -58,8 +60,8 @@ export default function SignIn({navigation}: RootAuthI): React.JSX.Element {
           setLoading(true); // Set loading to true when login process starts
           try {
             const {message, token, status} = await logInUserRequest(values);
-            console.log(message, token, status);
             if(token) {
+              showToast(message, "success")
               dispatch(toggleIsLoggedIn(true))
               dispatch(addToken(token))
             }

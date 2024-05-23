@@ -1,5 +1,13 @@
-import React from 'react';
-import {ClipPath, Defs, G, Path, Rect, Svg} from 'react-native-svg';
+import React, { useEffect, useRef } from "react";
+import { ClipPath, Defs, G, Path, Rect, Svg } from "react-native-svg";
+import {
+  StyledPath1,
+  StyledPath2,
+  StyledPath3,
+  StyledPath5,
+} from "../styles/styledComponents";
+import { Animated, Easing } from "react-native";
+import { Colors } from "../Colors";
 
 interface Props {
   width?: number;
@@ -11,7 +19,7 @@ interface Props {
 export const ArrowRightIcon = ({
   width = 20,
   height = 20,
-  color = '#ffffff',
+  color = "#ffffff",
   onPress,
 }: Props) => {
   return (
@@ -40,7 +48,7 @@ export const ArrowRightIcon = ({
 export const AddIcon = ({
   width = 20,
   height = 20,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -66,7 +74,7 @@ export const AddIcon = ({
 export const ArrowForwardIcon = ({
   width = 20,
   height = 20,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -85,7 +93,7 @@ export const ArrowForwardIcon = ({
 export const MailIcon: React.FC<Props> = ({
   width = 24,
   height = 24,
-  color = '#F20831',
+  color = "#F20831",
 }) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
@@ -112,7 +120,7 @@ export const MailIcon: React.FC<Props> = ({
 export const PhoneIcon: React.FC<Props> = ({
   width = 24,
   height = 24,
-  color = '#F20831',
+  color = "#F20831",
 }) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
@@ -144,7 +152,7 @@ export const PhoneIcon: React.FC<Props> = ({
   );
 };
 
-export const CircleIcon = ({width = 20, height = 20, color = '#9CA3AF'}) => {
+export const CircleIcon = ({ width = 20, height = 20, color = "#9CA3AF" }) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
       <Path
@@ -164,7 +172,7 @@ export const CircleIcon = ({width = 20, height = 20, color = '#9CA3AF'}) => {
     </Svg>
   );
 };
-export const CheckVerify = ({width = 20, height = 20, color = '#9CA3AF'}) => {
+export const CheckVerify = ({ width = 20, height = 20, color = "#9CA3AF" }) => {
   return (
     <Svg
       width={width}
@@ -192,14 +200,15 @@ export const CheckVerify = ({width = 20, height = 20, color = '#9CA3AF'}) => {
   );
 };
 
-export const BackSpaceIcon = ({onPress, color = '#F20831'}: Props) => {
+export const BackSpaceIcon = ({ onPress, color = "#F20831" }: Props) => {
   return (
     <Svg
       width={25}
       height={25}
       viewBox="0 0 25 25"
       fill="none"
-      onPress={onPress}>
+      onPress={onPress}
+    >
       <Path
         opacity="0.4"
         d="M10.9477 20.5H17.6677C20.4277 20.5 22.6677 18.26 22.6677 15.5V9C22.6677 6.24 20.4277 4 17.6677 4H10.9477C9.53766 4 8.19766 4.59 7.24766 5.64L3.71766 9.52C2.30766 11.07 2.30766 13.43 3.71766 14.98L7.24766 18.86C8.19766 19.91 9.53766 20.5 10.9477 20.5Z"
@@ -213,7 +222,7 @@ export const BackSpaceIcon = ({onPress, color = '#F20831'}: Props) => {
   );
 };
 
-export const NigeriaFlag = ({width = 24, height = 24}: Props) => {
+export const NigeriaFlag = ({ width = 24, height = 24 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
       <Defs>
@@ -235,7 +244,7 @@ export const NigeriaFlag = ({width = 24, height = 24}: Props) => {
 export const ArrowBackwardIcon = ({
   width = 24,
   height = 24,
-  color = '#6B7280',
+  color = "#6B7280",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
@@ -254,7 +263,7 @@ export const ArrowBackwardIcon = ({
 export const EyeLineIcon = ({
   width = 24,
   height = 24,
-  color = '#6B7280',
+  color = "#6B7280",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -354,7 +363,7 @@ export const ForgotPasswordIcon = () => {
 export const EyeIcon = ({
   width = 24,
   height = 24,
-  color = '#6B7280',
+  color = "#6B7280",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
@@ -380,7 +389,7 @@ export const EyeIcon = ({
 export const HomeIcon = ({
   width = 24,
   height = 24,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
@@ -397,7 +406,7 @@ export const HomeIcon = ({
 export const DiscoverIcon = ({
   width = 24,
   height = 24,
-  color = '#9CA3AF',
+  color = "#9CA3AF",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
@@ -423,7 +432,7 @@ export const DiscoverIcon = ({
 export const SettingsIcon = ({
   width = 24,
   height = 24,
-  color = '#9CA3AF',
+  color = "#9CA3AF",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
@@ -451,7 +460,7 @@ export const SettingsIcon = ({
 export const NotifictionIcon = ({
   width = 24,
   height = 24,
-  color = '#6B7280',
+  color = "#6B7280",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
@@ -481,7 +490,7 @@ export const NotifictionIcon = ({
   );
 };
 
-export const CopyIcon = ({width = 16, height = 16, color = '#9CA3AF'}) => {
+export const CopyIcon = ({ width = 16, height = 16, color = "#9CA3AF" }) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 12 12" fill="none">
       <Path
@@ -504,7 +513,7 @@ export const CopyIcon = ({width = 16, height = 16, color = '#9CA3AF'}) => {
 export const WalletIcon = ({
   width = 20,
   height = 20,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -545,7 +554,7 @@ export const WalletIcon = ({
 export const ArrowDownIcon = ({
   width = 16,
   height = 16,
-  color = '#9CA3AF',
+  color = "#9CA3AF",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 16 16" fill="none">
@@ -566,7 +575,7 @@ export const ArrowDownIcon = ({
 export const ArrowFrontIcon = ({
   width = 16,
   height = 16,
-  color = '#6B7280',
+  color = "#6B7280",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 16 16" fill="none">
@@ -586,7 +595,7 @@ export const ArrowFrontIcon = ({
 export const PayIcon = ({
   width = 20,
   height = 20,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -620,7 +629,7 @@ export const PayIcon = ({
 export const RecieveIcon = ({
   width = 20,
   height = 20,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -654,7 +663,7 @@ export const RecieveIcon = ({
 export const ScanIcon = ({
   width = 24,
   height = 24,
-  color = '#9CA3AF',
+  color = "#9CA3AF",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
@@ -709,7 +718,7 @@ export const ScanIcon = ({
 export const ScanRedIcon = ({
   width = 24,
   height = 24,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -752,7 +761,7 @@ export const ScanRedIcon = ({
 export const ScanWhiteIcon = ({
   width = 45,
   height = 45,
-  color = 'white',
+  color = "white",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 40 40" fill="none">
@@ -794,7 +803,7 @@ export const ScanWhiteIcon = ({
 export const GalleryIcon = ({
   width = 35,
   height = 35,
-  color = 'white',
+  color = "white",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 36 36" fill="none">
@@ -818,7 +827,7 @@ export const GalleryIcon = ({
 export const BulbRedIcon = ({
   width = 35,
   height = 35,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 35 35" fill="none">
@@ -839,7 +848,11 @@ export const BulbRedIcon = ({
   );
 };
 
-export const BulbIcon = ({width = 35, height = 35, color = 'white'}: Props) => {
+export const BulbIcon = ({
+  width = 35,
+  height = 35,
+  color = "white",
+}: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 36 36" fill="none">
       <Path
@@ -862,7 +875,7 @@ export const BulbIcon = ({width = 35, height = 35, color = 'white'}: Props) => {
 export const PaySIcon = ({
   width = 33,
   height = 19,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 30 16" fill="none">
@@ -885,7 +898,7 @@ export const PaySIcon = ({
 export const SecuritySafeIcon = ({
   width = 100,
   height = 100,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 100 100" fill="none">
@@ -921,7 +934,7 @@ export const SecuritySafeIcon = ({
 export const PasswordCheckIcon = ({
   width = 25,
   height = 25,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -977,7 +990,7 @@ export const PasswordCheckIcon = ({
 export const TickCircleIcon = ({
   width = 25,
   height = 25,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -1003,7 +1016,7 @@ export const TickCircleIcon = ({
 export const ActiveRadioIcon = ({
   width = 25,
   height = 25,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -1020,7 +1033,7 @@ export const ActiveRadioIcon = ({
 export const InActiveRadioIcon = ({
   width = 25,
   height = 25,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -1033,7 +1046,7 @@ export const InActiveRadioIcon = ({
 export const NairaIcon = ({
   width = 25,
   height = 25,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width="23" height="21" viewBox="0 0 23 21" fill="none">
@@ -1050,7 +1063,7 @@ export const NairaIcon = ({
 export const LinkIcon = ({
   width = 29,
   height = 29,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 26 26" fill="none">
@@ -1083,7 +1096,7 @@ export const LinkIcon = ({
 export const MoneyIcon = ({
   width = 29,
   height = 29,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 28 28" fill="none">
@@ -1146,7 +1159,7 @@ export const MoneyIcon = ({
 export const AssetIcon = ({
   width = 25,
   height = 26,
-  color = '#9CA3AF',
+  color = "#9CA3AF",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 24 25" fill="none">
@@ -1197,7 +1210,7 @@ export const AssetIcon = ({
 export const AssetFilledIcon = ({
   width = 25,
   height = 25,
-  color = '#9CA3AF',
+  color = "#9CA3AF",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -1216,7 +1229,7 @@ export const AssetFilledIcon = ({
 export const EditIcon = ({
   width = 19,
   height = 18,
-  color = '#6B7280',
+  color = "#6B7280",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 17 16" fill="none">
@@ -1251,7 +1264,7 @@ export const EditIcon = ({
 export const TransactionIcon = ({
   width = 27,
   height = 28,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 24 25" fill="none">
@@ -1292,7 +1305,7 @@ export const TransactionIcon = ({
 export const ReferralIcon = ({
   width = 27,
   height = 28,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 24 25" fill="none">
@@ -1334,7 +1347,7 @@ export const ReferralIcon = ({
 export const CSServiceIcon = ({
   width = 27,
   height = 28,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 24 25" fill="none">
@@ -1360,7 +1373,7 @@ export const CSServiceIcon = ({
 export const RateIcon = ({
   width = 27,
   height = 28,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 24 25" fill="none">
@@ -1403,7 +1416,7 @@ export const RateIcon = ({
 export const InfoIcon = ({
   width = 27,
   height = 28,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 24 25" fill="none">
@@ -1428,7 +1441,7 @@ export const InfoIcon = ({
 export const FilterIcon = ({
   width = 18,
   height = 18,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 16 16" fill="none">
@@ -1456,7 +1469,7 @@ export const FilterIcon = ({
 export const SelectIcon = ({
   width = 22,
   height = 22,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -1504,7 +1517,7 @@ export const SelectIcon = ({
 export const AddCircleIcon = ({
   width = 22,
   height = 22,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -1538,7 +1551,7 @@ export const AddCircleIcon = ({
 export const CursorDownIcon = ({
   width = 22,
   height = 22,
-  color = '#6B7280',
+  color = "#6B7280",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -1557,7 +1570,7 @@ export const CursorDownIcon = ({
 export const CursorUpIcon = ({
   width = 22,
   height = 22,
-  color = '#6B7280',
+  color = "#6B7280",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -1576,7 +1589,7 @@ export const CursorUpIcon = ({
 export const ShareIcon = ({
   width = 22,
   height = 22,
-  color = '#6B7280',
+  color = "#6B7280",
 }: Props) => {
   return (
     <Svg width={width} height="20" viewBox="0 0 21 20" fill="none">
@@ -1613,7 +1626,11 @@ export const ShareIcon = ({
   );
 };
 
-export const QRIcon = ({width = 22, height = 22, color = '#F20831'}: Props) => {
+export const QRIcon = ({
+  width = 22,
+  height = 22,
+  color = "#F20831",
+}: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
       <G clip-path="url(#clip0_5290_10227)">
@@ -1666,7 +1683,7 @@ export const QRIcon = ({width = 22, height = 22, color = '#F20831'}: Props) => {
 export const ProfileIcon = ({
   width = 22,
   height = 22,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -1692,7 +1709,7 @@ export const ProfileIcon = ({
 export const CoinIcon = ({
   width = 22,
   height = 22,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -1725,7 +1742,7 @@ export const CoinIcon = ({
 export const LinkHookIcon = ({
   width = 22,
   height = 22,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
@@ -1751,15 +1768,10 @@ export const LinkHookIcon = ({
 export const ArrowUpIcon = ({
   width = 17,
   height = 17,
-  color = '#F20831',
+  color = "#F20831",
 }: Props) => {
   return (
-    <Svg
-      width={width}
-      height={height}
-      viewBox="0 0 15 15"
-      fill="none"
-      >
+    <Svg width={width} height={height} viewBox="0 0 15 15" fill="none">
       <Path
         d="M11.6768 8.7374L9.67056 6.73115L8.44556 5.4999C7.92682 4.98115 7.08306 4.98115 6.56431 5.4999L3.32681 8.7374C2.90181 9.1624 3.20806 9.8874 3.80181 9.8874H7.30806H11.2018C11.8018 9.8874 12.1018 9.1624 11.6768 8.7374Z"
         fill={color}
@@ -1768,7 +1780,11 @@ export const ArrowUpIcon = ({
   );
 };
 
-export const StarIcon = ({width = 17, height = 17, color = '#F59E0B'}: Props) => {
+export const StarIcon = ({
+  width = 17,
+  height = 17,
+  color = "#F59E0B",
+}: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 16 16" fill="none">
       <Path
@@ -1784,7 +1800,11 @@ export const StarIcon = ({width = 17, height = 17, color = '#F59E0B'}: Props) =>
   );
 };
 
-export const DotIcon = ({width = 6, height = 7, color = '#F20831'}: Props) => {
+export const DotIcon = ({
+  width = 6,
+  height = 7,
+  color = "#F20831",
+}: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 5 6" fill="none">
       <Rect y="0.5" width="5" height="5" rx="2.5" fill={color} />
@@ -1792,14 +1812,13 @@ export const DotIcon = ({width = 6, height = 7, color = '#F20831'}: Props) => {
   );
 };
 
-export const GreenNairaIcon = ({width = 23, height = 22, color = "#16A34A"}: Props) => {
+export const GreenNairaIcon = ({
+  width = 23,
+  height = 22,
+  color = "#16A34A",
+}: Props) => {
   return (
-    <Svg
-      width={width}
-      height={height}
-      viewBox="0 0 23 22"
-      fill="none"
-    >
+    <Svg width={width} height={height} viewBox="0 0 23 22" fill="none">
       <Path
         fill-rule="evenodd"
         clip-rule="evenodd"
@@ -1810,3 +1829,80 @@ export const GreenNairaIcon = ({width = 23, height = 22, color = "#16A34A"}: Pro
   );
 };
 
+interface LogoProps {
+  className?: string;
+}
+const AnimatedPath = Animated.createAnimatedComponent(Path);
+export const Logo: React.FC<LogoProps> = ({ className }) => {
+  const dashOffset = useRef(new Animated.Value(197)).current;
+  const dashOffset2 = useRef(new Animated.Value(118)).current;
+
+  useEffect(() => {
+    const animate = (
+      value: Animated.Value,
+      toValue: number,
+      duration: number
+    ) => {
+      return Animated.loop(
+        Animated.sequence([
+          Animated.timing(value, {
+            toValue: 0,
+            duration,
+            easing: Easing.linear,
+            useNativeDriver: false,
+          }),
+          Animated.timing(value, {
+            toValue,
+            duration,
+            easing: Easing.linear,
+            useNativeDriver: false,
+          }),
+        ])
+      );
+    };
+
+    const animation1 = animate(dashOffset, 197, 3000);
+    const animation2 = animate(dashOffset2, 118, 3000);
+
+    animation1.start();
+    animation2.start();
+
+    return () => {
+      animation1.stop();
+      animation2.stop();
+    };
+  }, [dashOffset, dashOffset2]);
+
+  return (
+    <Svg width="305px" data-name="Layer 2" viewBox="0 0 70.67 37.25">
+      <G data-name="Layer 1">
+        <Path
+          d="M66.5 0H11.01c-1.4.05-2.75.56-3.82 1.45A6.123 6.123 0 005.1 4.92L.08 32.34c-.5 2.72 1.34 4.92 4.09 4.92h55.49c1.4-.05 2.75-.56 3.82-1.45a6.123 6.123 0 002.09-3.47l5-27.42C71.08 2.21 69.25 0 66.49 0z"
+          fill="#e4e9ef"
+        />
+        <AnimatedPath
+          d="M11.47 9.78L19.54 9.78 14.47 29.78"
+          stroke="#f20831"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={8}
+          strokeDasharray={197}
+          strokeDashoffset={dashOffset}
+        />
+        <AnimatedPath
+          d="M21.47 28.78s16 4 21.5-11.5 23-4 10.5 8.5c-4.03 4.03-14.09 1.14-13.5-5.5.37-4.11.5-8.5-4.5-9.5-6.86-1.37-15 5-7 21"
+          stroke="#f20831"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={8}
+          strokeDasharray={118}
+          strokeDashoffset={dashOffset2}
+        />
+        <Path
+          d="M51.17 12.52c-2.94 0-5.49 3.99-5.87 8.62-.24 2.89.95 4.74 2.73 4.74 2.97 0 5.51-3.92 5.91-8.62.23-2.87-.96-4.74-2.77-4.74zM66.5 0H11.01c-1.4.05-2.75.56-3.82 1.45A6.123 6.123 0 005.1 4.92L.08 32.34c-.5 2.72 1.34 4.92 4.09 4.92h55.49c1.4-.05 2.75-.56 3.82-1.45a6.123 6.123 0 002.09-3.47l5-27.42C71.08 2.21 69.25 0 66.49 0zM15.55 30.79h-3.08c-1.09 0-1.58-.61-1.31-1.71l4.03-16.95h-3.7c-1.09 0-1.58-.61-1.27-1.71l.45-1.75c.1-.49.37-.94.77-1.25.4-.31.9-.48 1.41-.46h8.57c1.12 0 1.58.61 1.27 1.71l-4.93 20.4c-.1.5-.37.95-.78 1.27-.41.32-.91.48-1.43.46zm44.94-14.01c-.69 8.27-6.58 14.44-13.79 14.44-2.95 0-5.25-1.21-6.62-3.28 1.23-2.2 2.05-4.6 2.42-7.08a16.17 16.17 0 01-3.15 5.69 12.89 12.89 0 01-4.39 3.42c-1.7.81-3.56 1.24-5.45 1.26-5.26 0-8.46-3.81-7.97-9.59.69-8.27 6.61-14.44 13.79-14.44 2.97 0 5.28 1.19 6.64 3.27a20.66 20.66 0 00-2.44 7.1C41.49 11.42 46.57 7.2 52.52 7.2c5.3 0 8.46 3.78 7.98 9.59zm-26.5-4.26c-2.94 0-5.49 3.99-5.87 8.62-.24 2.89.95 4.74 2.73 4.74 2.97 0 5.51-3.92 5.91-8.62.23-2.87-.96-4.74-2.77-4.74z"
+          fill="#fff"
+        />
+      </G>
+    </Svg>
+  );
+};

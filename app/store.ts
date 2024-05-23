@@ -1,14 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { createTransform, persistReducer, persistStore } from "redux-persist";
+import { PersistConfig, createTransform, persistReducer, persistStore } from "redux-persist";
 import userReducer, { logOut } from "../features/user/userSlice";
 import accountReducer from "../features/account/accountSlice";
 import { thunk } from "redux-thunk";
 import authReducer from "../features/auth/authSlice"
 
-const persistConfig = {
+const persistConfig: PersistConfig<RootState> = {
   key: "hundred-pay",
   storage: AsyncStorage,
+  blacklist: ["auth"],
 };
 
 const rootReducer = combineReducers({

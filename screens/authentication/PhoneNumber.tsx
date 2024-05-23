@@ -38,6 +38,7 @@ import { RootState } from "../../app/store";
 import { updateFormInput } from "../../features/auth/authSlice";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../routes/AppStacks";
+import { useToast } from "../../components/CustomToast/ToastContext";
 
 const loginSchema = yup.object().shape({
   phoneNumber: yup
@@ -56,15 +57,16 @@ interface RootAuthI {
   navigation: NativeStackNavigationProp<RootStackParamList>;
 }
 
-
 export default function PhoneNumber({
   navigation,
 }: RootAuthI): React.JSX.Element {
   const { fontScale, width } = useWindowDimensions();
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
-  const { phone, country, countryDialCode, countryFlag, countryName } = useSelector((state: RootState) => state.auth);
+  const { phone, country, countryDialCode, countryFlag, countryName } =
+    useSelector((state: RootState) => state.auth);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneNumberError, setPhoneNumberError] = useState("");
+  const { showToast } = useToast();
   /*-- -- -- -- -- - --- -- */
   const [showKeypad, setShowKeypad] = useState(false);
   const [show, setShow] = useState(false);
@@ -80,7 +82,7 @@ export default function PhoneNumber({
     } else if (phone.length === 10) {
       setPhoneNumberError("Phone number must be 10 digits");
     } else {
-      return null
+      return null;
     }
   };
 
@@ -98,8 +100,8 @@ export default function PhoneNumber({
   const onCountrySelection = (item: any) => {
     // Define your logic when a country is selected
     dispatch(updateFormInput({ countryDialCode: item.dial_code }));
-    dispatch(updateFormInput({countryName: item.name.en}))
-    dispatch(updateFormInput({countryFlag: item.flag}))
+    dispatch(updateFormInput({ countryName: item.name.en }));
+    dispatch(updateFormInput({ countryFlag: item.flag }));
     dispatch(updateFormInput({ country: item.code }));
     togglePopup();
   };
@@ -206,6 +208,12 @@ export default function PhoneNumber({
               isLarge={false}
               isWide={false}
               onPress={() => {
+                if (phone.length < 11 || country === "") {
+                  showToast("Please complete the form to continue", "error");
+                  setPhoneNumberError("Please complete the form to continue");
+                  setTimeout(()=> setPhoneNumberError(""), 3000)
+                  return
+                }
                 navigation.navigate("PersonalInfo");
               }}
             >
@@ -376,7 +384,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginLeft: "auto",
-    marginVertical: 20
+    marginVertical: 20,
   },
   buttonText: {
     color: Colors.white,

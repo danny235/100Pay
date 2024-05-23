@@ -1,10 +1,7 @@
 import axios from "axios";
-const API_KEY = process.env.NEXT_PUBLIC_API_KEY || "";
-const BASE_API = process.env.NEXT_PUBLIC_BASE_API || "";
 
-const axiosInstance = axios.create({
-  baseURL: BASE_API,
-});
+
+
 
 interface RegisterData {
   first_name: string;
@@ -43,18 +40,16 @@ const constructRegisterData: (values: any) => RegisterData = (values) => {
 };
 
 export const createUserRequest = async (values: any) => {
-  let data = JSON.stringify(constructRegisterData(values));
+  
 
   let config = {
     method: "post",
     headers: {
       "Content-Type": "application/json",
-      "Api-Key": API_KEY,
     },
-    data: data,
+    data: values,
   };
 
-  console.log("createUserRequest config", data);
 
   try {
     const res = await axios(
@@ -62,73 +57,17 @@ export const createUserRequest = async (values: any) => {
       config
     );
 
-    console.log(res);
 
-    return {
-      message: "User Created",
-      token: res.data,
-    };
+
+   return {
+     message: "Account creation successful  🎉 🎉 🎉",
+     token: res.data,
+     status: res.status,
+   };
   } catch (err: any) {
-    console.log("catch");
-
-    console.log("createUser POST err", err);
-    console.log(err.response.data);
-
-    throw Error(err.response.data);
+    return err
   }
 };
 
-export const POST = async (req: Request) => {
-  const data = await req.json();
-  const raw = JSON.stringify(constructRegisterData(data));
 
-  let config = {
-    method: "post",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: raw,
-  };
 
-  try {
-    const res = await axios(
-      `https://api.100pay.co/api/v1/user/register`,
-      config
-    );
-
-    console.log(res);
-
-    return Response.json({
-      message: "User Created",
-      token: res.data,
-    });
-  } catch (err: any) {
-    console.log("catch");
-
-    console.log("createUser POST err", err);
-    console.log(err.response.data);
-
-    return Response.json({ error: err.response.data }, { status: 400 });
-  }
-};
-
-export const getUserData: (token: string) => Promise<UserData> = async (
-  token: string
-) => {
-  try {
-    const res = await axiosInstance("/user", {
-      headers: {
-        "Auth-Token": token,
-      },
-    });
-
-    return res.data;
-  } catch (err: any) {
-    console.log("catch");
-
-    console.log("createUser POST err", err);
-    console.log(err.response.data);
-
-    throw Error(err.response.daa);
-  }
-};

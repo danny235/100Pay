@@ -20,8 +20,16 @@ import { RootStackParamList } from "../../routes/AppStacks";
 import { Profile } from "iconsax-react-native";
 
 const signUpSchema = yup.object().shape({
-  first_name: yup.string().required().label("First Name"),
-  last_name: yup.string().required().label("Last Name"),
+  first_name: yup
+    .string()
+    .required()
+    .label("First Name")
+    .min(3, "First name must be 3 characters long"),
+  last_name: yup
+    .string()
+    .required()
+    .label("Last Name")
+    .min(3, "Last name must be 3 characters long"),
 });
 
 interface RootAuthI {

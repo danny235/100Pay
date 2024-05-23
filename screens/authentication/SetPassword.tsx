@@ -71,7 +71,7 @@ export default function SetPassword({
         }}
         onSubmit={async (values, actions) => {
           console.log(values);
-          navigation.navigate("Referral");
+          navigation.navigate("Invitation");
         }}
         validationSchema={setPasswordSchema}
       >

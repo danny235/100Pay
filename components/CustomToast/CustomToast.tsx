@@ -60,7 +60,7 @@ const CustomToast: React.FC<CustomToastProps> = ({message, type, onClose}) => {
       iconComponent = <TickCircle color={Colors.success700} variant="TwoTone" />;
       break;
     case "error":
-      iconComponent = <CloseCircle color={Colors.error02} variant="TwoTone" />;
+      iconComponent = <CloseCircle color={Colors.error5} variant="TwoTone" />;
       break;
     case "info":
       iconComponent = <Warning2 size="32" color="#FF8A65" variant="TwoTone" />;

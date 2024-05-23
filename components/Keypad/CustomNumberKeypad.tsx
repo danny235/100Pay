@@ -126,39 +126,39 @@ const CustomNumberKeypad = forwardRef<CustomNumberKeypadMethods, CustomNumberKey
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     paddingHorizontal: 20,
-    paddingVertical: 20
+    paddingVertical: 20,
   },
   keypadContainer: {
     paddingTop: 20, // Add padding to the top of the keypad
   },
   keypad: {
     backgroundColor: Colors.white,
-    flexDirection: 'column',
+    flexDirection: "column",
     gap: 10,
   },
   row: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     gap: 10,
   },
   button: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 10,
     backgroundColor: Colors.searchInput,
-    aspectRatio: 1 / .5
+    aspectRatio: 1 / 0.35,
   },
   inActiveButton: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 10,
   },
   buttonText: {
-    color: 'black',
+    color: "black",
   },
 });
 

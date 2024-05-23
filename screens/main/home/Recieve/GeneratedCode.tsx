@@ -41,7 +41,7 @@ export default function GeneratedCode({ navigation }: GenerateCodeT) {
 
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(`${activeUserApp?.referralCode}`);
-    showToast("Copied successfully");
+    showToast("Copied successfully", "success");
   };
 
   const onSharePress = async () => {

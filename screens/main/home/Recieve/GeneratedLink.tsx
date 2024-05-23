@@ -1,5 +1,5 @@
 import * as Clipboard from "expo-clipboard";
-import { NavigationProp } from "@react-navigation/native";
+import { NavigationProp, RouteProp } from "@react-navigation/native";
 import React, { useRef } from "react";
 import { Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
 import QRCode from "react-native-qrcode-svg";
@@ -18,9 +18,12 @@ import {
   MediumText,
 } from "../../../../components/styles/styledComponents";
 import { RootStackParamList } from "../../../../routes/AppStacks";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { truncateText } from "../../../../utils";
 
 type GenerateCodeT = {
-  navigation: NavigationProp<RootStackParamList>;
+  navigation: NativeStackNavigationProp<RootStackParamList>;
+  route: RouteProp<RootStackParamList, "MainTabs">;
 };
 
 type ShareOptions = {
@@ -28,16 +31,17 @@ type ShareOptions = {
   message: string;
 };
 
-export default function GeneratedLink({ navigation }: GenerateCodeT) {
+export default function GeneratedLink({ navigation, route }: GenerateCodeT) {
   const { fontScale } = useWindowDimensions();
-  const link = "http://100pay.co";
   const { showToast } = useToast();
   const qrRef = useRef<ViewShot>(null);
   let logoFromFile = require("../../../../assets/images/payLogo.png");
+  const {detail}: any = route.params
+  const link = `https://paylink.100pay.co/${detail}`;
 
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(link);
-    showToast("Copied successfully");
+    showToast("Copied successfully", "success");
   };
 
   const onSharePress = async () => {
@@ -72,6 +76,8 @@ export default function GeneratedLink({ navigation }: GenerateCodeT) {
       console.error("Oops, snapshot failed", error);
     }
   };
+
+  console.log(detail, "params")
 
   return (
     <CustomView>
@@ -137,7 +143,7 @@ export default function GeneratedLink({ navigation }: GenerateCodeT) {
         >
           Link
         </MediumText>
-        <LightText style={{ fontSize: 15 / fontScale }}>{link}</LightText>
+        <LightText style={{ fontSize: 15 / fontScale }}>{truncateText(link, 22)}</LightText>
         <Pressable style={{ marginLeft: "auto" }} onPress={copyToClipboard}>
           <CopyIcon height={25} width={25} />
         </Pressable>

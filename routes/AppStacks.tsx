@@ -50,7 +50,7 @@ export type RootStackParamList = {
   CreateAccount: undefined;
   PhoneNumber: undefined;
   SetPassword: undefined;
-  PersonalInfo: undefined
+  PersonalInfo: undefined;
   DiscoverS: undefined;
   Referral: undefined;
   ForgotPassword: undefined;
@@ -82,7 +82,13 @@ export type RootStackParamList = {
   Payouts: undefined;
   AddBank: undefined;
   ConnectQr: undefined;
-  MainTabs: {screen: string; params?: {screen?: string, initial?: boolean}; initial?: boolean};
+  MainTabs: {
+    screen: string;
+    params?: { screen?: string; initial?: boolean, params?: {
+      detail: any
+    } };
+    initial?: boolean;
+  };
 
   // Define other screens and their parameters here
 };

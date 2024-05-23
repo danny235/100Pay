@@ -73,8 +73,8 @@ export default function RecieveModal({
     bottomSheetModalRef.current?.present();
   }, []);
   const handlePresentModalClose = useCallback(() => {
-    bottomSheetModalRef.current?.dismiss();
     onClose();
+    bottomSheetModalRef.current?.dismiss();
   }, []);
   const nav = useNavigation();
   const handleSheetChanges = useCallback((index: number) => {
@@ -90,8 +90,8 @@ export default function RecieveModal({
     recieveSheetModalRef.current?.present();
   }, []);
   const handlePresentRecieveModalClose = useCallback(() => {
-    recieveSheetModalRef.current?.dismiss();
     onClose();
+    recieveSheetModalRef.current?.dismiss();
   }, []);
   const handleRecieveSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
@@ -181,35 +181,43 @@ export default function RecieveModal({
           )}
           animateOnMount={true}
         >
-          <View style={{ paddingVertical: 20, gap: 20, paddingHorizontal: 20, flex: 1 }}>
-              <View style={{ gap: 20, flexDirection: "row" }}>
-                <SelectIcon />
-                <MediumText
-                  style={{
-                    fontSize: 20 / fontScale,
-                    borderLeftColor: Colors.ash,
-                    borderLeftWidth: 1,
-                    paddingLeft: 10,
-                  }}
-                >
-                  Recieve Payments
-                </MediumText>
-              </View>
-              <LightText
+          <View
+            style={{
+              paddingVertical: 20,
+              gap: 20,
+              paddingHorizontal: 20,
+              flex: 1,
+            }}
+          >
+            <View style={{ gap: 20, flexDirection: "row" }}>
+              <SelectIcon />
+              <MediumText
                 style={{
-                  fontSize: 15 / fontScale,
-                  color: Colors.authTextTitle,
+                  fontSize: 20 / fontScale,
+                  borderLeftColor: Colors.ash,
+                  borderLeftWidth: 1,
+                  paddingLeft: 10,
                 }}
               >
-                Recieve payment via Crypto, Pay ID, Payment Link
-              </LightText>
-              <Pressable style={styles.searchBox}>
-                <LightText>Search request code here...</LightText>
-                <CircleIcon color={Colors.grayText} />
-              </Pressable>
-            <ScrollView style={{flex: 1}} contentContainerStyle={{gap: 10, flex: 1}}>
-
-
+                Recieve Payments
+              </MediumText>
+            </View>
+            <LightText
+              style={{
+                fontSize: 15 / fontScale,
+                color: Colors.authTextTitle,
+              }}
+            >
+              Recieve payment via Crypto, Pay ID, Payment Link
+            </LightText>
+            <Pressable style={styles.searchBox}>
+              <LightText>Search request code here...</LightText>
+              <CircleIcon color={Colors.grayText} />
+            </Pressable>
+            <ScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={{ gap: 10, flex: 1 }}
+            >
               {paymentLinksLoading === "loading" && (
                 <View
                   style={{ justifyContent: "center", alignItems: "center" }}
@@ -221,7 +229,24 @@ export default function RecieveModal({
               {paymentLinks?.length > 0 &&
                 paymentLinks.map((paymentLink, i) => {
                   return (
-                    <Pressable style={styles.linkItem} key={paymentLink._id}>
+                    <Pressable
+                      onPress={() => { 
+                        onClose()
+                        handlePresentModalClose();
+                        navigation.navigate("MainTabs", {
+                          screen: "Discover",
+                          params: {
+                            screen: "GeneratedLink",
+                            initial: false,
+                            params: {
+                              detail: paymentLink.code,
+                            },
+                          },
+                        });
+                      }}
+                      style={styles.linkItem}
+                      key={paymentLink._id}
+                    >
                       <View style={styles.linkCurrency}>
                         <GreenNairaIcon />
                       </View>
@@ -277,8 +302,8 @@ export default function RecieveModal({
                 style={{
                   flexDirection: "row",
                   gap: 10,
-              
-                  marginHorizontal: 10
+
+                  marginHorizontal: 10,
                 }}
               >
                 <Button
@@ -418,7 +443,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: 40,
-    height: 40
+    height: 40,
   },
   linkSubtextWrapper: {
     flexDirection: "row",

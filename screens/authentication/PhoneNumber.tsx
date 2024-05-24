@@ -47,6 +47,13 @@ const loginSchema = yup.object().shape({
     .matches(/^[0-9]{10}$/, "Phone number must be 10 digits"),
 });
 
+function validatePhoneNumber(phoneNumber) {
+  // Regular expression pattern for US phone numbers
+  const phonePattern = /^(\+1\s?)?(\(?\d{3}\)?[\s.-]?)?\d{3}[\s.-]?\d{4}$/;
+
+  return phonePattern.test(phoneNumber);
+}
+
 interface Country {
   name: string;
   code: string;
@@ -214,6 +221,7 @@ export default function PhoneNumber({
                   setTimeout(()=> setPhoneNumberError(""), 3000)
                   return
                 }
+                
                 navigation.navigate("PersonalInfo");
               }}
             >

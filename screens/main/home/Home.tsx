@@ -57,6 +57,10 @@ import SwitchBusiness from "./SwitchBusiness/SwitchBusiness";
 import RecieveModal from "./RecieveModal/RecieveModal";
 import PinInputBottomSheet from "../../../components/CustomPin/PinInputBottomSheet";
 import Loader from "../../../components/Loader/LogoLoader";
+import {
+  CreateTransactionPin,
+  createTransactionPinRequest,
+} from "../../../apis/createtransactionpin";
 
 interface CustomBackdropProps {
   animatedIndex: SharedValue<number>;
@@ -126,20 +130,48 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
   const [isConfirmPinSheetVisible, setIsConfirmPinSheetVisible] =
     useState(false);
   const [tPin, setTPin] = useState("");
+  const [confirmTPin, setConfirmTPin] = useState("");
+  const [creatingPin, setCreatingPin] = useState(false);
 
   const handlePinSubmit = (pin) => {
-    console.log("PIN submitted:", pin);
     setIsPinSheetVisible(false);
     setIsConfirmPinSheetVisible(true);
+    setTPin(pin);
+  };
+
+  const createTxnPin = async () => {
+    setCreatingPin(true);
+    const data: CreateTransactionPin = {
+      pin: tPin,
+      confirmedPin: confirmTPin,
+    };
+    try {
+      const res = await createTransactionPinRequest(
+        data,
+        token,
+        activeUserApp?.keys.pub_keys[0].value
+      );
+
+      if (res.data) {
+        setCreatingPin(false);
+        showToast(res.message, "success");
+        dispatch(fetchUserData(token));
+      }
+    } catch (err) {
+      setCreatingPin(false);
+      showToast(err.message, "error");
+    }
   };
 
   const handleConfirmPinSubmit = (pin) => {
-    if (pin !== tPin) {
-      showToast("Pin doesn't match", "error");
-      return;
-    } else {
-      console.log("PIN submitted:", pin);
+    setConfirmTPin(pin);
+    if (pin === tPin) {
+      console.log("PIN confirmed:", pin);
       setIsConfirmPinSheetVisible(false);
+      createTxnPin()
+    } else {
+      showToast("Pin doesn't match", "error");
+      // Show a toast or alert here if necessary
     }
   };
 
@@ -179,15 +211,14 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
   const handleShowModal = () => {
     setShowSwithBalanceModal(true);
   };
+
   useEffect(() => {
     dispatch(fetchUserApps(token));
     dispatch(fetchUserData(token));
-    dispatch(
-      fetchBanks({ token, apiKey: activeUserApp?.keys.pub_keys[0].value })
-    );
-    
   }, []);
+
   useEffect(() => {
+    if (userAppsLoading === "loading") return;
     if (!activeUserApp?.keys?.pub_keys[0]?.value) return;
     dispatch(
       fetchPaymentsLinks({
@@ -195,21 +226,18 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
         apiKey: activeUserApp?.keys?.pub_keys[0].value,
       })
     );
-  }, [activeUserApp?.keys?.pub_keys[0].value]);
-  useEffect(() => {
-    dispatch(fetchUserApps(token));
-    dispatch(fetchUserData(token));
     dispatch(
       fetchBanks({ token, apiKey: activeUserApp?.keys.pub_keys[0].value })
     );
-    if (activeUserApp?.keys?.pub_keys[0]?.value) 
-      dispatch(
-        fetchPaymentsLinks({
-          token,
-          apiKey: activeUserApp?.keys.pub_keys[0].value,
-        })
-      );
-  }, []);
+     dispatch(
+       fetchPayments({
+         token,
+         apiKey: activeUserApp?.keys.pub_keys[0].value,
+         appId: activeUserApp?._id,
+       })
+     );
+
+  }, [activeUserApp?.keys?.pub_keys[0].value, userAppsLoading]);
 
   useEffect(() => {
     if (userProfileLoading === "loading") return;
@@ -366,13 +394,15 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
         mainTxt="Confirm Payment Pin"
         subTxt="Confirm your transaction pin to continue"
         isVisible={isConfirmPinSheetVisible}
-        onClose={() => setIsConfirmPinSheetVisible(false)}
+        onClose={setIsConfirmPinSheetVisible}
         onSubmit={handleConfirmPinSubmit}
       />
 
       <Loader
         visible={
-          userProfileLoading === "loading" && userAppsLoading === "loading"
+          userProfileLoading === "loading" ||
+          userAppsLoading === "loading" ||
+          creatingPin
         }
       />
     </CustomView>

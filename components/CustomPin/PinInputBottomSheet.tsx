@@ -36,8 +36,8 @@ const PinInputBottomSheet = ({
   onSubmit,
 }) => {
   const { fontScale, height, width } = useWindowDimensions();
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [snapTo, setSnapTo] = useState(["38%", `${height <= 800 ? height :(height) / 13}%`]);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [pin, setPin] = useState("");
   const snapPoints = useMemo(() => snapTo, [snapTo]);
   const handlePresentModalPress = useCallback(() => {
@@ -45,7 +45,7 @@ const PinInputBottomSheet = ({
   }, []);
   const handlePresentModalClose = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
-    onClose();
+    // onClose();
   }, []);
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
@@ -60,11 +60,9 @@ const PinInputBottomSheet = ({
   };
 
   const handleConfirm = () => {
-    onClose()
     if (pin.length === 6) {
       onSubmit(pin);
       setPin("");
-      handlePresentModalClose();
     }
   };
 
@@ -75,6 +73,12 @@ const PinInputBottomSheet = ({
       handlePresentModalClose();
     }
   }, [isVisible]);
+
+  useEffect(() => {
+    if (pin.length === 6) {
+      handleConfirm()
+    } 
+  }, [pin]);
 
 
   return (
@@ -102,7 +106,7 @@ const PinInputBottomSheet = ({
         animateOnMount={true}
       >
         <View style={styles.sheetContent}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginVertical: 10 }}>
             <PasswordCheck color={Colors.primary} variant="TwoTone" />
             <SemiBoldText
               style={[
@@ -124,7 +128,7 @@ const PinInputBottomSheet = ({
             onKeyPress={handleKeyPress}
             onBackspace={() => handleKeyPress("Back")}
           />
-          <Button
+          {/* <Button
             variant="primary"
             style={[
             
@@ -134,7 +138,7 @@ const PinInputBottomSheet = ({
             disabled={pin.length !== 6}
           >
             <Text style={styles.confirmButtonText}>Confirm</Text>
-          </Button>
+          </Button> */}
         </View>
       </BottomSheetModal>
     </BottomSheetModalProvider>

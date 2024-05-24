@@ -5,30 +5,39 @@ import {
   Pressable,
   Image,
   ScrollView,
-} from 'react-native';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {NavigationProp} from '@react-navigation/native';
-import {RootStackParamList} from '../../../../routes/AppStacks';
-import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
-import {CustomBackdrop} from '../../../../components/ChooseAccountBalance/ChooseAccountBalance';
-import {Colors} from '../../../../components/Colors';
+} from "react-native";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { NavigationProp } from "@react-navigation/native";
+import { RootStackParamList } from "../../../../routes/AppStacks";
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
+import { CustomBackdrop } from "../../../../components/ChooseAccountBalance/ChooseAccountBalance";
+import { Colors } from "../../../../components/Colors";
 import {
   AddCircle,
   People,
   Personalcard,
   Profile2User,
   Shop,
-} from 'iconsax-react-native';
+} from "iconsax-react-native";
 import {
   BoldText,
   LightText,
   MediumText,
-} from '../../../../components/styles/styledComponents';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../../../app/store';
-import {updateActiveApps} from '../../../../features/user/userSlice';
-import {ThunkDispatch} from 'redux-thunk';
-import {Button} from '../../../../components/Button/Button';
+} from "../../../../components/styles/styledComponents";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../../app/store";
+import { updateActiveApps } from "../../../../features/user/userSlice";
+import { ThunkDispatch } from "redux-thunk";
+import { Button } from "../../../../components/Button/Button";
 
 type SwitchBusinessT = {
   navigation?: NavigationProp<RootStackParamList>;
@@ -41,7 +50,6 @@ export default function SwitchBusiness({
   showSwitch,
   onClose,
 }: SwitchBusinessT) {
-  const {fontScale} = useWindowDimensions();
   const {
     userApps,
     activeUserApp,
@@ -53,7 +61,11 @@ export default function SwitchBusiness({
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  const [snapTo, setSnapTo] = useState(['38%', '50%']);
+  const { fontScale, height, width } = useWindowDimensions();
+  const [snapTo, setSnapTo] = useState([
+    "38%",
+    `${height <= 800 ? height / 9 : height / 13}%`,
+  ]);
   const snapPoints = useMemo(() => snapTo, [snapTo]);
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
@@ -63,7 +75,7 @@ export default function SwitchBusiness({
     bottomSheetModalRef.current?.dismiss();
   }, []);
   const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
+    console.log("handleSheetChanges", index);
   }, []);
 
   useEffect(() => {
@@ -85,18 +97,19 @@ export default function SwitchBusiness({
         handleIndicatorStyle={{
           borderWidth: 3,
           borderColor: Colors.ash,
-          width: '20%',
+          width: "20%",
         }}
-        backdropComponent={({animatedIndex, style}) => (
+        backdropComponent={({ animatedIndex, style }) => (
           <CustomBackdrop
             onPress={handlePresentModalClose}
             animatedIndex={animatedIndex}
             style={style}
           />
         )}
-        animateOnMount={true}>
-        <View style={{paddingVertical: 20, paddingHorizontal: 20, gap: 10}}>
-          <View style={{flexDirection: 'row', gap: 10}}>
+        animateOnMount={true}
+      >
+        <View style={{ paddingVertical: 20, paddingHorizontal: 20, gap: 10 }}>
+          <View style={{ flexDirection: "row", gap: 10 }}>
             <Profile2User variant="TwoTone" color={Colors.primary} size={23} />
             <BoldText
               style={{
@@ -104,11 +117,12 @@ export default function SwitchBusiness({
                 borderLeftColor: Colors.ash,
                 borderLeftWidth: 1,
                 paddingLeft: 10,
-              }}>
+              }}
+            >
               Select Business Account
             </BoldText>
           </View>
-          <LightText style={{fontSize: 15 / fontScale}}>
+          <LightText style={{ fontSize: 15 / fontScale }}>
             Select or create new business account.
           </LightText>
         </View>
@@ -117,45 +131,51 @@ export default function SwitchBusiness({
             paddingHorizontal: 20,
 
             gap: 10,
-          }}>
-          {userApps?.length !== 0 && userApps !== null && userApps?.map((userApp, _i) => (
-            <Pressable
-              key={userApp._id}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                borderBottomWidth: 1,
-                borderBottomColor: Colors.ash,
-                paddingVertical: 20,
-                gap: 20,
-              }}
-              onPress={() =>{ 
-                dispatch(updateActiveApps(userApp))
-                handlePresentModalClose()
-                }}>
-              <Shop size={30} color={Colors.primary} />
-              <MediumText style={{fontSize: 16 / fontScale}}>
-                {userApp?.business_name}
-              </MediumText>
-            </Pressable>
-          ))}
-        </ScrollView>
-        <View style={{paddingHorizontal: 20}}>
-
+          }}
+        >
+          {userApps?.length !== 0 &&
+            userApps !== null &&
+            userApps?.map((userApp, _i) => (
+              <Pressable
+                key={userApp._id}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  borderBottomWidth: 1,
+                  borderBottomColor: Colors.ash,
+                  paddingVertical: 20,
+                  gap: 20,
+                }}
+                onPress={() => {
+                  dispatch(updateActiveApps(userApp));
+                  handlePresentModalClose();
+                }}
+              >
+                <Shop size={30} color={Colors.primary} />
+                <MediumText style={{ fontSize: 16 / fontScale }}>
+                  {userApp?.business_name}
+                </MediumText>
+              </Pressable>
+            ))}
+     
           <Button
             variant="primary"
             isLarge={false}
             isWide={true}
             style={{
-              marginTop: 'auto',
+             marginVertical: 20,
               marginBottom: 30,
-            }}>
+            }}
+          >
             <AddCircle size={24} color={Colors.white} variant="TwoTone" />
-            <MediumText style={{color: Colors.white, fontSize: 15 / fontScale}}>
+            <MediumText
+              style={{ color: Colors.white, fontSize: 15 / fontScale }}
+            >
               Create Business
             </MediumText>
           </Button>
-        </View>
+     
+        </ScrollView>
       </BottomSheetModal>
     </BottomSheetModalProvider>
   );

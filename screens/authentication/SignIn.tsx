@@ -67,7 +67,7 @@ export default function SignIn({navigation}: RootAuthI): React.JSX.Element {
             }
             // Handle success, maybe set token to AsyncStorage or Redux store
           } catch (error) {
-            console.log('Login error:', error);
+            showToast(error.message, "error")
             // Handle error, maybe display error message to the user
           } finally {
             setLoading(false); // Set loading to false when login process completes

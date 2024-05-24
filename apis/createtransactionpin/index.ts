@@ -1,16 +1,8 @@
 import axios from "axios";
-const BASE_API = process.env.NEXT_PUBLIC_BASE_API || "";
-const API_KEY = process.env.NEXT_PUBLIC_API_KEY || "";
 
-const axiosInstance = axios.create({
-  baseURL: BASE_API,
-});
 
-let token: string | null;
 
-if (typeof window !== "undefined") token = localStorage.getItem("token");
-
-interface CreateTransactionPin {
+export interface CreateTransactionPin {
   pin: any;
   confirmedPin: any;
 }
@@ -52,17 +44,16 @@ const constructResetTransactionPin: (values: any) => ResetTransactionPin = (
   };
 };
 
-export const createTransactionPinRequest = async (values: any) => {
-  let data = JSON.stringify(constructCreateTransactionPin(values));
+export const createTransactionPinRequest = async (values: CreateTransactionPin, token: any, apiKey) => {
 
   let config = {
     method: "post",
     headers: {
       "Content-Type": "application/json",
-      "Api-Key": API_KEY,
+      "Api-Key": apiKey,
       "Auth-Token": token,
     },
-    data: data,
+    data: values,
   };
 
   try {
@@ -76,43 +67,19 @@ export const createTransactionPinRequest = async (values: any) => {
       data: res.data,
     };
   } catch (err: any) {
-    console.log("catch");
-
-    console.log("transaction pin creation POST err", err);
-    console.log(err.response.data);
-
     throw Error(err.response.data);
   }
 };
 
-export const getUserData: (token: string) => Promise<UserData> = async (
-  token: string
-) => {
-  try {
-    const res = await axiosInstance("/user", {
-      headers: {
-        "Auth-Token": token,
-      },
-    });
 
-    return res.data;
-  } catch (err: any) {
-    console.log("catch");
-
-    console.log("user logged in POST err", err);
-    console.log(err.response.data);
-
-    throw Error(err.response.daa);
-  }
-};
 
 // send code
-export const requestResetTransactionPinCode = async () => {
+export const requestResetTransactionPinCode = async (apikey, token) => {
   let config = {
     method: "post",
     headers: {
       "Content-Type": "application/json",
-      "Api-Key": API_KEY,
+      "Api-Key": apikey,
       "Auth-Token": token,
     },
   };
@@ -128,29 +95,24 @@ export const requestResetTransactionPinCode = async () => {
       data: res.data,
     };
   } catch (err: any) {
-    console.log("catch");
-
-    console.log("pin reset code creation POST err", err);
-    console.log(err.response.data);
-
     throw Error(err.response.data);
   }
 };
 
-export const resetTransactionPin = async (values: any) => {
-  let data = JSON.stringify(constructResetTransactionPin(values));
+export const resetTransactionPin = async (values: ResetTransactionPin, apiKey: any, token: any) => {
+
 
   let config = {
     method: "post",
     headers: {
       "Content-Type": "application/json",
-      "Api-Key": API_KEY,
+      "Api-Key": apiKey,
       "Auth-Token": token,
     },
-    data: data,
+    data: values,
   };
 
-  console.log(data, "faraa");
+
 
   try {
     const res = await axios(
@@ -163,10 +125,6 @@ export const resetTransactionPin = async (values: any) => {
       data: res.data,
     };
   } catch (err: any) {
-    console.log("catch");
-
-    console.log("pin reset code creation POST err", err);
-    console.log(err.response.data);
 
     throw Error(err.response.data);
   }

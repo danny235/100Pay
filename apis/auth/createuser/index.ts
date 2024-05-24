@@ -65,7 +65,7 @@ export const createUserRequest = async (values: any) => {
      status: res.status,
    };
   } catch (err: any) {
-    return err
+    throw Error(err.response.data);
   }
 };
 

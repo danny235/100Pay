@@ -69,6 +69,6 @@ export const getUserData: (token: string) => Promise<User> = async (
 
     return res.data;
   } catch (err) {
-    return err;
+    throw Error(err.response.data);
   }
 };

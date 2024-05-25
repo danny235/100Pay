@@ -114,7 +114,7 @@ export default function BankList({ isOpen, onBankPress, onClose }: BankListI) {
             <TextInput
               placeholder="Search assets here"
               style={{
-                fontFamily: "SpaceGrotesk-SemiBold",
+                fontFamily: "SpaceGrotesk-Medium",
                 color: Colors.black,
                 width: "70%",
                 fontSize: 15 / fontScale,
@@ -130,7 +130,7 @@ export default function BankList({ isOpen, onBankPress, onClose }: BankListI) {
             {filteredBanks.map((bank, i) => (
               <Pressable
                 onPress={() => {
-                    onBankPress(bank)
+                  onBankPress(bank);
                   setActiveBank(bank);
                   handlePresentModalClose();
                 }}

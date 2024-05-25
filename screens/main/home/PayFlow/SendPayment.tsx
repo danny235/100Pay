@@ -1,5 +1,11 @@
-import {NavigationProp} from '@react-navigation/native';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import { NavigationProp, RouteProp } from "@react-navigation/native";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Image,
   Platform,
@@ -9,93 +15,115 @@ import {
   TextInput,
   View,
   useWindowDimensions,
-} from 'react-native';
-import UserAvatar from '../../../../assets/images/DashboardEmojis/Avatar-a.png';
-import {Button} from '../../../../components/Button/Button';
-import {Colors} from '../../../../components/Colors';
-import CustomNumberKeypad from '../../../../components/Keypad/CustomNumberKeypad';
+} from "react-native";
+import UserAvatar from "../../../../assets/images/DashboardEmojis/Avatar-a.png";
+import { Button } from "../../../../components/Button/Button";
+import { Colors } from "../../../../components/Colors";
+import CustomNumberKeypad from "../../../../components/Keypad/CustomNumberKeypad";
 import {
   ArrowDownIcon,
   ArrowRightIcon,
   CircleIcon,
   PayIcon,
-} from '../../../../components/SvgAssets';
-import CustomView from '../../../../components/Views/CustomView';
-import CustomHeader from '../../../../components/headers/CustomHeaders';
+} from "../../../../components/SvgAssets";
+import CustomView from "../../../../components/Views/CustomView";
+import CustomHeader from "../../../../components/headers/CustomHeaders";
 import {
   BoldText,
   LightText,
   MediumText,
   RegularText,
   SemiBoldText,
-} from '../../../../components/styles/styledComponents';
-import {RootStackParamList} from '../../../../routes/AppStacks';
-import {addCommas} from '../../../../utils';
+} from "../../../../components/styles/styledComponents";
+import { RootStackParamList } from "../../../../routes/AppStacks";
+import { addCommas } from "../../../../utils";
 import ChooseAccountBalance, {
   CustomBackdrop,
-} from '../../../../components/ChooseAccountBalance/ChooseAccountBalance';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../../app/store';
+} from "../../../../components/ChooseAccountBalance/ChooseAccountBalance";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../app/store";
 import {
   AddCircle,
   RecoveryConvert,
   TickCircle,
   Warning2,
-} from 'iconsax-react-native';
-import AlertModal from '../../../../components/Alert/AlertModal';
-import Btc from '../../../../assets/images/bitcoin.png';
-import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
-import RadioSwitch from '../../../../components/Radio/RadioSwitch';
+} from "iconsax-react-native";
+import AlertModal from "../../../../components/Alert/AlertModal";
+import Btc from "../../../../assets/images/bitcoin.png";
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
+import RadioSwitch from "../../../../components/Radio/RadioSwitch";
+import PinInputBottomSheet from "../../../../components/CustomPin/PinInputBottomSheet";
+import Loader from "../../../../components/Loader/LogoLoader";
+import { useToast } from "../../../../components/CustomToast/ToastContext";
+import { bankTransfer } from "../../../../apis/pay";
 
 type SendPaymentT = {
   navigation: NavigationProp<RootStackParamList>;
+  route: RouteProp<RootStackParamList, "SendPayment">;
 };
 
 const coins = [
   {
     id: 1,
-    currency: 'Btc',
-    balance: '1',
-    equivalentBalance: '10',
+    currency: "Btc",
+    balance: "1",
+    equivalentBalance: "10",
     symbol: Btc,
   },
   {
     id: 2,
-    currency: 'Usdt',
-    balance: '0.1',
-    equivalentBalance: '100',
+    currency: "Usdt",
+    balance: "0.1",
+    equivalentBalance: "100",
     symbol: Btc,
   },
   {
     id: 3,
-    currency: 'Eth',
-    balance: '0.005',
-    equivalentBalance: '1000',
+    currency: "Eth",
+    balance: "0.005",
+    equivalentBalance: "1000",
     symbol: Btc,
   },
 ];
 
-export default function SendPayment({navigation}: SendPaymentT) {
-  const {fontScale} = useWindowDimensions();
+export default function SendPayment({ navigation, route }: SendPaymentT) {
+  const { fontScale } = useWindowDimensions();
+  const { bank, bankDetails, pay } = route.params;
   const [amount, setAmount] = useState<number>(100);
   const [balance, setBalance] = useState(0);
   const [showSwitchBalanceModal, setShowSwithBalanceModal] = useState(false);
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const {accountBalanceType, accountBalance} = useSelector(
-    (state: RootState) => state.user,
-  );
-  const [searchQuery, setSearchQuery] = useState('');
+  const {
+    userApps,
+    activeUserApp,
+    userAppsError,
+    userAppsLoading,
+    token,
+    userProfile,
+    userProfileLoading,
+  } = useSelector((state: RootState) => state.user);
+  const [searchQuery, setSearchQuery] = useState("");
   const [filteredCoins, setFilteredCoins] = useState(coins);
   const [emptyField, setEmptyField] = useState(false);
+  const { showToast } = useToast();
   /*-- -- -- -- -- - --- -- */
   const [showKeypad, setShowKeypad] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [phoneNumberError, setPhoneNumberError] = useState('');
+  const [inputValue, setInputValue] = useState("");
+  const [phoneNumberError, setPhoneNumberError] = useState("");
   const [isSelected, setIsSelected] = useState(false);
 
+  /*-------------- Payment -----------------*/
+  const [pin, setPin] = useState("");
+  const [showPinSheet, setShowPinSheet] = useState(false);
+  const [paying, setPaying] = useState(false);
+  /*-------------------------------------*/
+
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const [snapTo, setSnapTo] = useState(['38%', '100%']);
+  const [snapTo, setSnapTo] = useState(["38%", "100%"]);
   const snapPoints = useMemo(() => snapTo, [snapTo]);
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
@@ -104,11 +132,11 @@ export default function SendPayment({navigation}: SendPaymentT) {
     bottomSheetModalRef.current?.dismiss();
   }, []);
   const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
+    console.log("handleSheetChanges", index);
   }, []);
 
   const convertSheetModalRef = useRef<BottomSheetModal>(null);
-  const [convertSnapTo, setConvertSnapTo] = useState(['38%', '50%']);
+  const [convertSnapTo, setConvertSnapTo] = useState(["38%", "50%"]);
   const convertSnapPoints = useMemo(() => convertSnapTo, [convertSnapTo]);
   const handlePresentConvertPress = useCallback(() => {
     convertSheetModalRef.current?.present();
@@ -117,42 +145,73 @@ export default function SendPayment({navigation}: SendPaymentT) {
     convertSheetModalRef.current?.dismiss();
   }, []);
   const handleConvertSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
+    console.log("handleSheetChanges", index);
   }, []);
   const handleSearch = (query: string) => {
     setSearchQuery(query); // Update search query state
     // Filter banks based on search query
-    const filtered = coins.filter(coin =>
-      coin.currency.toLowerCase().includes(query.toLowerCase()),
+    const filtered = coins.filter((coin) =>
+      coin.currency.toLowerCase().includes(query.toLowerCase())
     );
     setFilteredCoins(filtered); // Update filtered banks state
   };
 
+  const handleBankPayment = async (pin) => {
+    setPin(pin);
+    setPaying(true);
+    try {
+      const data = {
+        amount: Number(inputValue),
+        app_id: activeUserApp?._id,
+        destination_wallet: "bank_account",
+        pin,
+        description: "payment",
+        account: {
+          account_number: bankDetails.account_number,
+          account_name: bankDetails.account_name,
+          bank_code: bank.code,
+          bank_name: bank.name,
+        },
+      };
+      const res = await bankTransfer(data, token)
+      if(res.data) {
+        showToast(res.message, "success")
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        });
+      }
+    } catch (err) {
+      setPaying(false);
+      showToast(err.message, "error");
+    }
+  };
+
   const handleKeypadToggle = () => {
-    setShowKeypad(prevValue => !prevValue);
+    setShowKeypad((prevValue) => !prevValue);
   };
 
   const handleKeypadKeyPress = (value: string) => {
     if (inputValue.length < 10) {
-      setInputValue(prevValue => prevValue + value);
-      setPhoneNumberError('Phone number must be 10 digits');
+      setInputValue((prevValue) => prevValue + value);
+      setPhoneNumberError("Phone number must be 10 digits");
     } else if (inputValue.length === 10) {
-      setPhoneNumberError('');
+      setPhoneNumberError("");
     } else {
-      setPhoneNumberError('Phone number must be 10 digits');
+      setPhoneNumberError("Phone number must be 10 digits");
     }
   };
 
   const makePayment = () => {
-    if (balance < Number(inputValue)) {
+    if (Number(activeUserApp?.fiat_balance) < Number(inputValue)) {
       setShowError(true);
     } else {
-      navigation.navigate('ConfirmPayment');
+      setShowPinSheet(true);
     }
   };
 
   const handleBackspace = () => {
-    setInputValue(prevValue => prevValue.slice(0, -1));
+    setInputValue((prevValue) => prevValue.slice(0, -1));
   };
 
   /*  -- ------- --- -- -*/
@@ -175,19 +234,22 @@ export default function SendPayment({navigation}: SendPaymentT) {
       <ScrollView>
         <Pressable
           onPress={() => setShowKeypad(false)}
-          style={styles.payContainer}>
+          style={styles.payContainer}
+        >
           <View
-            style={{gap: 10, alignItems: 'center', justifyContent: 'center'}}>
+            style={{ gap: 10, alignItems: "center", justifyContent: "center" }}
+          >
             <View style={styles.avatarWrapper}>
               <Image style={styles.avatarImg} source={UserAvatar} />
             </View>
             <View style={styles.userTextWrapper}>
-              <LightText style={{fontSize: 15 / fontScale}}>
+              <LightText style={{ fontSize: 15 / fontScale }}>
                 Send money to
               </LightText>
               <MediumText
-                style={{fontSize: 15 / fontScale, color: Colors.iconColor}}>
-                Daniel Barima
+                style={{ fontSize: 15 / fontScale, color: Colors.iconColor }}
+              >
+                {bankDetails ? bankDetails.account_name : pay.app_name}
               </MediumText>
             </View>
           </View>
@@ -199,40 +261,47 @@ export default function SendPayment({navigation}: SendPaymentT) {
                 borderRightColor: Colors.modernBlack,
                 borderRightWidth: 1,
                 paddingHorizontal: 5,
-              }}>
+              }}
+            >
               Pay with
             </LightText>
-            <BoldText style={{fontSize: 15 / fontScale}}>
-              ₦ {addCommas(balance)}
+            <BoldText style={{ fontSize: 15 / fontScale }}>
+              {`${activeUserApp?.currency} ${addCommas(
+                activeUserApp?.fiat_balance.toFixed(2)
+              )}`}
             </BoldText>
           </Pressable>
 
           <View style={styles.amountContainer}>
             <Pressable
               onPress={handleKeypadToggle}
-              style={styles.amountWarpper}>
-              <BoldText style={{fontSize: 30 / fontScale}}>
-                {inputValue ? addCommas(inputValue) : '0.00'}
+              style={styles.amountWarpper}
+            >
+              <BoldText style={{ fontSize: 30 / fontScale }}>
+                {inputValue ? addCommas(inputValue) : "0.00"}
               </BoldText>
             </Pressable>
             <LightText
               style={{
                 fontSize: 17 / fontScale,
-                textAlign: 'center',
-                width: '70%',
-              }}>
+                textAlign: "center",
+                width: "70%",
+              }}
+            >
               Enter the amount you want to send to the user
             </LightText>
           </View>
 
-          <View style={{marginLeft: 'auto'}}>
+          <View style={{ marginLeft: "auto" }}>
             <Button
               variant="primary"
               isLarge={false}
               isWide={false}
-              onPress={makePayment}>
+              onPress={makePayment}
+            >
               <MediumText
-                style={{color: Colors.white, fontSize: 15 / fontScale}}>
+                style={{ color: Colors.white, fontSize: 15 / fontScale }}
+              >
                 Pay
               </MediumText>
               <ArrowRightIcon />
@@ -252,19 +321,20 @@ export default function SendPayment({navigation}: SendPaymentT) {
           handleIndicatorStyle={{
             borderWidth: 3,
             borderColor: Colors.ash,
-            width: '20%',
+            width: "20%",
           }}
-          backdropComponent={({animatedIndex, style}) => (
+          backdropComponent={({ animatedIndex, style }) => (
             <CustomBackdrop
               onPress={handlePresentModalClose}
               animatedIndex={animatedIndex}
               style={style}
             />
           )}
-          animateOnMount={true}>
-          <View style={{paddingVertical: 20, gap: 20, paddingHorizontal: 20}}>
+          animateOnMount={true}
+        >
+          <View style={{ paddingVertical: 20, gap: 20, paddingHorizontal: 20 }}>
             <CustomHeader
-              text={'Select Bank'}
+              text={"Select Bank"}
               icon={
                 <AddCircle variant="TwoTone" color={Colors.primary} size={24} />
               }
@@ -274,9 +344,9 @@ export default function SendPayment({navigation}: SendPaymentT) {
               <TextInput
                 placeholder="Search assets here"
                 style={{
-                  fontFamily: 'SpaceGrotesk-SemiBold',
+                  fontFamily: "SpaceGrotesk-SemiBold",
                   color: Colors.black,
-                  width: '70%',
+                  width: "70%",
                   fontSize: 15 / fontScale,
                 }}
                 placeholderTextColor={Colors.grayText}
@@ -286,11 +356,12 @@ export default function SendPayment({navigation}: SendPaymentT) {
               <CircleIcon color={Colors.grayText} />
             </View>
             <LightText
-              style={{fontSize: 14 / fontScale, color: Colors.grayText}}>
+              style={{ fontSize: 14 / fontScale, color: Colors.grayText }}
+            >
               Select the assets you want to convert from the options below
             </LightText>
 
-            <ScrollView contentContainerStyle={{gap: 10}}>
+            <ScrollView contentContainerStyle={{ gap: 10 }}>
               {filteredCoins.map((coin, i) => (
                 <Pressable
                   onPress={() => {
@@ -298,51 +369,57 @@ export default function SendPayment({navigation}: SendPaymentT) {
                   }}
                   key={coin.id}
                   style={{
-                    flexDirection: 'row',
+                    flexDirection: "row",
                     gap: 10,
                     borderBottomColor: Colors.ash,
                     borderBottomWidth: 1,
                     paddingBottom: 10,
-                  }}>
+                  }}
+                >
                   <View
                     style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
+                      flexDirection: "row",
+                      alignItems: "center",
                       flex: 1,
                       gap: 10,
-                    }}>
+                    }}
+                  >
                     <Image
                       source={coin.symbol}
-                      style={{width: 30, height: 30, borderRadius: 30}}
+                      style={{ width: 30, height: 30, borderRadius: 30 }}
                     />
                     <MediumText
                       style={{
                         fontSize: 15 / fontScale,
-                      }}>
+                      }}
+                    >
                       {coin.currency}
                     </MediumText>
                   </View>
 
                   <View
                     style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
+                      flexDirection: "row",
+                      alignItems: "center",
                       gap: 10,
-                    }}>
+                    }}
+                  >
                     <View>
                       <MediumText
                         style={{
                           fontSize: 15 / fontScale,
-                          textAlign: 'right',
-                        }}>
+                          textAlign: "right",
+                        }}
+                      >
                         {coin.balance}
                       </MediumText>
                       <RegularText
                         style={{
                           fontSize: 15 / fontScale,
-                          textAlign: 'right',
+                          textAlign: "right",
                           color: Colors.grayText,
-                        }}>
+                        }}
+                      >
                         ≈ ₦{coin.equivalentBalance}
                       </RegularText>
                     </View>
@@ -356,15 +433,17 @@ export default function SendPayment({navigation}: SendPaymentT) {
               isLarge={false}
               isWide={true}
               style={{
-                marginTop: 'auto',
+                marginTop: "auto",
                 marginBottom: 10,
               }}
               onPress={() => {
                 handlePresentModalClose();
                 handlePresentConvertPress();
-              }}>
+              }}
+            >
               <MediumText
-                style={{color: Colors.white, fontSize: 15 / fontScale}}>
+                style={{ color: Colors.white, fontSize: 15 / fontScale }}
+              >
                 Continue
               </MediumText>
               <ArrowRightIcon />
@@ -385,50 +464,53 @@ export default function SendPayment({navigation}: SendPaymentT) {
           handleIndicatorStyle={{
             borderWidth: 3,
             borderColor: Colors.ash,
-            width: '20%',
+            width: "20%",
           }}
-          backdropComponent={({animatedIndex, style}) => (
+          backdropComponent={({ animatedIndex, style }) => (
             <CustomBackdrop
               onPress={handlePresentConvertClose}
               animatedIndex={animatedIndex}
               style={style}
             />
           )}
-          animateOnMount={true}>
+          animateOnMount={true}
+        >
           <ScrollView
             contentContainerStyle={{
               paddingHorizontal: 20,
               paddingVertical: 10,
               gap: 20,
-            }}>
-            <View style={{flexDirection: 'row', gap: 10}}>
+            }}
+          >
+            <View style={{ flexDirection: "row", gap: 10 }}>
               <RecoveryConvert
                 variant="TwoTone"
                 size={23}
                 color={Colors.primary}
               />
-              <BoldText style={{fontSize: 15 / fontScale, color: Colors.ash}}>
+              <BoldText style={{ fontSize: 15 / fontScale, color: Colors.ash }}>
                 |
               </BoldText>
-              <MediumText style={{fontSize: 15 / fontScale}}>
+              <MediumText style={{ fontSize: 15 / fontScale }}>
                 Confirm Conversion
               </MediumText>
             </View>
-            <LightText style={{fontSize: 15 / fontScale}}>
+            <LightText style={{ fontSize: 15 / fontScale }}>
               Confirm your asset conversion to continue.
             </LightText>
 
             <View
               style={{
-                flexDirection: 'row',
+                flexDirection: "row",
                 gap: 10,
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
               <RegularText>Total Conversion:</RegularText>
               <LightText>-----------------------</LightText>
               <SemiBoldText>
-                {inputValue ? Math.floor(Number(inputValue) / 10000) : '0.0000'}{' '}
+                {inputValue ? Math.floor(Number(inputValue) / 10000) : "0.0000"}{" "}
                 $Pay
               </SemiBoldText>
             </View>
@@ -436,31 +518,35 @@ export default function SendPayment({navigation}: SendPaymentT) {
             <View
               style={{
                 backgroundColor: Colors.memojiBackground,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
+                flexDirection: "row",
+                justifyContent: "space-between",
                 padding: 20,
                 borderRadius: 10,
-              }}>
+              }}
+            >
               <MediumText
                 style={{
                   fontSize: 15 / fontScale,
-                }}>
+                }}
+              >
                 BTC
               </MediumText>
               <View>
                 <MediumText
                   style={{
                     fontSize: 15 / fontScale,
-                    textAlign: 'right',
-                  }}>
+                    textAlign: "right",
+                  }}
+                >
                   {inputValue}
                 </MediumText>
                 <RegularText
                   style={{
                     fontSize: 15 / fontScale,
-                    textAlign: 'right',
+                    textAlign: "right",
                     color: Colors.grayText,
-                  }}>
+                  }}
+                >
                   ≈ {500}$Pay
                 </RegularText>
               </View>
@@ -469,8 +555,9 @@ export default function SendPayment({navigation}: SendPaymentT) {
             <View style={styles.buttonGroup}>
               <Pressable
                 onPress={handlePresentConvertClose}
-                style={styles.grayButton}>
-                <MediumText style={{fontSize: 15 / fontScale}}>
+                style={styles.grayButton}
+              >
+                <MediumText style={{ fontSize: 15 / fontScale }}>
                   Cancel
                 </MediumText>
               </Pressable>
@@ -480,9 +567,11 @@ export default function SendPayment({navigation}: SendPaymentT) {
                   setShowSuccess(true);
                   handlePresentConvertClose();
                 }}
-                style={[styles.grayButton, {backgroundColor: Colors.primary}]}>
+                style={[styles.grayButton, { backgroundColor: Colors.primary }]}
+              >
                 <MediumText
-                  style={{fontSize: 15 / fontScale, color: Colors.white}}>
+                  style={{ fontSize: 15 / fontScale, color: Colors.white }}
+                >
                   Confirm
                 </MediumText>
               </Pressable>
@@ -509,7 +598,6 @@ export default function SendPayment({navigation}: SendPaymentT) {
         buttonText="Convert Assets"
         onClose={() => {
           setShowError(false);
-          handlePresentModalPress();
         }}
       />
 
@@ -521,6 +609,17 @@ export default function SendPayment({navigation}: SendPaymentT) {
         buttonText="Continue"
         onClose={() => setShowSuccess(false)}
       />
+
+      <PinInputBottomSheet
+        key={2}
+        mainTxt="Enter Pin"
+        subTxt="Enter your transaction pin to continue payment"
+        isVisible={showPinSheet}
+        onClose={setShowPinSheet}
+        onSubmit={handleBankPayment}
+      />
+
+      <Loader visible={paying} />
     </CustomView>
   );
 }
@@ -529,8 +628,8 @@ const styles = StyleSheet.create({
   payContainer: {
     marginVertical: 50,
     gap: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   avatarWrapper: {
     width: 80,
@@ -543,46 +642,46 @@ const styles = StyleSheet.create({
     borderRadius: 80,
   },
   userTextWrapper: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 3,
   },
   payWithToggle: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingVertical: 10,
 
     borderColor: Colors.modernBlack,
     borderWidth: 1,
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     gap: 20,
     paddingHorizontal: 20,
   },
   amountWarpper: {
     paddingVertical: 10,
-    width: '85%',
+    width: "85%",
     borderBottomColor: Colors.modernBlack,
     borderBottomWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     gap: 20,
     paddingHorizontal: 20,
   },
   amountContainer: {
     marginVertical: 20,
     gap: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
   },
   searchBox: {
-    paddingVertical: Platform.OS === 'android' ? 2 : 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    paddingVertical: Platform.OS === "android" ? 2 : 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
     borderWidth: 1,
     borderColor: Colors.ash,
     borderRadius: 50,
-    alignItems: 'center',
+    alignItems: "center",
     paddingHorizontal: 20,
   },
   grayBg: {
@@ -592,15 +691,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginVertical: 20,
     gap: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   acctContainer: {
     borderBottomColor: Colors.ash,
     borderBottomWidth: 1,
     paddingBottom: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   acctDetContainer: {
     gap: 10,
@@ -610,33 +709,33 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   bankSelect: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     borderWidth: 1,
     borderColor: Colors.ash,
     padding: 12,
-    alignItems: 'center',
+    alignItems: "center",
     borderRadius: 10,
   },
   amountWrapper: {
     gap: 10,
   },
-  amountText: {textAlign: 'right'},
+  amountText: { textAlign: "right" },
   grayButton: {
     backgroundColor: Colors.memojiBackground,
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 20,
     paddingVertical: 15,
     flexGrow: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 10,
   },
   buttonGroup: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 20,
-    marginTop: 'auto',
+    marginTop: "auto",
     paddingVertical: 30,
   },
 });

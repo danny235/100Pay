@@ -19,18 +19,26 @@ export interface UserData {
   createdAt: string;
 }
 
+export interface BankTransferT {
+  amount: number;
+  app_id: string;
+  destination_wallet: string;
+  pin: string;
+  description: string;
+  account: {
+    account_number: string;
+    account_name: string;
+    bank_code: string;
+    bank_name: string;
+  };
+}
 
 interface ResetTransactionPin {
   code: any;
   newPin: any;
 }
 
-
-
-export const validatePayId = async (
-  payId: string,
-  token: any,
-) => {
+export const validatePayId = async (payId: string, token: any) => {
   let config = {
     method: "post",
     headers: {
@@ -38,7 +46,7 @@ export const validatePayId = async (
       "Auth-Token": token,
     },
     data: {
-      payId
+      payId,
     },
   };
 
@@ -59,7 +67,7 @@ export const validatePayId = async (
 
 export const validateBankAccount = async (
   data: ValidateBankAccountT,
-  token: any,
+  token: any
 ) => {
   let config = {
     method: "post",
@@ -69,7 +77,7 @@ export const validateBankAccount = async (
     },
     data: {
       accountNumber: data.accountNumber,
-      bankCode: data.bankCode
+      bankCode: data.bankCode,
     },
   };
 
@@ -88,55 +96,24 @@ export const validateBankAccount = async (
   }
 };
 
-// send code
-export const requestResetTransactionPinCode = async (apikey, token) => {
+export const bankTransfer = async (data: BankTransferT, token: any) => {
   let config = {
     method: "post",
     headers: {
       "Content-Type": "application/json",
-      "Api-Key": apikey,
       "Auth-Token": token,
     },
+    data,
   };
 
   try {
     const res = await axios(
-      `https://api.100pay.co/api/v1/user/send-code`,
+      `https://api.100pay.co/api/v1/user/transfer`,
       config
     );
 
     return {
-      message: "Code Sent! please check your email",
-      data: res.data,
-    };
-  } catch (err: any) {
-    throw Error(err.response.data);
-  }
-};
-
-export const resetTransactionPin = async (
-  values: ResetTransactionPin,
-  apiKey: any,
-  token: any
-) => {
-  let config = {
-    method: "post",
-    headers: {
-      "Content-Type": "application/json",
-      "Api-Key": apiKey,
-      "Auth-Token": token,
-    },
-    data: values,
-  };
-
-  try {
-    const res = await axios(
-      `https://api.100pay.co/api/v1/user/pin-reset`,
-      config
-    );
-
-    return {
-      message: "Transaction Pin Reset Successful",
+      message: "Transfer complete 🎊!",
       data: res.data,
     };
   } catch (err: any) {

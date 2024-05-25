@@ -14,14 +14,14 @@ export async function GetApp(token: string) {
     },
   };
   try {
-    const response = await axios.get(
+    const response = await axios(
       'https://api.100pay.co/api/v1/user/apps',
       config,
     );
 
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     
-    return error;
+    throw Error(error.response.data);
   }
 }

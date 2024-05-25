@@ -6,6 +6,7 @@ import {
   useWindowDimensions,
   Pressable,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { isObject, useFormik } from "formik";
 import * as yup from "yup";
@@ -41,6 +42,8 @@ import { validateBankAccount, validatePayId } from "../../../../apis/pay";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../app/store";
 import { UserAppType } from "../../../../features/user/userSlice";
+import PayLogo from "../../../../components/Logo/PayLogo";
+
 
 const validationSchema = yup.object().shape({
   recipientNameOrID: yup
@@ -56,7 +59,7 @@ type PayHomeT = {
   navigation: NavigationProp<RootStackParamList>;
 };
 
-type BankT = {
+export type BankT = {
   id: number;
   name: string;
   slug: string;
@@ -74,20 +77,28 @@ type BankT = {
   updatedAt: string;
 };
 
+export type BankDetailsT = {
+  account_name: string;
+  account_number: string;
+  bank_id: number;
+};
 
 export default function PayHome({ navigation }: PayHomeT) {
   const { fontScale } = useWindowDimensions();
   const [submitted, setSubmitted] = useState(false); // State to track form submission
   const [payIdDetails, setPayIdDetails] = useState<UserAppType>(null);
-  const [bankDetails, setBankDetails] = useState<BankT>(null);
+  const [showPayIdDetails, setShowPayIdDetails] = useState(false)
+  const [bankDetails, setBankDetails] = useState<BankDetailsT>(null);
+  const [showBankDetails, setShowBankDetails] = useState(false)
   const [fetching, setFetching] = useState(false);
-  const [activeBank, setActiveBank] = useState(null);
+  const [activeBank, setActiveBank] = useState<BankT>(null);
+  const [showActiveBank, setShowActiveBank] = useState(false)
   const [bankOpen, setBankOpen] = useState(false);
   const [accountNum, setAccountNum] = useState("");
   const [showBankForm, setShowBankForm] = useState(false);
   const fetchTimeoutRef = useRef(null);
   const resetTimeoutRef = useRef(null);
-  const {showToast} = useToast()
+  const { showToast } = useToast();
   const {
     userApps,
     activeUserApp,
@@ -99,48 +110,52 @@ export default function PayHome({ navigation }: PayHomeT) {
   } = useSelector((state: RootState) => state.user);
 
   const validateId = async (payId) => {
-    setFetching(true)
+    setFetching(true);
     try {
-      const res = await validatePayId(payId, token)
+      const res = await validatePayId(payId, token);
 
-      if(res.data) {
-        setFetching(false)
-        setPayIdDetails(res.data)
+      if (res.data) {
+        setFetching(false);
+        setPayIdDetails(res.data);
       }
-    } catch(err) {
-      setFetching(false)
-      showToast(err?.message, "error")
+    } catch (err) {
+      setFetching(false);
+      showToast(err?.message, "error");
     }
-  }
+  };
 
   const validateBank = async (accountNumber, bank, token) => {
-    setActiveBank(bank)
+    setActiveBank(bank);
+    setShowBankForm(false);
+    setShowActiveBank(true)
     const data = {
       accountNumber,
-      bankCode: bank?.code
-    }
-    setFetching(true)
+      bankCode: bank?.code,
+    };
+    setFetching(true);
     try {
-      const res = await validateBankAccount(data, token)
+      const res = await validateBankAccount(data, token);
 
-      if(res.data) {
-        setFetching(false)
-        setBankDetails(res.data)
+      if (res.data) {
+        console.log(res.data?.data, "from line 140")
+        setBankDetails(res.data?.data);
+        setShowActiveBank(false);
+        setFetching(false);
+        setShowBankDetails(true)
       }
-    } catch(err) {
-      setFetching(false)
-      showToast(err?.message, "error")
+    } catch (err) {
+      setFetching(false);
+      showToast(err?.message, "error");
     }
-  }
+  };
 
   useEffect(() => {
     if (accountNum.length === 6) {
       fetchTimeoutRef.current = setTimeout(() => {
-       validateId(accountNum)
+        validateId(accountNum);
       }, 1000);
     } else if (accountNum.length === 10) {
       setShowBankForm(true);
-      
     } else if (accountNum.length < 10) {
       setShowBankForm(false);
     }
@@ -149,7 +164,6 @@ export default function PayHome({ navigation }: PayHomeT) {
       if (fetchTimeoutRef.current) {
         clearTimeout(fetchTimeoutRef.current);
       }
-    
     };
   }, [accountNum]);
 
@@ -199,20 +213,35 @@ export default function PayHome({ navigation }: PayHomeT) {
             </Pressable>
           </View>
           <View style={{ marginTop: 12, gap: 24 }}>
-            {submitted && (
+            {payIdDetails && (
               <Pressable
-                onPress={() => navigation.navigate("SendPayment")}
-                style={{
-                  backgroundColor: Colors.memojiBackground,
-                  padding: 16,
-                  borderRadius: 12,
-                }}
+              disabled={true}
+                onPress={() =>
+                  navigation.navigate("SendPayment", {
+                    pay: payIdDetails,
+                  })
+                }
+                style={styles.accountDetailPressable}
               >
                 <SemiBoldText style={{ color: Colors.balanceBlack }}>
                   Send Money to:
                 </SemiBoldText>
-                <View style={{ marginTop: 12, marginBottom: -24 }}>
-                  <UserPayList renderSingleItem />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
+                  <PayLogo width={20} height={20} />
+                  <MediumText
+                    style={{
+                      color: Colors.balanceBlack,
+                      fontSize: 17 / fontScale,
+                    }}
+                  >
+                    {payIdDetails.app_name}
+                  </MediumText>
                 </View>
               </Pressable>
             )}
@@ -220,11 +249,7 @@ export default function PayHome({ navigation }: PayHomeT) {
             {showBankForm && (
               <Pressable
                 onPress={() => setBankOpen(true)}
-                style={{
-                  backgroundColor: Colors.memojiBackground,
-                  padding: 16,
-                  borderRadius: 12,
-                }}
+                style={styles.accountDetailPressable}
               >
                 <SemiBoldText
                   style={{
@@ -253,6 +278,118 @@ export default function PayHome({ navigation }: PayHomeT) {
                 </View>
               </Pressable>
             )}
+
+            {showActiveBank && (
+              <Pressable
+                onPress={() => {
+                  setBankOpen(true);
+                }}
+                style={styles.accountDetailPressable}
+              >
+                <SemiBoldText
+                  style={{
+                    color: Colors.balanceBlack,
+                    fontSize: 17 / fontScale,
+                  }}
+                >
+                  Select Bank:
+                </SemiBoldText>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
+                  <PayLogo width={20} height={20} />
+                  <MediumText
+                    style={{
+                      color: Colors.balanceBlack,
+                      fontSize: 17 / fontScale,
+                    }}
+                  >
+                    {activeBank.name}
+                  </MediumText>
+                </View>
+                <View
+                  style={{
+                    marginTop: 12,
+                    flexDirection: "row",
+                    gap: 10,
+                    alignItems: "center",
+                  }}
+                >
+                  <RegularText style={{ fontSize: 15 / fontScale }}>
+                    Other banks
+                  </RegularText>
+                  <ArrowRight
+                    color={Colors.primary}
+                    variant="TwoTone"
+                    size={20}
+                  />
+                </View>
+              </Pressable>
+            )}
+
+            {showBankDetails && (
+              <Pressable
+                onPress={() =>
+                  navigation.navigate("SendPayment", {
+                    bankDetails: bankDetails,
+                    bank: activeBank
+                  })
+                }
+                style={styles.accountDetailPressable}
+              >
+                {/* <SemiBoldText
+                  style={{
+                    color: Colors.balanceBlack,
+                    fontSize: 17 / fontScale,
+                  }}
+                >
+                  Select Bank:
+                </SemiBoldText> */}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
+                  <PayLogo width={20} height={20} />
+                  <MediumText
+                    style={{
+                      color: Colors.balanceBlack,
+                      fontSize: 17 / fontScale,
+                    }}
+                  >
+                    {activeBank.name}
+                  </MediumText>
+                </View>
+                <View
+                  style={{
+                    marginTop: 12,
+                    flexDirection: "row",
+                    gap: 10,
+                    alignItems: "center",
+                  }}
+                >
+                  <RegularText
+                    style={{ fontSize: 15 / fontScale, color: Colors.grayText }}
+                  >
+                    Name:
+                  </RegularText>
+                  <RegularText style={{ fontSize: 15 / fontScale }}>
+                    {bankDetails.account_name}
+                  </RegularText>
+                  {/* <ArrowRight
+                    color={Colors.primary}
+                    variant="TwoTone"
+                    size={20}
+                  /> */}
+                </View>
+              </Pressable>
+            )}
             <View>
               <Memojis onPress={() => navigation.navigate("SendPayment")} />
 
@@ -277,7 +414,7 @@ export default function PayHome({ navigation }: PayHomeT) {
               >
                 Send Money To:
               </SemiBoldText>
-              <UserPayList onPress={() => navigation.navigate("SendPayment")} />
+              <UserPayList onPress={() => null} />
             </View>
           </View>
         </View>
@@ -340,5 +477,11 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     width: 40,
     height: 40,
+  },
+  accountDetailPressable: {
+    backgroundColor: Colors.memojiBackground,
+    padding: 16,
+    borderRadius: 12,
+    gap: 20,
   },
 });

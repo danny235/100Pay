@@ -30,7 +30,7 @@ import PhoneNumber from '../screens/authentication/PhoneNumber';
 import SecureCode from '../screens/authentication/SecureCode';
 import SetPassword from '../screens/authentication/SetPassword';
 import ConfirmPayment from '../screens/main/home/PayFlow/ConfirmPayment';
-import PayHome from '../screens/main/home/PayFlow/Pay';
+import PayHome, { BankDetailsT, BankT } from '../screens/main/home/PayFlow/Pay';
 import SendPayment from '../screens/main/home/PayFlow/SendPayment';
 import MainTabs from './MainTabs';
 import Invitation from '../screens/authentication/Invitation';
@@ -40,6 +40,7 @@ import { useEffect } from 'react';
 import { RootState } from '../app/store';
 import { ChargeType } from '../features/account/accountSlice';
 import PersonalInfo from '../screens/authentication/PersonalInfo';
+import { UserAppType } from '../features/user/userSlice';
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -60,7 +61,13 @@ export type RootStackParamList = {
   Home: undefined;
   Pay: undefined;
   Scan: undefined;
-  SendPayment: undefined;
+  SendPayment: {
+    screen?: string;
+    pay?: UserAppType;
+    bankDetails?: BankDetailsT,
+    bank?: BankT;
+    initial?: boolean;
+  };
   ConfirmPayment: undefined;
   TransactionPin: undefined;
   PaymentComplete: undefined;

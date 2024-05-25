@@ -115,17 +115,17 @@ export default function RecieveModal({
         });
       },
     },
-    {
-      id: 2,
-      name: "Asset Deposit",
-      icon: <CoinIcon />,
-      cb: () => {
-        handlePresentRecieveModalClose();
-        navigation.replace("MainTabs", {
-          screen: "Asset",
-        });
-      },
-    },
+    // {
+    //   id: 2,
+    //   name: "Asset Deposit",
+    //   icon: <CoinIcon />,
+    //   cb: () => {
+    //     handlePresentRecieveModalClose();
+    //     navigation.replace("MainTabs", {
+    //       screen: "Asset",
+    //     });
+    //   },
+    // },
     {
       id: 3,
       name: "Payment Link",
@@ -136,6 +136,7 @@ export default function RecieveModal({
           screen: "Discover",
           params: {
             screen: "GenerateLink",
+            initial: false
           },
         });
       },

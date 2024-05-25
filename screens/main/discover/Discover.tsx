@@ -58,7 +58,7 @@ export default function Discover({navigation}: DiscoverT): React.JSX.Element {
           <ArrowForwardIcon color={Colors.iconColor} />
         </Pressable>
 
-        <Pressable
+        {/* <Pressable
           onPress={() => navigation.navigate('Payouts')}
           style={styles.discoverCTA}>
           <Money4 color={Colors.primary} size={24} />
@@ -76,7 +76,7 @@ export default function Discover({navigation}: DiscoverT): React.JSX.Element {
           <View style={{marginLeft: 'auto'}}>
             <ArrowForwardIcon color={Colors.iconColor} />
           </View>
-        </Pressable>
+        </Pressable> */}
 
         <Pressable style={styles.discoverCTA}>
           <Money4 color={Colors.primary} size={24} />

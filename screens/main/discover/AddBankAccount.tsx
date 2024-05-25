@@ -29,6 +29,7 @@ import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet
 import { CustomBackdrop } from '../../../components/ChooseAccountBalance/ChooseAccountBalance';
 import {banks} from "../../../components/banks.json"
 import AlertModal from '../../../components/Alert/AlertModal';
+import BankList from '../../../components/banksList/BankList';
 
 type BankT = {
   name?: string;
@@ -62,6 +63,7 @@ export default function AddBankAccount({navigation}: AddBankAccountT) {
   const [activeBank, setActiveBank] = useState<BankT | null>(null); // State to store active bank
   const [filteredBanks, setFilteredBanks] = useState<BankT[]>(banks); // State to store filtered banks, initially set to all banks
   const [showModal, setShowModal] = useState(false)
+  const [bankOpen, setBankOpen] = useState(false)
 
  
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -238,85 +240,7 @@ export default function AddBankAccount({navigation}: AddBankAccountT) {
         </Formik>
       </KeyboardAwareScrollView>
 
-      <BottomSheetModalProvider>
-        <BottomSheetModal
-          ref={bottomSheetModalRef}
-          index={1}
-          snapPoints={snapPoints}
-          onChange={handleSheetChanges}
-          enableContentPanningGesture={false}
-          enablePanDownToClose={false}
-          handleIndicatorStyle={{
-            borderWidth: 3,
-            borderColor: Colors.ash,
-            width: '20%',
-          }}
-          backdropComponent={({animatedIndex, style}) => (
-            <CustomBackdrop
-              onPress={handlePresentModalClose}
-              animatedIndex={animatedIndex}
-              style={style}
-            />
-          )}
-          animateOnMount={true}>
-          <View style={{paddingVertical: 20, gap: 20, paddingHorizontal: 20}}>
-            <CustomHeader
-              text={'Select Bank'}
-              icon={
-                useCrypto ? (
-                  <AddCircle
-                    variant="TwoTone"
-                    color={Colors.primary}
-                    size={24}
-                  />
-                ) : (
-                  <Bank variant="TwoTone" color={Colors.primary} size={24} />
-                )
-              }
-              onPress={handlePresentModalClose}
-            />
-            <View style={styles.searchBox}>
-              <TextInput
-                placeholder="Search assets here"
-                style={{
-                  fontFamily: 'SpaceGrotesk-SemiBold',
-                  color: Colors.black,
-                  width: '70%',
-                  fontSize: 15 / fontScale,
-                }}
-                placeholderTextColor={Colors.grayText}
-                onChangeText={handleSearch} // Call handleSearch on text change
-                value={searchQuery} // Bind searchQuery state to the input value
-              />
-              <CircleIcon color={Colors.grayText} />
-            </View>
-
-            <ScrollView contentContainerStyle={{gap: 10}}>
-              {filteredBanks.map((bank, i) => (
-                <Pressable
-                  onPress={() => {
-                    setActiveBank(bank);
-                    handlePresentModalClose();
-                  }}
-                  key={bank.code}
-                  style={{flexDirection: 'row', gap: 10}}>
-                  <DotIcon />
-                  <MediumText
-                    style={{
-                      fontSize: 14 / fontScale,
-                      borderBottomColor: Colors.ash,
-                      borderBottomWidth: 1,
-                      paddingBottom: 10,
-                      width: '90%',
-                    }}>
-                    {bank.name}
-                  </MediumText>
-                </Pressable>
-              ))}
-            </ScrollView>
-          </View>
-        </BottomSheetModal>
-      </BottomSheetModalProvider>
+     <BankList isOpen={bankOpen} onBankPress={(bank)=>setActiveBank(bank)} onClose={()=> setBankOpen(false)} />
       <AlertModal
         show={showModal}
         icon={<TickCircle color={Colors.primary} variant="TwoTone" size={48} />}

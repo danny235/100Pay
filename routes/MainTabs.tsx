@@ -53,7 +53,7 @@ export default function MainTabs(): React.JSX.Element {
         name="Home"
         component={HomeStackScreen}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         options={({route}) => ({
           headerShown: false,
           tabBarIcon: ({color, size}) => <AssetIcon color={color} />,
@@ -67,7 +67,7 @@ export default function MainTabs(): React.JSX.Element {
         })}
         name="Asset"
         component={AssetStackScreen}
-      />
+      /> */}
       <Tab.Screen
         options={({route}) => ({
           headerShown: false,

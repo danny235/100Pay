@@ -34,6 +34,7 @@ import { RootState } from "../../../app/store";
 import ChooseAccountBalance from "../../../components/ChooseAccountBalance/ChooseAccountBalance";
 import { useToast } from "../../../components/CustomToast/ToastContext";
 import {
+  ArrowDownIcon,
   ArrowFrontIcon,
   CopyIcon,
   NotifictionIcon,
@@ -223,16 +224,16 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     dispatch(
       fetchPaymentsLinks({
         token,
-        apiKey: activeUserApp?.keys?.pub_keys[0].value,
+        apiKey: activeUserApp?.keys?.pub_keys[0]?.value,
       })
     );
     dispatch(
-      fetchBanks({ token, apiKey: activeUserApp?.keys.pub_keys[0].value })
+      fetchBanks({ token, apiKey: activeUserApp?.keys?.pub_keys[0]?.value })
     );
      dispatch(
        fetchPayments({
          token,
-         apiKey: activeUserApp?.keys.pub_keys[0].value,
+         apiKey: activeUserApp?.keys?.pub_keys[0]?.value,
          appId: activeUserApp?._id,
        })
      );
@@ -265,49 +266,50 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
             alignItems: "center",
           }}
         >
-          <View style={{ flexDirection: "row", gap: 10, paddingVertical: 20 }}>
-            <Pressable onPress={() => setShowSwitch(true)}>
-              <Image
-                style={{ borderRadius: 40, height: 40, width: 40 }}
-                source={{
-                  uri: "https://plus.unsplash.com/premium_photo-1703617663829-ac7430988118?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3fHx8ZW58MHx8fHx8",
-                }}
-              />
-            </Pressable>
+          <Pressable
+            onPress={() => setShowSwitch(true)}
+            style={{ flexDirection: "row", gap: 10, paddingVertical: 20 }}
+          >
+            <Image
+              style={{ borderRadius: 40, height: 40, width: 40 }}
+              source={{
+                uri: "https://plus.unsplash.com/premium_photo-1703617663829-ac7430988118?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3fHx8ZW58MHx8fHx8",
+              }}
+            />
 
             <View style={{ gap: 4 }}>
               <BoldText
                 style={{ fontSize: 16 / fontScale, color: Colors.balanceBlack }}
               >
-                {userAppsLoading === "loading" || userAppsLoading === "rejected"
+                {userProfileLoading === "loading" ||
+                userProfileLoading === "rejected"
                   ? "*****"
-                  : userAppsLoading === "success"
-                  ? activeUserApp?.app_name || "*****"
-                  : undefined}
+                  : userProfileLoading === "success"
+                  ? `Hello ${userProfile?.first_name}` || "*****"
+                  : undefined}{" "}
+                👋
               </BoldText>
-              <Pressable
-                onPress={copyToClipboard}
+              <View
+                
                 style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
               >
                 <LightText
                   style={{
-                    textTransform: "uppercase",
                     fontSize: 12 / fontScale,
                     color: Colors.grayText,
                   }}
                 >
-                  Pay ID:{" "}
                   {userAppsLoading === "loading" ||
                   userAppsLoading === "rejected"
                     ? "*****"
                     : userAppsLoading === "success"
-                    ? activeUserApp?.referralCode || "*****"
+                    ? activeUserApp.business_name || "*****"
                     : undefined}
                 </LightText>
-                <CopyIcon />
-              </Pressable>
+                <ArrowDownIcon  />
+              </View>
             </View>
-          </View>
+          </Pressable>
 
           <View style={{ flexDirection: "row", gap: 20 }}>
             <Pressable onPress={() => navigation.navigate("Scan")}>

@@ -136,12 +136,15 @@ export default function PayHome({ navigation }: PayHomeT) {
     try {
       const res = await validateBankAccount(data, token);
 
-      if (res.data) {
+      if (res.data?.status) {
         console.log(res.data?.data, "from line 140")
         setBankDetails(res.data?.data);
         setShowActiveBank(false);
         setFetching(false);
         setShowBankDetails(true)
+      } else {
+        setFetching(false);
+        showToast(res.data?.message, "error");
       }
     } catch (err) {
       setFetching(false);

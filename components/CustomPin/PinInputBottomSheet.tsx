@@ -98,7 +98,7 @@ const PinInputBottomSheet = ({
         style={{zIndex: 2000}}
         backdropComponent={({ animatedIndex, style }) => (
           <CustomBackdrop
-            onPress={()=>null}
+            onPress={()=>onClose()}
             animatedIndex={animatedIndex}
             style={style}
           />

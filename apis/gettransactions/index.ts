@@ -20,6 +20,6 @@ export async function getCharge({token, apiKey}: ChargeT) {
   
     
   } catch (error) {
-    return error
+    throw Error(error.response.data);
   }
 }

@@ -93,6 +93,6 @@ export const getPaymentLinks = async ({token, apiKey}: PaymentT) => {
 
     return response.data;
   } catch (err) {
-    return err;
+    throw Error(err.response.data);
   }
 };

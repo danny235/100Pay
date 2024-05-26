@@ -114,7 +114,7 @@ export default function BankList({ isOpen, onBankPress, onClose }: BankListI) {
             <TextInput
               placeholder="Search assets here"
               style={{
-                fontFamily: "SpaceGrotesk-Medium",
+                fontFamily: "SpaceGroteskMedium",
                 color: Colors.black,
                 width: "70%",
                 fontSize: 15 / fontScale,
@@ -126,7 +126,7 @@ export default function BankList({ isOpen, onBankPress, onClose }: BankListI) {
             <CircleIcon color={Colors.grayText} />
           </View>
 
-          <ScrollView contentContainerStyle={{ gap: 10 }}>
+          <ScrollView style={{gap: 10}} contentContainerStyle={{ gap: 10 }}>
             {filteredBanks.map((bank, i) => (
               <Pressable
                 onPress={() => {
@@ -143,7 +143,7 @@ export default function BankList({ isOpen, onBankPress, onClose }: BankListI) {
                     fontSize: 14 / fontScale,
                     borderBottomColor: Colors.ash,
                     borderBottomWidth: 1,
-                    paddingBottom: 10,
+                    paddingBottom: 20,
                     width: "90%",
                   }}
                 >

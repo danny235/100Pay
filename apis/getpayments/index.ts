@@ -25,7 +25,7 @@ export async function getPayments({token, apiKey, appId}: getPaymentsT) {
     );
     return response.data;
   } catch (error) {
-    return error;
+    throw Error(error.response.data);
   }
 }
 

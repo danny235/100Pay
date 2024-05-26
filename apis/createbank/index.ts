@@ -68,6 +68,6 @@ export const getBankRequest = async ({token, apiKey}: GetBankT) => {
 
     return res.data;
   } catch (err: any) {
-    return err;
+   throw Error(err.response.data);
   }
 };

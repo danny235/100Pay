@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     padding: 8,
     width: "100%",
-    fontFamily: "SpaceGrotesk-Medium",
+    fontFamily: "SpaceGroteskMedium",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 13,
@@ -468,6 +468,7 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     width: "83%",
     padding: 10,
+    fontFamily: "SpaceGroteskMedium",
   },
   qrBtn: {
     backgroundColor: Colors.primary,

@@ -64,7 +64,7 @@ export default function Balance({onBalanceClick}: Props ): React.JSX.Element {
             paddingRight: 10,
             borderRightWidth: 1,
           }}>
-          <WalletIcon />
+          <WalletIcon color={Colors.primary} />
         </View>
         <RegularText style={{fontSize: 15 / fontScale, color: Colors.grayText}}>
           Cash Balance

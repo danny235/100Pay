@@ -143,7 +143,7 @@ export const PhoneIcon: React.FC<Props> = ({
       <Path
         opacity="0.4"
         d="M22 9C22 5.13 18.87 2 15 2"
-        stroke="#EF4444"
+        stroke={color}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -315,20 +315,20 @@ export const EyeLineIcon = ({
   );
 };
 
-export const ForgotPasswordIcon = () => {
+export const ForgotPasswordIcon = ({ width = 24, height = 24, color = "#F20831" }) => {
   return (
-    <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
       <Path
         opacity="0.4"
         d="M11.02 19.5H7.5C6.88 19.5 6.33 19.48 5.84 19.41C3.21 19.12 2.5 17.88 2.5 14.5V9.5C2.5 6.12 3.21 4.88 5.84 4.59C6.33 4.52 6.88 4.5 7.5 4.5H10.96"
-        stroke="#F20831"
+        stroke={color}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <Path
         d="M15.0195 4.5H16.4995C17.1195 4.5 17.6695 4.52 18.1595 4.59C20.7895 4.88 21.4995 6.12 21.4995 9.5V14.5C21.4995 17.88 20.7895 19.12 18.1595 19.41C17.6695 19.48 17.1195 19.5 16.4995 19.5H15.0195"
-        stroke="#F20831"
+        stroke={color}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1069,14 +1069,14 @@ export const LinkIcon = ({
     <Svg width={width} height={height} viewBox="0 0 26 26" fill="none">
       <Path
         d="M16.2383 18.9584H17.8741C21.1458 18.9584 23.8324 16.2826 23.8324 13.0001C23.8324 9.72842 21.1566 7.04175 17.8741 7.04175H16.2383"
-        stroke="#F20831"
+        stroke={color}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <Path
         d="M9.7513 7.04175H8.1263C4.8438 7.04175 2.16797 9.71758 2.16797 13.0001C2.16797 16.2717 4.8438 18.9584 8.1263 18.9584H9.7513"
-        stroke="#F20831"
+        stroke={color}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1084,7 +1084,7 @@ export const LinkIcon = ({
       <Path
         opacity="0.4"
         d="M8.66797 13H17.3346"
-        stroke="#F20831"
+        stroke={color}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"

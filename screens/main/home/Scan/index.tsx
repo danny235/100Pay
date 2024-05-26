@@ -61,6 +61,7 @@ function Scan({ navigation }: Props) {
   //     'ultra-wide-angle-camera',
   //     'wide-angle-camera',
   //     'telephoto-camera',
+ 
   //   ],
   // });
   const [isCameraInitialized, setIsCameraInitialized] = useState(false);
@@ -150,7 +151,7 @@ function toggleCameraFacing() {
   return (
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
       <CustomHeader
-        text="Scan QR code"
+        text="Lens that sheet"
         icon={<ScanRedIcon color={Colors.primary} />}
         onPress={() => navigation.goBack()}
       />
@@ -214,12 +215,9 @@ function toggleCameraFacing() {
       />
       )} */}
       <CameraView
-        barcodeScannerSettings={{
-          barcodeTypes: ["qr"],
-        }}
+        
         facing={facing}
         flash={flashOn ? "on" : "off"}
-        onBarcodeScanned={handleBarCodeScanned}
         // onBarcodeScanned={({data})=> console.log(data)}
         style={StyleSheet.absoluteFill}
         onCameraReady={() => console.log("camera ready")}
@@ -243,7 +241,7 @@ function toggleCameraFacing() {
             colors={["rgba(17, 24, 39, 1)", "rgba(17, 24, 39, 0)"]}
           >
             <CustomHeader
-              text="Scan QR code"
+              text="Lens sheet"
               icon={<ScanRedIcon color={Colors.white} />}
               onPress={() => navigation.goBack()}
               textColor={Colors.white}
@@ -262,10 +260,10 @@ function toggleCameraFacing() {
                 style={{
                   fontSize: 20 / fontScale,
                   textAlign: "center",
-                  color: Colors.white,
+                  color: Colors.white
                 }}
               >
-                Scan code to pay
+                Lens that sheet to pay
               </BoldText>
               <RegularText
                 style={{
@@ -274,8 +272,7 @@ function toggleCameraFacing() {
                   color: Colors.grayText,
                 }}
               >
-                Point the camera to the QR code or load picture with the QR code
-                from your gallery to continue.
+                Point the camera over the sheet to make payment.
               </RegularText>
             </View>
           </LinearGradient>

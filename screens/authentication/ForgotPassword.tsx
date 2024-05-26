@@ -11,6 +11,7 @@ import {NavigationProp} from '@react-navigation/native';
 import Input from '../../components/Input';
 import Header from '../../components/headers/AuthHeader';
 import AuthTitleText from '../../components/headers/AuthTitleText';
+import { PasswordCheck } from 'iconsax-react-native';
 
 const loginSchema = yup.object().shape({
   email: yup.string().required().label('Email').email(),
@@ -30,29 +31,30 @@ export default function ForgotPassword({
       <Header />
 
       <AuthTitleText
-         text="Reset your 100Pay account password"
-         title="Forgot Your Password?"
-        icon={<ForgotPasswordIcon />}
+        text="Reset your 100Pay account password"
+        title="Forgot Your Password?"
+        icon={<PasswordCheck color={Colors.primary} variant="TwoTone" />}
         marginTop={24}
       />
 
       <Formik
         initialValues={{
-          email: '',
+          email: "",
         }}
         onSubmit={async (values, actions) => {
-          console.log('Form values:', values);
+          console.log("Form values:", values);
           try {
             await loginSchema.validate(values);
-            console.log('Form validation passed. Navigating to PhoneNumber...');
-            navigation.navigate('NewPassword');
+            console.log("Form validation passed. Navigating to PhoneNumber...");
+            navigation.navigate("NewPassword");
           } catch (error) {
-            console.error('Form validation failed:', error);
+            console.error("Form validation failed:", error);
           }
         }}
-        validationSchema={loginSchema}>
-        {formikProps => (
-          <View style={{gap: 12, marginTop: 24}}>
+        validationSchema={loginSchema}
+      >
+        {(formikProps) => (
+          <View style={{ gap: 12, marginTop: 24 }}>
             <View>
               <Input
                 placeholder="johndoe@example.com"
@@ -65,16 +67,18 @@ export default function ForgotPassword({
                 placeholderTextColor={Colors?.grayText}
               />
             </View>
-            <View style={{marginLeft: 'auto'}}>
+            <View style={{ marginLeft: "auto" }}>
               <Button
                 variant="primary"
                 isLarge={false}
                 isWide={false}
                 onPress={() => {
                   formikProps.handleSubmit();
-                }}>
+                }}
+              >
                 <MediumText
-                  style={{color: Colors.white, fontSize: 15 / fontScale}}>
+                  style={{ color: Colors.white, fontSize: 15 / fontScale }}
+                >
                   Continue
                 </MediumText>
                 <ArrowRightIcon />

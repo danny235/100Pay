@@ -41,7 +41,7 @@ export default function Discover({navigation}: DiscoverT): React.JSX.Element {
         <Pressable
           style={styles.discoverCTA}
           onPress={() => navigation.navigate('GenerateLink')}>
-          <LinkIcon />
+          <LinkIcon color={Colors.primary} />
           <View style={{gap: 10, flexShrink: 1}}>
             <MediumText style={{fontSize: 17 / fontScale}}>
               Generate Request Link

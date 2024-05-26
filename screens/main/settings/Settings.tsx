@@ -10,7 +10,7 @@ import * as Clipboard from "expo-clipboard";
 import { NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/AppStacks';
 import { useDispatch, useSelector } from 'react-redux';
-import { Login, LoginCurve } from 'iconsax-react-native';
+import { HeartAdd, Login, LoginCurve, MusicPlay, Note, ProfileAdd, ProfileCircle, SecuritySafe } from 'iconsax-react-native';
 import { addToken, logOut, toggleIsLoggedIn } from '../../../features/user/userSlice';
 import { RootState, logoutUser } from '../../../app/store';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -26,6 +26,8 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
   const {userApps, activeUserApp, userAppsError, userAppsLoading, token, userProfile} =
     useSelector((state: RootState) => state.user);
   const dispatch = useDispatch()
+
+
   const logout = () => {
     dispatch(logOut())
     dispatch(clearAccount())
@@ -33,51 +35,51 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
   const settingList = [
     {
       id: 1,
-      title: 'Security',
-      description: 'Password, Biometrics, Payment Pin, Freeze Account...',
-      icon: <SecuritySafeIcon width={27} height={27} />,
+      title: "Business Settings",
+      description: "Business Name, Country, Web Address, Web Hook...",
+      icon: <ProfileCircle variant="TwoTone" width={24} height={24} color={Colors.primary} />,
       onPress: () => null,
     },
     {
       id: 2,
-      title: 'Transactions',
-      description: 'View your transaction history here',
-      icon: <TransactionIcon />,
-      onPress: () => navigation.navigate('Transactions'),
-    },
-    {
-      id: 3,
-      title: 'Referrals',
-      description: 'Refer your friends and earn $Pay Tokens',
-      icon: <ReferralIcon />,
+      title: "Security",
+      description: "Password, Biometrics, Payment Pin, Freeze Account...",
+      icon: <SecuritySafe variant="TwoTone" width={24} height={24} color={Colors.primary} />,
       onPress: () => null,
     },
     {
+      id: 3,
+      title: "Transactions",
+      description: "View your transaction history here",
+      icon: <Note variant="TwoTone" color={Colors.primary} />,
+      onPress: () => navigation.navigate("Transactions"),
+    },
+    {
       id: 4,
-      title: 'Customer Service',
-      description: 'Get solutions to your problem here',
-      icon: <CSServiceIcon />,
+      title: "Referrals",
+      description: "Refer your friends and earn $Pay Tokens",
+      icon: <ProfileAdd variant="TwoTone" color={Colors.primary} />,
       onPress: () => null,
     },
     {
       id: 5,
-      title: 'Rate Our App',
-      description: 'Rate our app on app store and google play store.',
-      icon: <RateIcon />,
+      title: "Customer Service",
+      description: "Get solutions to your problem here",
+      icon: <MusicPlay variant="TwoTone" color={Colors.primary} />,
       onPress: () => null,
     },
     {
       id: 6,
-      title: 'About 100Pay',
-      description: 'Know more about 100 Pay.',
-      icon: <InfoIcon />,
+      title: "Rate Our App",
+      description: "Rate our app on app store and google play store.",
+      icon: <HeartAdd variant="TwoTone" color={Colors.primary} />,
       onPress: () => null,
     },
     {
       id: 7,
-      title: 'Sign Out',
-      description: 'Sign out of your 100Pay account',
-      icon: <LoginCurve variant='TwoTone' color={Colors.primary} size={24} />,
+      title: "Sign Out",
+      description: "Sign out of your Paylens account",
+      icon: <LoginCurve variant="TwoTone" color={Colors.primary} size={24} />,
       onPress: () => logout(),
     },
   ];
@@ -91,62 +93,69 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
         <View
           style={{
             gap: 10,
-            alignItems: 'center',
-            justifyContent: 'center',
+            alignItems: "center",
+            justifyContent: "center",
             marginVertical: 30,
-          }}>
+          }}
+        >
           <Image style={styles.userPhoto} source={Avatar} />
           <BoldText
             style={{
-              textTransform: 'capitalize',
+              textTransform: "capitalize",
               fontSize: 15 / fontScale,
               color: Colors.balanceBlack,
-            }}>
+            }}
+          >
             {userProfile?.first_name} {userProfile?.last_name}
           </BoldText>
           <Pressable
             onPress={copyToClipboard}
-            style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+            style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
+          >
             <LightText
               style={{
-                textTransform: 'uppercase',
+                textTransform: "uppercase",
                 fontSize: 12 / fontScale,
                 color: Colors.grayText,
-              }}>
-              ID:{' '}
-              {userAppsLoading === 'loading' || userAppsLoading === 'rejected'
-                ? '*****'
-                : userAppsLoading === 'success'
-                  ? activeUserApp?.referralCode || '*****'
-                  : undefined}
+              }}
+            >
+              ID:{" "}
+              {userAppsLoading === "loading" || userAppsLoading === "rejected"
+                ? "*****"
+                : userAppsLoading === "success"
+                ? activeUserApp?.referralCode || "*****"
+                : undefined}
             </LightText>
             <CopyIcon />
           </Pressable>
         </View>
-        <View style={{flexDirection: 'row', gap: 20, marginVertical: 20}}>
-          <Pressable style={styles.pressableCTA}>
+        <View style={{ flexDirection: "row", gap: 20, marginVertical: 20 }}>
+          <Pressable onPress={copyToClipboard} style={styles.pressableCTA}>
             <MediumText
               style={{
-                textTransform: 'uppercase',
+                textTransform: "uppercase",
                 fontSize: 12 / fontScale,
                 color: Colors.balanceBlack,
-              }}>
-              {userAppsLoading === 'loading' || userAppsLoading === 'rejected'
-                ? '*****'
-                : userAppsLoading === 'success'
-                  ? activeUserApp?.referralCode || '*****'
-                  : undefined}
+              }}
+            >
+              {userAppsLoading === "loading" || userAppsLoading === "rejected"
+                ? "*****"
+                : userAppsLoading === "success"
+                ? activeUserApp?.referralCode || "*****"
+                : undefined}
             </MediumText>
             <CopyIcon />
           </Pressable>
           <Pressable
-            onPress={() => navigation.navigate('EditProfile')}
-            style={styles.pressableCTA}>
+            onPress={() => navigation.navigate("EditProfile")}
+            style={styles.pressableCTA}
+          >
             <MediumText
               style={{
                 fontSize: 12 / fontScale,
                 color: Colors.balanceBlack,
-              }}>
+              }}
+            >
               Edit Profile
             </MediumText>
             <EditIcon />
@@ -160,25 +169,29 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
                 key={setting.id}
                 style={{
                   gap: 20,
-                  flexDirection: 'row',
-                  alignItems: 'center',
+                  flexDirection: "row",
+                  alignItems: "center",
                   marginVertical: 15,
+                  flexWrap: "wrap",
                 }}
-                onPress={setting.onPress}>
+                onPress={setting.onPress}
+              >
                 {setting.icon}
-                <View style={{gap: 6}}>
+                <View style={{ gap: 6, flexBasis: "70%" }}>
                   <MediumText
                     style={{
                       fontSize: 15 / fontScale,
                       color: Colors.balanceBlack,
-                    }}>
+                    }}
+                  >
                     {setting.title}
                   </MediumText>
                   <LightText
                     style={{
                       fontSize: 13 / fontScale,
                       color: Colors.grayText,
-                    }}>
+                    }}
+                  >
                     {setting.description}
                   </LightText>
                 </View>

@@ -21,6 +21,7 @@ import Header from '../../components/headers/AuthHeader';
 import AuthTitleText from '../../components/headers/AuthTitleText';
 import {TouchableOpacity} from 'react-native';
 import {Text} from 'react-native';
+import { PasswordCheck } from 'iconsax-react-native';
 
 interface RootAuthI {
   navigation: NavigationProp<any>;
@@ -63,34 +64,36 @@ export default function SecureCode({navigation}: RootAuthI): React.JSX.Element {
       <AuthTitleText
         text="Reset your 100Pay account password"
         title="Forgot Your Password?"
-        icon={<MailIcon />}
+        icon={<PasswordCheck color={Colors.primary} variant="TwoTone" />}
         marginTop={24}
       />
 
-      <View style={{marginTop: 32}}>
-        <MediumText style={{color: Colors.grayText, marginBottom: 4}}>
+      <View style={{ marginTop: 32 }}>
+        <MediumText style={{ color: Colors.grayText, marginBottom: 4 }}>
           Secure Code
         </MediumText>
-        <View style={{flexDirection: 'row', marginBottom: 48}}>
+        <View style={{ flexDirection: "row", marginBottom: 48 }}>
           {[1, 2, 3, 4, 5, 6].map((_, index) => (
             <View
               key={index}
               style={{
                 flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
+                justifyContent: "center",
+                alignItems: "center",
                 borderWidth: 1,
                 borderColor: Colors.ash,
                 borderRadius: 8,
                 marginRight: index !== 5 ? 8 : 0,
                 height: 60,
-              }}>
-              <BoldText style={{color: Colors.grayText, fontSize: 16}}>
+              }}
+            >
+              <BoldText style={{ color: Colors.grayText, fontSize: 16 }}>
                 {phoneNumber.length > index ? (
                   phoneNumber[index]
                 ) : (
                   <MediumText
-                    style={{opacity: 0.4, fontFamily: 'SpaceGrotesk-Medium'}}>
+                    style={{ opacity: 0.4, fontFamily: "SpaceGrotesk-Medium" }}
+                  >
                     0
                   </MediumText>
                 )}
@@ -99,7 +102,8 @@ export default function SecureCode({navigation}: RootAuthI): React.JSX.Element {
           ))}
         </View>
         <LightText
-          style={{color: Colors?.grayText, marginTop: -24, marginBottom: 24}}>
+          style={{ color: Colors?.grayText, marginTop: -24, marginBottom: 24 }}
+        >
           Enter the confirmation code sent to your email here.
         </LightText>
         <View style={styles.buttonContainer}>
@@ -108,8 +112,9 @@ export default function SecureCode({navigation}: RootAuthI): React.JSX.Element {
             isLarge={false}
             isWide={false}
             onPress={() => {
-              navigation.navigate('SetPassword');
-            }}>
+              navigation.navigate("SetPassword");
+            }}
+          >
             <MediumText style={styles.buttonText}>Continue</MediumText>
             <ArrowRightIcon />
           </Button>
@@ -130,35 +135,38 @@ export default function SecureCode({navigation}: RootAuthI): React.JSX.Element {
                 style={{
                   // backgroundColor: Colors?.searchInput,
                   padding: 12,
-                  textAlign: 'center',
+                  textAlign: "center",
                 }}
                 key="clear"
-                onPress={() => handleClearPin()}>
+                onPress={() => handleClearPin()}
+              >
                 Clear all
               </MediumText>,
               0,
               <TouchableOpacity
                 style={{
                   //backgroundColor: Colors?.searchInput,
-                  width: '100%',
-                  height: '100%',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  width: "100%",
+                  height: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
                 key="backspace"
-                onPress={handleDelete}>
+                onPress={handleDelete}
+              >
                 <BackSpaceIcon />
               </TouchableOpacity>,
             ].map((item, index) => (
               <TouchableOpacity
                 key={index}
                 onPress={() => {
-                  if (typeof item === 'number') {
+                  if (typeof item === "number") {
                     handleKeyPress(item);
                   }
                 }}
-                style={styles.gridItem}>
-                {typeof item === 'number' ? (
+                style={styles.gridItem}
+              >
+                {typeof item === "number" ? (
                   <Text style={styles.gridItemText}>{item}</Text>
                 ) : (
                   item

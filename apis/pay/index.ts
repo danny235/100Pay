@@ -28,7 +28,7 @@ export interface BankTransferT {
   account: {
     account_number: string;
     account_name: string;
-    bank_code: string;
+    bankCode: string;
     bank_name: string;
   };
 }
@@ -100,8 +100,7 @@ export const bankTransfer = async (data: BankTransferT, token: any) => {
   let config = {
     method: "post",
     headers: {
-      "Content-Type": "application/json",
-      "Auth-Token": token,
+      "auth-Token": token,
     },
     data,
   };

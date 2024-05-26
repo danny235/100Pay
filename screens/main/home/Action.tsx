@@ -15,13 +15,13 @@ export default function Action({onPayPress, onRecievePress}: ActionProps): React
   return (
     <View style={{gap: 20, flexDirection: 'row'}}>
       <Pressable onPress={onPayPress} style={styles.btn}>
-        <PayIcon />
+        <PayIcon color={Colors.primary} />
         <MediumText style={{fontSize: 15 / fontScale, color: Colors.balanceBlack}}>
           Pay
         </MediumText>
       </Pressable>
       <Pressable onPress={onRecievePress} style={styles.btn}>
-        <RecieveIcon />
+        <RecieveIcon color={Colors.primary} />
         <MediumText style={{fontSize: 15 / fontScale, color: Colors.balanceBlack}}>
           Recieve
         </MediumText>

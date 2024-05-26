@@ -39,7 +39,7 @@ export default function CreateAccount({
       <AuthTitleText
         text="Hello, tell us your email address so that we can get you started on this journey."
         title="Your email"
-        icon={<MailIcon />}
+        icon={<MailIcon color={Colors.primary} />}
         marginTop={24}
       />
 

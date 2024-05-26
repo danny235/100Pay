@@ -56,7 +56,7 @@ export default function RootAuth({navigation}: RootAuthI) {
               }}>
               Create
             </MediumText>
-            <AddIcon />
+            <AddIcon color={Colors.primary} />
           </View>
         </Pressable>
         <Pressable
@@ -78,7 +78,7 @@ export default function RootAuth({navigation}: RootAuthI) {
               }}>
               Sign in
             </MediumText>
-            <ArrowForwardIcon />
+            <ArrowForwardIcon color={Colors.primary} />
           </View>
         </Pressable>
       </View>

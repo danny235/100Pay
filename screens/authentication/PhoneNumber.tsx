@@ -148,7 +148,7 @@ export default function PhoneNumber({
           <AuthTitleText
             text="Confirm your country code and input your phone number to continue."
             title="Your Phone Number"
-            icon={<PhoneIcon />}
+            icon={<PhoneIcon color={Colors.primary} />}
             marginTop={24}
           />
           <Pressable

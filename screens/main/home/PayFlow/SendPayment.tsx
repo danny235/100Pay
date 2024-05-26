@@ -169,7 +169,7 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
         account: {
           account_number: bankDetails.account_number,
           account_name: bankDetails.account_name,
-          bank_code: bank.code,
+          bankCode: bank.code,
           bank_name: bank.name,
         },
       };

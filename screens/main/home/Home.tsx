@@ -303,7 +303,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
                   userAppsLoading === "rejected"
                     ? "*****"
                     : userAppsLoading === "success"
-                    ? activeUserApp.business_name || "*****"
+                    ? activeUserApp?.business_name || "*****"
                     : undefined}
                 </LightText>
                 <ArrowDownIcon  />

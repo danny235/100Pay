@@ -16,7 +16,7 @@ const TensorCamera = cameraWithTensors(CameraView);
 
 type CameraT = {
   onPictureTaken?: (photo) => void;
-  isVisible: boolean
+  isVisible: boolean;
 };
 
 const CustomCamera = ({ onPictureTaken, isVisible }: CameraT) => {
@@ -84,88 +84,92 @@ const CustomCamera = ({ onPictureTaken, isVisible }: CameraT) => {
       const loadedModel = await cocossd.load();
       setModel(loadedModel);
     })();
-  }, [Camera]);
+  }, [Camera, cameraRef]);
 
-//   if (hasPermission === null) {
-//     return (
-//       <View style={{ flex: 1, backgroundColor: Colors.white }}>
-//         <View
-//           style={{
-//             justifyContent: "center",
-//             alignItems: "center",
-//             flex: 1,
-//             backgroundColor: Colors.white,
-//             gap: 10,
-//           }}
-//         >
-//           <RegularText
-//             style={{
-//               fontSize: 20 / fontScale,
-//               textAlign: "center",
-//             }}
-//           >
-//             No camera device please grant access!
-//           </RegularText>
-//           <Button
-//             isLarge={false}
-//             isWide={false}
-//             variant="primary"
-//             onPress={requestPermission}
-//           >
-//             <RegularText
-//               style={{
-//                 fontSize: 15 / fontScale,
-//                 textAlign: "center",
-//                 color: Colors.white,
-//               }}
-//             >
-//               Grant access
-//             </RegularText>
-//           </Button>
-//         </View>
-//       </View>
-//     );
-//   }
+  useEffect(() => {
+    takePicture();
+  }, [cameraRef]);
 
-//   if (hasPermission === false)
-//     return (
-//       <View style={{ flex: 1, backgroundColor: Colors.white }}>
-//         <View
-//           style={{
-//             justifyContent: "center",
-//             alignItems: "center",
-//             flex: 1,
-//             backgroundColor: Colors.white,
-//             gap: 10,
-//           }}
-//         >
-//           <RegularText
-//             style={{
-//               fontSize: 20 / fontScale,
-//               textAlign: "center",
-//             }}
-//           >
-//             No camera device please grant access!
-//           </RegularText>
-//           <Button
-//             isLarge={false}
-//             isWide={false}
-//             variant="primary"
-//             onPress={requestPermission}
-//           >
-//             <RegularText
-//               style={{
-//                 fontSize: 15 / fontScale,
-//                 textAlign: "center",
-//                 color: Colors.white,
-//               }}
-//             >
-//               Grant access
-//             </RegularText>
-//           </Button>
-//         </View>
-//       </View>
-//     );
+  //   if (hasPermission === null) {
+  //     return (
+  //       <View style={{ flex: 1, backgroundColor: Colors.white }}>
+  //         <View
+  //           style={{
+  //             justifyContent: "center",
+  //             alignItems: "center",
+  //             flex: 1,
+  //             backgroundColor: Colors.white,
+  //             gap: 10,
+  //           }}
+  //         >
+  //           <RegularText
+  //             style={{
+  //               fontSize: 20 / fontScale,
+  //               textAlign: "center",
+  //             }}
+  //           >
+  //             No camera device please grant access!
+  //           </RegularText>
+  //           <Button
+  //             isLarge={false}
+  //             isWide={false}
+  //             variant="primary"
+  //             onPress={requestPermission}
+  //           >
+  //             <RegularText
+  //               style={{
+  //                 fontSize: 15 / fontScale,
+  //                 textAlign: "center",
+  //                 color: Colors.white,
+  //               }}
+  //             >
+  //               Grant access
+  //             </RegularText>
+  //           </Button>
+  //         </View>
+  //       </View>
+  //     );
+  //   }
+
+  //   if (hasPermission === false)
+  //     return (
+  //       <View style={{ flex: 1, backgroundColor: Colors.white }}>
+  //         <View
+  //           style={{
+  //             justifyContent: "center",
+  //             alignItems: "center",
+  //             flex: 1,
+  //             backgroundColor: Colors.white,
+  //             gap: 10,
+  //           }}
+  //         >
+  //           <RegularText
+  //             style={{
+  //               fontSize: 20 / fontScale,
+  //               textAlign: "center",
+  //             }}
+  //           >
+  //             No camera device please grant access!
+  //           </RegularText>
+  //           <Button
+  //             isLarge={false}
+  //             isWide={false}
+  //             variant="primary"
+  //             onPress={requestPermission}
+  //           >
+  //             <RegularText
+  //               style={{
+  //                 fontSize: 15 / fontScale,
+  //                 textAlign: "center",
+  //                 color: Colors.white,
+  //               }}
+  //             >
+  //               Grant access
+  //             </RegularText>
+  //           </Button>
+  //         </View>
+  //       </View>
+  //     );
 
   return (
     <Animated.View
@@ -183,7 +187,7 @@ const CustomCamera = ({ onPictureTaken, isVisible }: CameraT) => {
         <TensorCamera
           ref={cameraRef}
           style={styles.camera}
-          onCameraReady={() => console.log("camera ready")}
+          //   onCameraReady={() => console.log("camera ready")}
           facing={"back"}
           cameraTextureWidth={1920}
           cameraTextureHeight={1080}

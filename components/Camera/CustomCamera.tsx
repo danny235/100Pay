@@ -133,7 +133,7 @@ const CustomCamera = ({ onPictureTaken, isVisible }: CameraT) => {
         {
           Platform.OS === "web"
             ? <>
-              <Webcam style={styles.camera} ref={webcamRef} className="webcam" />
+              <Webcam  style={styles.camera} ref={webcamRef} className="webcam" />
               <canvas ref={canvasRef} className="canvas" />
             </>
             : <CameraView ref={cameraRef} style={StyleSheet.absoluteFillObject} />

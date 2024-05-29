@@ -24,7 +24,9 @@
           "recordAudioAndroid": true
         }
       ],
+
       "expo-router"
+      
     ],
     "web": {
       "output": "single",

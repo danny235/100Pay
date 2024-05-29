@@ -113,10 +113,15 @@ export default function PayHome({ navigation }: PayHomeT) {
     setFetching(true);
     try {
       const res = await validatePayId(payId, token);
+      console.log(typeof res.data, "from line 116")
 
-      if (res.data) {
+      if (res.data !== "") {
         setFetching(false);
+        setShowPayIdDetails(true)
         setPayIdDetails(res.data);
+      } else {
+        setFetching(false);
+        showToast("Error getting lens id 😢", "error");
       }
     } catch (err) {
       setFetching(false);
@@ -158,6 +163,7 @@ export default function PayHome({ navigation }: PayHomeT) {
         validateId(accountNum);
       }, 1000);
     } else if (accountNum.length === 10) {
+      setShowPayIdDetails(false)
       setShowBankForm(true);
     } else if (accountNum.length < 10) {
       setShowBankForm(false);
@@ -216,7 +222,7 @@ export default function PayHome({ navigation }: PayHomeT) {
             </Pressable>
           </View>
           <View style={{ marginTop: 12, gap: 24 }}>
-            {payIdDetails && (
+            {showPayIdDetails && (
               <Pressable
               disabled={true}
                 onPress={() =>

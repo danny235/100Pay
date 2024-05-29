@@ -39,6 +39,12 @@ import { RootStackParamList } from "../../../../routes/AppStacks";
 import { CameraView, Camera, useCameraPermissions, CameraNativeProps } from "expo-camera";
 import { Button } from "../../../../components/Button/Button";
 import { I3DRotate } from "iconsax-react-native";
+import * as tf from "@tensorflow/tfjs";
+import "@tensorflow/tfjs-react-native";
+import * as cocossd from "@tensorflow-models/coco-ssd";
+import { cameraWithTensors } from "@tensorflow/tfjs-react-native";
+
+const TensorCamera = cameraWithTensors(CameraView);
 
 type Props = {
   navigation: NavigationProp<RootStackParamList>;
@@ -56,6 +62,11 @@ function Scan({ navigation }: Props) {
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>()
   const [facing, setFacing] = useState<string | any>("back");
+
+
+   const [model, setModel] = useState(null);
+   const [predictions, setPredictions] = useState([]);
+
   // const device = useCameraDevice('back', {
   //   physicalDevices: [
   //     'ultra-wide-angle-camera',
@@ -104,6 +115,24 @@ function Scan({ navigation }: Props) {
   //   console.log(result.assets, 'from line 82');
   // };
 
+ const handleCameraStream = (images, updatePreview, gl) => {
+   const loop = async () => {
+     console.log("readyyyyy")
+     if (model) {
+       const nextImageTensor = images.next().value;
+       if (nextImageTensor) {
+         const predictions = await model.detect(nextImageTensor);
+         setPredictions(predictions);
+
+         requestAnimationFrame(loop);
+         console.log(predictions, "from line 127")
+       }
+     }
+   };
+   loop();
+   console.log("Test from stream")
+ };
+
   const handleCameraError = (e: any) => {
     console.log("error", e);
   };
@@ -126,7 +155,15 @@ function toggleCameraFacing() {
   useEffect(() => {
     
 
-    requestPermission()
+     (async () => {
+      requestPermission()
+       const { status } = await Camera.requestCameraPermissionsAsync();
+       setHasPermission(status === "granted");
+
+       await tf.ready();
+       const loadedModel = await cocossd.load();
+       setModel(loadedModel);
+     })();
     
 
   }, [Camera]);
@@ -214,14 +251,22 @@ function toggleCameraFacing() {
         style={StyleSheet.absoluteFillObject}
       />
       )} */}
-      <CameraView
-        
-        facing={facing}
-        flash={flashOn ? "on" : "off"}
+      <TensorCamera
+        // facing={facing}
+        // flash={flashOn ? "on" : "off"}
         // onBarcodeScanned={({data})=> console.log(data)}
         style={StyleSheet.absoluteFill}
         onCameraReady={() => console.log("camera ready")}
-        onMountError={() => console.log("There is an error")}
+        // onMountError={() => console.log("There is an error")}
+        facing="back"
+        cameraTextureWidth={1920}
+        cameraTextureHeight={1080}
+        resizeWidth={152}
+        resizeHeight={200}
+        resizeDepth={1}
+        onReady={handleCameraStream}
+        autorender={true}
+        useCustomShadersToResize={false}
       />
       {/* <Camera
         style={StyleSheet.absoluteFillObject}
@@ -260,7 +305,7 @@ function toggleCameraFacing() {
                 style={{
                   fontSize: 20 / fontScale,
                   textAlign: "center",
-                  color: Colors.white
+                  color: Colors.white,
                 }}
               >
                 Lens that sheet to pay

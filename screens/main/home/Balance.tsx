@@ -48,14 +48,15 @@ export default function Balance({onBalanceClick}: Props ): React.JSX.Element {
 
   return (
     <View
-    style={{gap: 10}}
+    style={{gap: 10, justifyContent: "center", alignItems: "center"}}
      >
       <View
       
         style={{
           gap: 10,
           alignItems: "center",
-          flexDirection: "row"
+          flexDirection: "row",
+
         }}>
         <View
          
@@ -66,8 +67,8 @@ export default function Balance({onBalanceClick}: Props ): React.JSX.Element {
           }}>
           <WalletIcon color={Colors.primary} />
         </View>
-        <RegularText style={{fontSize: 15 / fontScale, color: Colors.grayText}}>
-          Cash Balance
+        <RegularText style={{fontSize: 15 / fontScale, color: Colors.grayText, textAlign: "center"}}>
+          Account Balance
         </RegularText>
         <Pressable onPress={() => dispatch(updateShowAccountBalance())}>
           {showAccountBalance ? (
@@ -79,30 +80,30 @@ export default function Balance({onBalanceClick}: Props ): React.JSX.Element {
       </View>
       <View style={{gap: 3}}>
         <SemiBoldText
-          style={{fontSize: 27 / fontScale, color: Colors.balanceBlack}}>
+          style={{fontSize: 27 / fontScale, color: Colors.balanceBlack, textAlign: "center"}}>
           {/* {accountBalanceType === 'naira' ? '₦ 60,000.00' : '100,000$PAY'} */}
           {userAppsLoading !== 'loading' &&
           userAppsLoading !== 'rejected' &&
           showAccountBalance && activeUserApp &&
           Object.keys(activeUserApp).length !== 0
             ? `${activeUserApp?.currency} ${addCommas(activeUserApp?.fiat_balance.toFixed(2))}`
-            : '******'}
+            : '*** *** ***'}
           {userAppsLoading !== 'loading' &&
             userAppsLoading !== 'rejected' &&
             showAccountBalance}
         </SemiBoldText>
-        <LightText style={{fontSize: 11 / fontScale, color: Colors.grayText}}>
-          ≈ $PAY{' '}
-          {userAppsLoading !== 'loading' &&
+        <LightText style={{fontSize: 11 / fontScale, color: Colors.grayText, textAlign: "center"}}>
+          {/* ≈ $PAY{' '} */}
+          {/* {userAppsLoading !== 'loading' &&
           userAppsLoading !== 'rejected' &&
           showAccountBalance
             ? addCommas(activeUserApp?.tokenBalance.toFixed(3))
-            : '*****'}
-          {userAppsLoading !== 'loading' &&
+            : '*****'} */}
+          {/* {userAppsLoading !== 'loading' &&
           userAppsLoading !== 'rejected' &&
           showAccountBalance
             ? activeUserApp?.tokenBalance === 0 && '.00'
-            : ''}
+            : ''} */}
         </LightText>
       </View>
     </View>

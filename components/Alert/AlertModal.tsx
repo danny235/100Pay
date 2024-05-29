@@ -68,9 +68,9 @@ export default function AlertModal({
                     paddingTop: 20
                 },
             ]}>
-                <LinearGradient
+                {/* <LinearGradient
                     style={{width: "100%", height: 100, borderRadius: 10, position: "absolute"}}
-                  colors={['rgba(254, 238, 241, 1)', 'rgba(255, 255, 255, 1)']} />
+                  colors={['rgba(254, 238, 241, 1)', 'rgba(255, 255, 255, 1)']} /> */}
             {icon}
             <View style={{gap: 5}}>
               <BoldText style={{fontSize: 18 / fontScale, textAlign: 'center'}}>

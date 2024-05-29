@@ -62,6 +62,7 @@ import {
   CreateTransactionPin,
   createTransactionPinRequest,
 } from "../../../apis/createtransactionpin";
+import CustomCamera from "../../../components/Camera/CustomCamera";
 
 interface CustomBackdropProps {
   animatedIndex: SharedValue<number>;
@@ -247,23 +248,26 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
   }, [isPinSheetVisible, userProfile?.hasSetPin, userProfileLoading]);
   // console.log(activeUserApp?.keys.pub_keys[0].value)
   return (
-    <CustomView>
+    <View style={{flex: 1}}>
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 40 }}
+        style={{flex: 1}}
+        contentContainerStyle={{ paddingBottom: 40,}}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
-            shouldRasterizeIOS={true}
-            refreshing={refreshing}
-            onRefresh={onRefresh}
+          shouldRasterizeIOS={true}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
           />
         }
       >
+        <CustomCamera />
         <View
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
+            paddingHorizontal: 10
           }}
         >
           <Pressable
@@ -320,7 +324,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
             </Pressable>
           </View>
         </View>
-        <View style={{ gap: 10 }}>
+        <View style={{ gap: 10, paddingHorizontal: 10 }}>
           <Balance />
 
           <Action
@@ -328,7 +332,10 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
             onRecievePress={() => setShowRecieveModal(true)}
           />
         </View>
+        <View style={{paddingHorizontal: 10}}>
+
         <Memojis onPress={() => navigation.navigate("SendPayment")} />
+        </View>
         <View
           style={{
             backgroundColor: Colors.memojiBackground,
@@ -407,6 +414,6 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
           creatingPin
         }
       />
-    </CustomView>
+    </View>
   );
 }

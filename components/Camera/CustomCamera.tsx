@@ -1,6 +1,6 @@
 // CameraComponent.js
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, useWindowDimensions } from "react-native";
+import { View, StyleSheet, useWindowDimensions, Animated } from "react-native";
 import { Camera, CameraView, useCameraPermissions } from "expo-camera";
 import * as ImageManipulator from "expo-image-manipulator";
 import { Colors } from "../Colors";
@@ -16,15 +16,26 @@ const TensorCamera = cameraWithTensors(CameraView);
 
 type CameraT = {
   onPictureTaken?: (photo) => void;
+  isVisible: boolean
 };
 
-const CustomCamera = ({ onPictureTaken }: CameraT) => {
+const CustomCamera = ({ onPictureTaken, isVisible }: CameraT) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef(null);
   const [model, setModel] = useState(null);
   const [predictions, setPredictions] = useState([]);
   const { fontScale, height } = useWindowDimensions();
+
+  const opacity = useRef(new Animated.Value(isVisible ? 1 : 0)).current;
+
+  useEffect(() => {
+    Animated.timing(opacity, {
+      toValue: isVisible ? 1 : 0,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  }, [isVisible]);
 
   useEffect(() => {
     (async () => {
@@ -75,89 +86,89 @@ const CustomCamera = ({ onPictureTaken }: CameraT) => {
     })();
   }, [Camera]);
 
-  if (hasPermission === null) {
-    return (
-      <View style={{ flex: 1, backgroundColor: Colors.white, }}>
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            flex: 1,
-            backgroundColor: Colors.white,
-            gap: 10,
-          }}
-        >
-          <RegularText
-            style={{
-              fontSize: 20 / fontScale,
-              textAlign: "center",
-            }}
-          >
-            No camera device please grant access!
-          </RegularText>
-          <Button
-            isLarge={false}
-            isWide={false}
-            variant="primary"
-            onPress={requestPermission}
-          >
-            <RegularText
-              style={{
-                fontSize: 15 / fontScale,
-                textAlign: "center",
-                color: Colors.white,
-              }}
-            >
-              Grant access
-            </RegularText>
-          </Button>
-        </View>
-      </View>
-    );
-  }
+//   if (hasPermission === null) {
+//     return (
+//       <View style={{ flex: 1, backgroundColor: Colors.white }}>
+//         <View
+//           style={{
+//             justifyContent: "center",
+//             alignItems: "center",
+//             flex: 1,
+//             backgroundColor: Colors.white,
+//             gap: 10,
+//           }}
+//         >
+//           <RegularText
+//             style={{
+//               fontSize: 20 / fontScale,
+//               textAlign: "center",
+//             }}
+//           >
+//             No camera device please grant access!
+//           </RegularText>
+//           <Button
+//             isLarge={false}
+//             isWide={false}
+//             variant="primary"
+//             onPress={requestPermission}
+//           >
+//             <RegularText
+//               style={{
+//                 fontSize: 15 / fontScale,
+//                 textAlign: "center",
+//                 color: Colors.white,
+//               }}
+//             >
+//               Grant access
+//             </RegularText>
+//           </Button>
+//         </View>
+//       </View>
+//     );
+//   }
 
-  if (hasPermission === false)
-    return (
-      <View style={{ flex: 1, backgroundColor: Colors.white }}>
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            flex: 1,
-            backgroundColor: Colors.white,
-            gap: 10,
-          }}
-        >
-          <RegularText
-            style={{
-              fontSize: 20 / fontScale,
-              textAlign: "center",
-            }}
-          >
-            No camera device please grant access!
-          </RegularText>
-          <Button
-            isLarge={false}
-            isWide={false}
-            variant="primary"
-            onPress={requestPermission}
-          >
-            <RegularText
-              style={{
-                fontSize: 15 / fontScale,
-                textAlign: "center",
-                color: Colors.white,
-              }}
-            >
-              Grant access
-            </RegularText>
-          </Button>
-        </View>
-      </View>
-    );
+//   if (hasPermission === false)
+//     return (
+//       <View style={{ flex: 1, backgroundColor: Colors.white }}>
+//         <View
+//           style={{
+//             justifyContent: "center",
+//             alignItems: "center",
+//             flex: 1,
+//             backgroundColor: Colors.white,
+//             gap: 10,
+//           }}
+//         >
+//           <RegularText
+//             style={{
+//               fontSize: 20 / fontScale,
+//               textAlign: "center",
+//             }}
+//           >
+//             No camera device please grant access!
+//           </RegularText>
+//           <Button
+//             isLarge={false}
+//             isWide={false}
+//             variant="primary"
+//             onPress={requestPermission}
+//           >
+//             <RegularText
+//               style={{
+//                 fontSize: 15 / fontScale,
+//                 textAlign: "center",
+//                 color: Colors.white,
+//               }}
+//             >
+//               Grant access
+//             </RegularText>
+//           </Button>
+//         </View>
+//       </View>
+//     );
 
   return (
-    <View
+    <Animated.View
       style={{
         position: "absolute",
         height: "40%",
@@ -165,6 +176,7 @@ const CustomCamera = ({ onPictureTaken }: CameraT) => {
         top: 0,
         borderBottomLeftRadius: 30,
         borderBottomRightRadius: 30,
+        opacity,
       }}
     >
       <View style={styles.cameraWrapper}>
@@ -172,7 +184,7 @@ const CustomCamera = ({ onPictureTaken }: CameraT) => {
           ref={cameraRef}
           style={styles.camera}
           onCameraReady={() => console.log("camera ready")}
-          facing="back"
+          facing={"back"}
           cameraTextureWidth={1920}
           cameraTextureHeight={1080}
           resizeWidth={152}
@@ -193,14 +205,12 @@ const CustomCamera = ({ onPictureTaken }: CameraT) => {
           borderBottomRightRadius: 10,
           overflow: "hidden",
         }}
-        tint="systemUltraThinMaterialLight"
-        intensity={20}
+        tint="dark"
+        intensity={30}
         experimentalBlurMethod="dimezisBlurView"
       />
-    </View>
+    </Animated.View>
   );
-
-
 };
 
 const styles = StyleSheet.create({
@@ -211,7 +221,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     gap: 10,
   },
-  
+
   container: {
     position: "absolute",
     height: "40%",

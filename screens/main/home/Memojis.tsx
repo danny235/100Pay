@@ -59,7 +59,7 @@ const Memojis: React.FC<MemojiT> = ({onPress}) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.memojiBackground,
-    marginVertical: 50,
+
     borderRadius: 12,
     padding: 16,
   },

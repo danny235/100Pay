@@ -9,6 +9,9 @@ import {
   StyleProp,
   View,
   useWindowDimensions,
+  Animated,
+  Easing,
+  StyleSheet
 } from "react-native";
 import { Colors } from "../../../components/Colors";
 import {
@@ -23,7 +26,7 @@ import TransactionItem from "./TransactionItem";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import * as Clipboard from "expo-clipboard";
 import { TouchableOpacity, ViewStyle } from "react-native";
-import Animated, {
+import {
   Extrapolation,
   SharedValue,
   interpolate,
@@ -75,39 +78,7 @@ interface CustomBackdropProps {
   onPress: () => void;
 }
 
-export const CustomBackdrop: React.FC<CustomBackdropProps> = ({
-  animatedIndex,
-  style,
-  onPress,
-}) => {
-  // animated variables
-  const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(
-      animatedIndex.value,
-      [0, 1],
-      [0, 1],
-      Extrapolation.CLAMP
-    ),
-  }));
 
-  // styles
-  const containerStyle = useMemo(
-    () => [
-      style,
-      {
-        backgroundColor: "rgba(255, 255, 255, 0.07)",
-      },
-      containerAnimatedStyle,
-    ],
-    [style, containerAnimatedStyle]
-  );
-
-  return (
-    <Animated.View style={containerStyle}>
-      <TouchableOpacity style={style} onPress={onPress} />
-    </Animated.View>
-  );
-};
 
 interface HomeProps {
   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -140,6 +111,20 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
   const [tPin, setTPin] = useState("");
   const [confirmTPin, setConfirmTPin] = useState("");
   const [creatingPin, setCreatingPin] = useState(false);
+
+
+   const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity value for camera is 1
+
+   const toggleCamera = () => {
+     Animated.timing(fadeAnim, {
+       toValue: showCamera ? 0 : 1, // Toggle between 0 and 1
+       duration: 500,
+       easing: Easing.linear,
+       useNativeDriver: true,
+     }).start(() => {
+       dispatch(toggleCamera())
+     });
+   };
 
   const handlePinSubmit = (pin) => {
     setIsPinSheetVisible(false);
@@ -266,7 +251,9 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
           />
         }
       >
-        {showCamera ? <CustomCamera /> : <CustomCameraImage />}
+        
+          {showCamera ? <CustomCamera isVisible={showCamera} /> : <CustomCameraImage isVisible={showCamera} />}
+       
         <View
           style={{
             flexDirection: "row",
@@ -337,7 +324,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
             onScanPress={() => dispatch(toggleShowCamera())}
           />
         </View>
-        <View style={{ paddingHorizontal: 10,  }}>
+        <View style={{ paddingHorizontal: 10, marginTop: 80 }}>
           <Memojis onPress={() => navigation.navigate("SendPayment")} />
         </View>
         <View
@@ -421,3 +408,10 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  
+  content: {
+    position: "relative"
+  },
+});

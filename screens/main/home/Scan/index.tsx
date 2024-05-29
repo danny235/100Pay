@@ -9,18 +9,7 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-// import {
-//   ImagePickerResponse,
-//   OptionsCommon,
-//   launchImageLibrary,
-// } from "react-native-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
-// import {
-//   Camera,
-//   useCameraDevice,
-//   useCameraPermission,
-//   useCodeScanner,
-// } from 'react-native-vision-camera';
 import ScanCorners from "../../../../assets/images/scanCorners.png";
 import { Colors } from "../../../../components/Colors";
 import {
@@ -31,24 +20,28 @@ import {
 } from "../../../../components/SvgAssets";
 import CustomView from "../../../../components/Views/CustomView";
 import CustomHeader from "../../../../components/headers/CustomHeaders";
-import {
-  BoldText,
-  RegularText,
-} from "../../../../components/styles/styledComponents";
+import { BoldText, RegularText } from "../../../../components/styles/styledComponents";
 import { RootStackParamList } from "../../../../routes/AppStacks";
 import { CameraView, Camera, useCameraPermissions, CameraNativeProps } from "expo-camera";
 import { Button } from "../../../../components/Button/Button";
 import { I3DRotate } from "iconsax-react-native";
-import * as tf from "@tensorflow/tfjs";
-import "@tensorflow/tfjs-react-native";
-import * as cocossd from "@tensorflow-models/coco-ssd";
-import { cameraWithTensors } from "@tensorflow/tfjs-react-native";
 
-const TensorCamera = cameraWithTensors(CameraView);
+// import * as tf from "@tensorflow/tfjs";
+// import "@tensorflow/tfjs-react-native";
+// import * as cocossd from "@tensorflow-models/coco-ssd";
+
+import Webcam from "react-webcam";
+import * as ml5 from "ml5";
 
 type Props = {
   navigation: NavigationProp<RootStackParamList>;
 };
+
+const allowedObjects = ['book', 'paper', 'person', 'tv', 'sheet']
+const dimensions = {
+  width: 800,
+  height: 500
+}
 
 function Scan({ navigation }: Props) {
   // const [hasPermission, setHasPermission] = useState<boolean>(false);
@@ -60,222 +53,164 @@ function Scan({ navigation }: Props) {
   const [scanned, setScanned] = useState(false);
   const [scannedData, setScannedData] = useState("");
   const [permission, requestPermission] = useCameraPermissions();
+
+  const webcamRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [isUnfocused, setIsUnfocused] = useState(false)
+  const [capturedImage, setCapturedImage] = useState();
+
   const cameraRef = useRef<CameraView>()
+
   const [facing, setFacing] = useState<string | any>("back");
 
+  const [model, setModel] = useState(null);
+  const [predictions, setPredictions] = useState([]);
 
-   const [model, setModel] = useState(null);
-   const [predictions, setPredictions] = useState([]);
-
-  // const device = useCameraDevice('back', {
-  //   physicalDevices: [
-  //     'ultra-wide-angle-camera',
-  //     'wide-angle-camera',
-  //     'telephoto-camera',
- 
-  //   ],
-  // });
   const [isCameraInitialized, setIsCameraInitialized] = useState(false);
   const [isActive, setIsActive] = useState(true);
   const squishFixRef = useRef(false);
-
-  // const options: OptionsCommon = {
-  //   mediaType: 'photo',
-  //   includeExtra: true,
-  // };
-
-  // const codeScanner = useCodeScanner({
-  //   codeTypes: ['qr', 'ean-13'],
-  //   onCodeScanned: codes => {
-  //     console.log(
-  //       `Scanned ${codes.length} ${JSON.stringify(codes[0].value)} ${typeof JSON.stringify(codes[0].value)}  codes!`,
-  //     );
-  //     (navigation as any).replace('SendPayment');
-  //   },
-  // });
-
-  // const initCallback = useCallback(() => {
-  //   if (isCameraInitialized && !squishFixRef.current) {
-  //     squishFixRef.current = true;
-  //     setTimeout(() => {
-  //       setIsActive(true);
-  //     }, 150);
-  //     setIsActive(false);
-  //   }
-  //   setIsCameraInitialized(true);
-  // }, [isCameraInitialized]);
 
   const toggleCamera = () => {
     setFlashOn(!flashOn);
   };
 
-  // const launchGallery = async () => {
-  //   // You can also use as a promise without 'callback':
-  //   const result: ImagePickerResponse = await launchImageLibrary(options);
-  //   console.log(result.assets, 'from line 82');
-  // };
-
- const handleCameraStream = (images, updatePreview, gl) => {
-   const loop = async () => {
-     console.log("readyyyyy")
-     if (model) {
-       const nextImageTensor = images.next().value;
-       if (nextImageTensor) {
-         const predictions = await model.detect(nextImageTensor);
-         setPredictions(predictions);
-
-         requestAnimationFrame(loop);
-         console.log(predictions, "from line 127")
-       }
-     }
-   };
-   loop();
-   console.log("Test from stream")
- };
-
-  const handleCameraError = (e: any) => {
-    console.log("error", e);
-  };
-function toggleCameraFacing() {
-  setFacing((current) => (current === "back" ? "front" : "back"));
-}
-   const handleBarCodeScanned = async ({data}) => {
-     
-           setScanned(true);
-           console.log("called")
-    //  await alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-   };
-  // useEffect(() => {
-  //   (async () => {
-  //     if(hasPermission) return
-  //     requestPermission()
-  //   })();
-  // }, []);
+  function toggleCameraFacing() {
+    setFacing((current) => (current === "back" ? "front" : "back"));
+  }
 
   useEffect(() => {
-    
+    let detectionInterval;
 
-     (async () => {
+    const modelLoaded = () => {
+      webcamRef.current.video.width = width;
+      webcamRef.current.video.height = height;
+      canvasRef.current.width = width;
+      canvasRef.current.height = height;
+
+
+      detectionInterval = setInterval(() => {
+        detect();
+      }, 200);
+    };
+
+    const objectDetector = ml5.objectDetector('cocossd', modelLoaded);
+
+    const detect = () => {
+      if (webcamRef.current.video.readyState !== 4) {
+        console.warn('Video not ready yet');
+        return;
+      }
+
+      try {
+        objectDetector.detect(webcamRef.current.video, (err, results) => {
+          const ctx = canvasRef.current.getContext('2d');
+          ctx.clearRect(0, 0, width, height);
+          if (results && results.length) {
+            console.log(results)
+            if (results.length > 1) {
+              setIsUnfocused(true)
+            }
+            else {
+              setIsUnfocused(false)
+              for (let all of results) {
+                if (allowedObjects.includes(all.label)) {
+                  ctx.drawImage(webcamRef.current.video, 0, 0, width, height);
+                  // canvasRef.current.toBlob(handleCapturedImage);
+                }
+              }
+            }
+          }
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    return () => {
+      if (detectionInterval) {
+        clearInterval(detectionInterval);
+      }
+    }
+
+  }, [width, height]);
+
+  useEffect(() => {
+    (async () => {
       requestPermission()
-       const { status } = await Camera.requestCameraPermissionsAsync();
-       setHasPermission(status === "granted");
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === "granted");
 
-       await tf.ready();
-       const loadedModel = await cocossd.load();
-       setModel(loadedModel);
-     })();
-    
-
+      // await tf.ready();
+      // const loadedModel = await cocossd.load();
+      // setModel(loadedModel);
+    })();
   }, [Camera]);
 
-   if (!permission) {
-     // Camera permissions are still loading
-     return (
-       <View
-         style={{
-           justifyContent: "center",
-           alignItems: "center",
-           flex: 1,
-           backgroundColor: Colors.white,
-         }}
-       >
-         <ActivityIndicator color={Colors.primary} size={40} />
-       </View>
-     );
-   }
-
-  if (!permission.granted)
-  return (
-    <View style={{ flex: 1, backgroundColor: Colors.white }}>
-      <CustomHeader
-        text="Lens that sheet"
-        icon={<ScanRedIcon color={Colors.primary} />}
-        onPress={() => navigation.goBack()}
-      />
+  if (!permission) {
+    // Camera permissions are still loading
+    return (
       <View
         style={{
           justifyContent: "center",
           alignItems: "center",
           flex: 1,
           backgroundColor: Colors.white,
-          gap: 10
         }}
       >
-        <RegularText
+        <ActivityIndicator color={Colors.primary} size={40} />
+      </View>
+    );
+  }
+
+  if (!permission.granted)
+    return (
+      <View style={{ flex: 1, backgroundColor: Colors.white }}>
+        <CustomHeader
+          text="Lens that sheet"
+          icon={<ScanRedIcon color={Colors.primary} />}
+          onPress={() => navigation.goBack()}
+        />
+        <View
           style={{
-            fontSize: 20 / fontScale,
-            textAlign: "center",
+            justifyContent: "center",
+            alignItems: "center",
+            flex: 1,
+            backgroundColor: Colors.white,
+            gap: 10
           }}
         >
-          No camera device please grant access!
-        </RegularText>
-        <Button isLarge={false} isWide={false} variant="primary" onPress={requestPermission}>
           <RegularText
             style={{
-              fontSize: 15 / fontScale,
+              fontSize: 20 / fontScale,
               textAlign: "center",
-              color: Colors.white
             }}
-          >Grant access</RegularText>
-        </Button>
+          >
+            No camera device please grant access!
+          </RegularText>
+          <Button isLarge={false} isWide={false} variant="primary" onPress={requestPermission}>
+            <RegularText
+              style={{
+                fontSize: 15 / fontScale,
+                textAlign: "center",
+                color: Colors.white
+              }}
+            >Grant access</RegularText>
+          </Button>
+        </View>
       </View>
-    </View>
-  );
+    );
 
   return (
     <CustomView>
-      {/* {Platform.OS === "web" ? (
-        <CameraView
-          barcodeScannerSettings={{
-            barcodeTypes: ["qr", "codabar", "aztec"],
-          }}
-          facing={facing}
-          flash={flashOn ? "on" : "off"}
-          onBarcodeScanned={handleBarCodeScanned}
-          // onBarcodeScanned={({data})=> console.log(data)}
-          style={StyleSheet.absoluteFill}
-          onCameraReady={()=>console.log("camera ready")}
-          onMountError={()=>console.log("There is an error")}
-        />
-      ) : (
-        // <iframe src="..." style={{ flex: 1, borderWidth: 0 }} allow="microphone; camera;">
-        // </iframe>
-      <CameraView
-        barcodeScannerSettings={{
-          barcodeTypes: ["qr"],
-        }}
-        ref={cameraRef}
-        enableTorch={true}
-        flash={flashOn ? "on" : "off"}
-        onBarcodeScanned={({ data }) => console.log(data)}
-        style={StyleSheet.absoluteFillObject}
-      />
-      )} */}
-      <TensorCamera
-        // facing={facing}
-        // flash={flashOn ? "on" : "off"}
-        // onBarcodeScanned={({data})=> console.log(data)}
-        style={StyleSheet.absoluteFill}
-        onCameraReady={() => console.log("camera ready")}
-        // onMountError={() => console.log("There is an error")}
-        facing="back"
-        cameraTextureWidth={1920}
-        cameraTextureHeight={1080}
-        resizeWidth={152}
-        resizeHeight={200}
-        resizeDepth={1}
-        onReady={handleCameraStream}
-        autorender={true}
-        useCustomShadersToResize={false}
-      />
-      {/* <Camera
-        style={StyleSheet.absoluteFillObject}
-        codeScanner={codeScanner}
-        device={device}
-        isActive={true}
-        torch={flashOn ? 'on' : 'off'}
-        onError={handleCameraError}
-      /> */}
+      {
+        Platform.OS === "web"
+          ? <>
+            <Webcam ref={webcamRef} className="webcam" />
+            <canvas ref={canvasRef} className="canvas" />
+          </>
+          : <CameraView ref={cameraRef} style={StyleSheet.absoluteFillObject} />
+      }
+
 
       <View
         style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}

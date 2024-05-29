@@ -6,12 +6,12 @@ import * as ImageManipulator from "expo-image-manipulator";
 import { Colors } from "../Colors";
 import { RegularText } from "../styles/styledComponents";
 import { Button } from "../Button/Button";
-import { cameraWithTensors } from "@tensorflow/tfjs-react-native";
-import * as tf from "@tensorflow/tfjs";
-import "@tensorflow/tfjs-react-native";
-import * as cocossd from "@tensorflow-models/coco-ssd";
+// import { cameraWithTensors } from "@tensorflow/tfjs-react-native";
+// import * as tf from "@tensorflow/tfjs";
+// import "@tensorflow/tfjs-react-native";
+// import * as cocossd from "@tensorflow-models/coco-ssd";
 
-const TensorCamera = cameraWithTensors(CameraView);
+// const TensorCamera = cameraWithTensors(CameraView);
 
 type CameraT = {
     onPictureTaken?: (photo) => void
@@ -69,9 +69,9 @@ const CustomCamera = ({ onPictureTaken }: CameraT) => {
          const { status } = await Camera.requestCameraPermissionsAsync();
          setHasPermission(status === "granted");
 
-         await tf.ready();
-         const loadedModel = await cocossd.load();
-         setModel(loadedModel);
+        //  await tf.ready();
+        //  const loadedModel = await cocossd.load();
+        //  setModel(loadedModel);
        })();
      }, [Camera]);
 
@@ -157,25 +157,27 @@ const CustomCamera = ({ onPictureTaken }: CameraT) => {
     );
 
   return (
-    <TensorCamera
-        ref={cameraRef}
-      // facing={facing}
-      // flash={flashOn ? "on" : "off"}
-      // onBarcodeScanned={({data})=> console.log(data)}
-    //   style={{position: "absolute", height: "50%", width: "100%", top: 0, zIndex: 1000}}
-    style={StyleSheet.absoluteFill}
-      onCameraReady={() => console.log("camera ready")}
-      // onMountError={() => console.log("There is an error")}
-      facing="back"
-      cameraTextureWidth={1920}
-      cameraTextureHeight={1080}
-      resizeWidth={152}
-      resizeHeight={200}
-      resizeDepth={1}
-      onReady={handleCameraStream}
-      autorender={true}
-      useCustomShadersToResize={false}
-    />
+    <>
+    </>
+    // <TensorCamera
+    //     ref={cameraRef}
+    //   // facing={facing}
+    //   // flash={flashOn ? "on" : "off"}
+    //   // onBarcodeScanned={({data})=> console.log(data)}
+    // //   style={{position: "absolute", height: "50%", width: "100%", top: 0, zIndex: 1000}}
+    // style={StyleSheet.absoluteFill}
+    //   onCameraReady={() => console.log("camera ready")}
+    //   // onMountError={() => console.log("There is an error")}
+    //   facing="back"
+    //   cameraTextureWidth={1920}
+    //   cameraTextureHeight={1080}
+    //   resizeWidth={152}
+    //   resizeHeight={200}
+    //   resizeDepth={1}
+    //   onReady={handleCameraStream}
+    //   autorender={true}
+    //   useCustomShadersToResize={false}
+    // />
   );
 };
 

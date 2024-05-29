@@ -42,7 +42,11 @@ import {
 } from "../../../components/SvgAssets";
 import CustomView from "../../../components/Views/CustomView";
 import Memojis from "./Memojis";
-import { fetchUserApps, fetchUserData } from "../../../features/user/userSlice";
+import {
+  fetchUserApps,
+  fetchUserData,
+  toggleShowCamera,
+} from "../../../features/user/userSlice";
 import {
   fetchBanks,
   fetchCharge,
@@ -63,6 +67,7 @@ import {
   createTransactionPinRequest,
 } from "../../../apis/createtransactionpin";
 import CustomCamera from "../../../components/Camera/CustomCamera";
+import CustomCameraImage from "../../../components/Camera/CustomCameraImage";
 
 interface CustomBackdropProps {
   animatedIndex: SharedValue<number>;
@@ -123,6 +128,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     token,
     userProfile,
     userProfileLoading,
+    showCamera,
   } = useSelector((state: RootState) => state.user);
   const { charges } = useSelector((state: RootState) => state.account);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
@@ -170,7 +176,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     if (pin === tPin) {
       console.log("PIN confirmed:", pin);
       setIsConfirmPinSheetVisible(false);
-      createTxnPin()
+      createTxnPin();
     } else {
       showToast("Pin doesn't match", "error");
       // Show a toast or alert here if necessary
@@ -231,14 +237,13 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     dispatch(
       fetchBanks({ token, apiKey: activeUserApp?.keys?.pub_keys[0]?.value })
     );
-     dispatch(
-       fetchPayments({
-         token,
-         apiKey: activeUserApp?.keys?.pub_keys[0]?.value,
-         appId: activeUserApp?._id,
-       })
-     );
-
+    dispatch(
+      fetchPayments({
+        token,
+        apiKey: activeUserApp?.keys?.pub_keys[0]?.value,
+        appId: activeUserApp?._id,
+      })
+    );
   }, [activeUserApp?.keys?.pub_keys[0].value, userAppsLoading]);
 
   useEffect(() => {
@@ -248,26 +253,26 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
   }, [isPinSheetVisible, userProfile?.hasSetPin, userProfileLoading]);
   // console.log(activeUserApp?.keys.pub_keys[0].value)
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <ScrollView
-        style={{flex: 1}}
-        contentContainerStyle={{ paddingBottom: 40,}}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
-          shouldRasterizeIOS={true}
-          refreshing={refreshing}
-          onRefresh={onRefresh}
+            shouldRasterizeIOS={true}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
           />
         }
       >
-        <CustomCamera />
+        {showCamera ? <CustomCamera /> : <CustomCameraImage />}
         <View
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
-            paddingHorizontal: 10
+            paddingHorizontal: 10,
           }}
         >
           <Pressable
@@ -283,7 +288,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
 
             <View style={{ gap: 4 }}>
               <BoldText
-                style={{ fontSize: 16 / fontScale, color: Colors.balanceBlack }}
+                style={{ fontSize: 16 / fontScale, color: Colors.white }}
               >
                 {userProfileLoading === "loading" ||
                 userProfileLoading === "rejected"
@@ -294,13 +299,12 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
                 👋
               </BoldText>
               <View
-                
                 style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
               >
                 <LightText
                   style={{
                     fontSize: 12 / fontScale,
-                    color: Colors.grayText,
+                    color: Colors.white,
                   }}
                 >
                   {userAppsLoading === "loading" ||
@@ -310,17 +314,17 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
                     ? activeUserApp?.business_name || "*****"
                     : undefined}
                 </LightText>
-                <ArrowDownIcon  />
+                <ArrowDownIcon />
               </View>
             </View>
           </Pressable>
 
           <View style={{ flexDirection: "row", gap: 20 }}>
-            <Pressable onPress={() => navigation.navigate("Scan")}>
+            {/* <Pressable onPress={() => navigation.navigate("Scan")}>
               <ScanIcon />
-            </Pressable>
+            </Pressable> */}
             <Pressable onPress={() => navigation.navigate("Notification")}>
-              <NotifictionIcon />
+              <NotifictionIcon color={Colors.white} />
             </Pressable>
           </View>
         </View>
@@ -330,11 +334,11 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
           <Action
             onPayPress={() => navigation.navigate("Pay")}
             onRecievePress={() => setShowRecieveModal(true)}
+            onScanPress={() => dispatch(toggleShowCamera())}
           />
         </View>
-        <View style={{paddingHorizontal: 10}}>
-
-        <Memojis onPress={() => navigation.navigate("SendPayment")} />
+        <View style={{ paddingHorizontal: 10,  }}>
+          <Memojis onPress={() => navigation.navigate("SendPayment")} />
         </View>
         <View
           style={{

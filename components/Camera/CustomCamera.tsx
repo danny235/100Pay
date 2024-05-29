@@ -10,19 +10,20 @@ import { cameraWithTensors } from "@tensorflow/tfjs-react-native";
 import * as tf from "@tensorflow/tfjs";
 import "@tensorflow/tfjs-react-native";
 import * as cocossd from "@tensorflow-models/coco-ssd";
+import { BlurView } from "expo-blur";
 
 const TensorCamera = cameraWithTensors(CameraView);
 
 type CameraT = {
-    onPictureTaken?: (photo) => void
-}
+  onPictureTaken?: (photo) => void;
+};
 
 const CustomCamera = ({ onPictureTaken }: CameraT) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef(null);
-     const [model, setModel] = useState(null);
-     const [predictions, setPredictions] = useState([]);
+  const [model, setModel] = useState(null);
+  const [predictions, setPredictions] = useState([]);
   const { fontScale, height } = useWindowDimensions();
 
   useEffect(() => {
@@ -44,40 +45,39 @@ const CustomCamera = ({ onPictureTaken }: CameraT) => {
     }
   };
 
+  const handleCameraStream = (images, updatePreview, gl) => {
+    const loop = async () => {
+      console.log("readyyyyy");
+      if (model) {
+        const nextImageTensor = images.next().value;
+        if (nextImageTensor) {
+          const predictions = await model.detect(nextImageTensor);
+          setPredictions(predictions);
 
-   const handleCameraStream = (images, updatePreview, gl) => {
-     const loop = async () => {
-       console.log("readyyyyy");
-       if (model) {
-         const nextImageTensor = images.next().value;
-         if (nextImageTensor) {
-           const predictions = await model.detect(nextImageTensor);
-           setPredictions(predictions);
+          requestAnimationFrame(loop);
+          console.log(predictions, "from line 127");
+        }
+      }
+    };
+    loop();
+    console.log("Test from stream");
+  };
 
-           requestAnimationFrame(loop);
-           console.log(predictions, "from line 127");
-         }
-       }
-     };
-     loop();
-     console.log("Test from stream");
-   };
+  useEffect(() => {
+    (async () => {
+      requestPermission();
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === "granted");
 
-     useEffect(() => {
-       (async () => {
-         requestPermission();
-         const { status } = await Camera.requestCameraPermissionsAsync();
-         setHasPermission(status === "granted");
-
-         await tf.ready();
-         const loadedModel = await cocossd.load();
-         setModel(loadedModel);
-       })();
-     }, [Camera]);
+      await tf.ready();
+      const loadedModel = await cocossd.load();
+      setModel(loadedModel);
+    })();
+  }, [Camera]);
 
   if (hasPermission === null) {
     return (
-      <View style={{ flex: 1, backgroundColor: Colors.white }}>
+      <View style={{ flex: 1, backgroundColor: Colors.white, }}>
         <View
           style={{
             justifyContent: "center",
@@ -157,26 +157,87 @@ const CustomCamera = ({ onPictureTaken }: CameraT) => {
     );
 
   return (
-    <TensorCamera
-        ref={cameraRef}
-      // facing={facing}
-      // flash={flashOn ? "on" : "off"}
-      // onBarcodeScanned={({data})=> console.log(data)}
-    //   style={{position: "absolute", height: "50%", width: "100%", top: 0, zIndex: 1000}}
-    style={StyleSheet.absoluteFill}
-      onCameraReady={() => console.log("camera ready")}
-      // onMountError={() => console.log("There is an error")}
-      facing="back"
-      cameraTextureWidth={1920}
-      cameraTextureHeight={1080}
-      resizeWidth={152}
-      resizeHeight={200}
-      resizeDepth={1}
-      onReady={handleCameraStream}
-      autorender={true}
-      useCustomShadersToResize={false}
-    />
+    <View
+      style={{
+        position: "absolute",
+        height: "40%",
+        width: "100%",
+        top: 0,
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
+      }}
+    >
+      <View style={styles.cameraWrapper}>
+        <TensorCamera
+          ref={cameraRef}
+          style={styles.camera}
+          onCameraReady={() => console.log("camera ready")}
+          facing="back"
+          cameraTextureWidth={1920}
+          cameraTextureHeight={1080}
+          resizeWidth={152}
+          resizeHeight={200}
+          resizeDepth={1}
+          onReady={handleCameraStream}
+          autorender={true}
+          useCustomShadersToResize={false}
+        />
+      </View>
+      <BlurView
+        style={{
+          position: "absolute",
+          height: "100%",
+          width: "100%",
+          top: 0,
+          borderBottomLeftRadius: 10,
+          borderBottomRightRadius: 10,
+          overflow: "hidden",
+        }}
+        tint="systemUltraThinMaterialLight"
+        intensity={20}
+        experimentalBlurMethod="dimezisBlurView"
+      />
+    </View>
   );
+
+
 };
+
+const styles = StyleSheet.create({
+  centeredView: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+    backgroundColor: Colors.white,
+    gap: 10,
+  },
+  
+  container: {
+    position: "absolute",
+    height: "40%",
+    width: "100%",
+    top: 0,
+    overflow: "hidden",
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  cameraWrapper: {
+    flex: 1,
+    overflow: "hidden",
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  camera: {
+    flex: 1,
+  },
+  blurView: {
+    position: "absolute",
+    height: "100%",
+    width: "100%",
+    top: 0,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+});
 
 export default CustomCamera;

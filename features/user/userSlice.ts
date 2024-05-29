@@ -127,6 +127,7 @@ interface UserState {
   userAppsLoading: string;
   userAppsError: string | undefined;
   activeUserApp: UserAppType | null;
+  showCamera: boolean;
 }
 
 const initialState: UserState = {
@@ -143,6 +144,7 @@ const initialState: UserState = {
   userAppsLoading: 'idle',
   userAppsError: '',
   showAccountBalance: true,
+  showCamera: false
 };
 
 export const userSlice = createSlice({
@@ -181,6 +183,9 @@ export const userSlice = createSlice({
     updateActiveApps: (state, action) => {
       state.activeUserApp = action.payload;
     },
+    toggleShowCamera: (state) => {
+      state.showCamera = !state.showCamera
+    }
   },
 
   extraReducers: builder => {
@@ -232,7 +237,8 @@ export const {
   updateAccountBalanceType,
   updateShowAccountBalance,
   updateAccountBalance,
-  updateActiveApps
+  updateActiveApps, 
+  toggleShowCamera
 } = userSlice.actions;
 
 export default userSlice.reducer;

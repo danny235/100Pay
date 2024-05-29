@@ -3,28 +3,48 @@ import {Pressable, StyleSheet, View, useWindowDimensions} from 'react-native';
 import {Colors} from '../../../components/Colors';
 import {PayIcon, RecieveIcon} from '../../../components/SvgAssets';
 import {MediumText} from '../../../components/styles/styledComponents';
+import { Scan } from 'iconsax-react-native';
+import { RootState } from '../../../app/store';
+import { useSelector } from 'react-redux';
 
 interface ActionProps {
   onPayPress: () => void;
   onRecievePress: () => void;
+  onScanPress: () => void;
 }
 
-export default function Action({onPayPress, onRecievePress}: ActionProps): React.JSX.Element {
+export default function Action({onPayPress, onRecievePress, onScanPress}: ActionProps): React.JSX.Element {
   const {fontScale} = useWindowDimensions();
+  const { showCamera } = useSelector((state: RootState) => state.user);
 
   return (
-    <View style={{gap: 20, flexDirection: 'row'}}>
+    <View style={{ gap: 20, flexDirection: "row" }}>
       <Pressable onPress={onPayPress} style={styles.btn}>
-        <PayIcon color={Colors.primary} />
-        <MediumText style={{fontSize: 15 / fontScale, color: Colors.balanceBlack}}>
+        <PayIcon color={Colors.white} />
+        <MediumText style={{ fontSize: 15 / fontScale, color: Colors.white }}>
           Pay
         </MediumText>
       </Pressable>
       <Pressable onPress={onRecievePress} style={styles.btn}>
-        <RecieveIcon color={Colors.primary} />
-        <MediumText style={{fontSize: 15 / fontScale, color: Colors.balanceBlack}}>
+        <RecieveIcon color={Colors.white} />
+        <MediumText style={{ fontSize: 15 / fontScale, color: Colors.white }}>
           Recieve
         </MediumText>
+      </Pressable>
+      <Pressable
+        onPress={onScanPress}
+        style={[
+          styles.btn,
+          {
+            flexBasis: "5%",
+            backgroundColor: showCamera ? Colors.white : "rgba(0, 0, 0, 0.1)",
+          },
+        ]}
+      >
+        <Scan
+          variant="TwoTone"
+          color={showCamera ? Colors.modernBlack : Colors.white}
+        />
       </Pressable>
     </View>
   );
@@ -37,8 +57,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 10,
     paddingHorizontal: 20,
-    backgroundColor: Colors.whiteShade,
-    flexBasis: '40%',
+    backgroundColor: "rgba(0, 0, 0, 0.1)",
+    flexBasis: '20%',
     flexGrow: 1,
     paddingVertical: 14,
     gap: 10,

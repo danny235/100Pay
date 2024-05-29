@@ -48,7 +48,7 @@ export default function Balance({onBalanceClick}: Props ): React.JSX.Element {
 
   return (
     <View
-    style={{gap: 10, justifyContent: "center", alignItems: "center"}}
+    style={{gap: 10, justifyContent: "center", alignItems: "center", marginVertical: 70}}
      >
       <View
       
@@ -65,22 +65,22 @@ export default function Balance({onBalanceClick}: Props ): React.JSX.Element {
             paddingRight: 10,
             borderRightWidth: 1,
           }}>
-          <WalletIcon color={Colors.primary} />
+          <WalletIcon color={Colors.white} />
         </View>
-        <RegularText style={{fontSize: 15 / fontScale, color: Colors.grayText, textAlign: "center"}}>
+        <RegularText style={{fontSize: 15 / fontScale, color: Colors.white, textAlign: "center"}}>
           Account Balance
         </RegularText>
         <Pressable onPress={() => dispatch(updateShowAccountBalance())}>
           {showAccountBalance ? (
-            <EyeLineIcon width={15} height={15} />
+            <EyeLineIcon color={Colors.white} width={15} height={15} />
           ) : (
-            <EyeIcon width={15} height={15} />
+            <EyeIcon color={Colors.white} width={15} height={15} />
           )}
         </Pressable>
       </View>
       <View style={{gap: 3}}>
         <SemiBoldText
-          style={{fontSize: 27 / fontScale, color: Colors.balanceBlack, textAlign: "center"}}>
+          style={{fontSize: 27 / fontScale, color: Colors.white, textAlign: "center"}}>
           {/* {accountBalanceType === 'naira' ? '₦ 60,000.00' : '100,000$PAY'} */}
           {userAppsLoading !== 'loading' &&
           userAppsLoading !== 'rejected' &&
@@ -92,7 +92,7 @@ export default function Balance({onBalanceClick}: Props ): React.JSX.Element {
             userAppsLoading !== 'rejected' &&
             showAccountBalance}
         </SemiBoldText>
-        <LightText style={{fontSize: 11 / fontScale, color: Colors.grayText, textAlign: "center"}}>
+        <LightText style={{fontSize: 11 / fontScale, color: Colors.white, textAlign: "center"}}>
           {/* ≈ $PAY{' '} */}
           {/* {userAppsLoading !== 'loading' &&
           userAppsLoading !== 'rejected' &&

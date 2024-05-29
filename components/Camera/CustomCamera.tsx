@@ -1,31 +1,40 @@
 // CameraComponent.js
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, useWindowDimensions, Animated } from "react-native";
+import { View, StyleSheet, useWindowDimensions, Animated, Platform } from "react-native";
 import { Camera, CameraView, useCameraPermissions } from "expo-camera";
 import * as ImageManipulator from "expo-image-manipulator";
 import { Colors } from "../Colors";
 import { RegularText } from "../styles/styledComponents";
 import { Button } from "../Button/Button";
-import { cameraWithTensors } from "@tensorflow/tfjs-react-native";
-import * as tf from "@tensorflow/tfjs";
-import "@tensorflow/tfjs-react-native";
-import * as cocossd from "@tensorflow-models/coco-ssd";
 import { BlurView } from "expo-blur";
 
-const TensorCamera = cameraWithTensors(CameraView);
+import Webcam from "react-webcam";
+import * as ml5 from "ml5";
 
 type CameraT = {
   onPictureTaken?: (photo) => void;
   isVisible: boolean;
 };
 
+const allowedObjects = ['book', 'paper', 'person', 'tv', 'sheet']
+const dimensions = {
+  width: 800,
+  height: 500
+}
+
 const CustomCamera = ({ onPictureTaken, isVisible }: CameraT) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [permission, requestPermission] = useCameraPermissions();
+
+  const webcamRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [isUnfocused, setIsUnfocused] = useState(false)
+  const [capturedImage, setCapturedImage] = useState();
+
   const cameraRef = useRef(null);
   const [model, setModel] = useState(null);
   const [predictions, setPredictions] = useState([]);
-  const { fontScale, height } = useWindowDimensions();
+  const { fontScale, height, width } = useWindowDimensions();
 
   const opacity = useRef(new Animated.Value(isVisible ? 1 : 0)).current;
 
@@ -44,132 +53,69 @@ const CustomCamera = ({ onPictureTaken, isVisible }: CameraT) => {
     })();
   }, []);
 
-  const takePicture = async () => {
-    if (cameraRef.current) {
-      let photo = await cameraRef.current.takePictureAsync();
-      //   const blurredImage = await ImageManipulator.manipulateAsync(
-      //     photo.uri,
-      //     [{ blur: 10 }],
-      //     { format: ImageManipulator.SaveFormat.JPEG }
-      //   );
-      onPictureTaken(photo.uri);
-    }
-  };
+  useEffect(() => {
+    let detectionInterval;
 
-  const handleCameraStream = (images, updatePreview, gl) => {
-    const loop = async () => {
-      console.log("readyyyyy");
-      if (model) {
-        const nextImageTensor = images.next().value;
-        if (nextImageTensor) {
-          const predictions = await model.detect(nextImageTensor);
-          setPredictions(predictions);
+    const modelLoaded = () => {
+      webcamRef.current.video.width = width;
+      webcamRef.current.video.height = height;
+      canvasRef.current.width = width;
+      canvasRef.current.height = height;
 
-          requestAnimationFrame(loop);
-          console.log(predictions, "from line 127");
-        }
+
+      detectionInterval = setInterval(() => {
+        detect();
+      }, 200);
+    };
+
+    const objectDetector = ml5.objectDetector('cocossd', modelLoaded);
+
+    const detect = () => {
+      if (webcamRef.current.video.readyState !== 4) {
+        console.warn('Video not ready yet');
+        return;
+      }
+
+      try {
+        objectDetector.detect(webcamRef.current.video, (err, results) => {
+          const ctx = canvasRef.current.getContext('2d');
+          ctx.clearRect(0, 0, width, height);
+          if (results && results.length) {
+            console.log(results)
+            if (results.length > 1) {
+              setIsUnfocused(true)
+            }
+            else {
+              setIsUnfocused(false)
+              for (let all of results) {
+                if (allowedObjects.includes(all.label)) {
+                  ctx.drawImage(webcamRef.current.video, 0, 0, width, height);
+                  // canvasRef.current.toBlob(handleCapturedImage);
+                }
+              }
+            }
+          }
+        });
+      } catch (e) {
+        console.log(e);
       }
     };
-    loop();
-    console.log("Test from stream");
-  };
+
+    return () => {
+      if (detectionInterval) {
+        clearInterval(detectionInterval);
+      }
+    }
+
+  }, [width, height]);
 
   useEffect(() => {
     (async () => {
       requestPermission();
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
-
-      await tf.ready();
-      const loadedModel = await cocossd.load();
-      setModel(loadedModel);
     })();
   }, [Camera, cameraRef]);
-
-  useEffect(() => {
-    takePicture();
-  }, [cameraRef]);
-
-  //   if (hasPermission === null) {
-  //     return (
-  //       <View style={{ flex: 1, backgroundColor: Colors.white }}>
-  //         <View
-  //           style={{
-  //             justifyContent: "center",
-  //             alignItems: "center",
-  //             flex: 1,
-  //             backgroundColor: Colors.white,
-  //             gap: 10,
-  //           }}
-  //         >
-  //           <RegularText
-  //             style={{
-  //               fontSize: 20 / fontScale,
-  //               textAlign: "center",
-  //             }}
-  //           >
-  //             No camera device please grant access!
-  //           </RegularText>
-  //           <Button
-  //             isLarge={false}
-  //             isWide={false}
-  //             variant="primary"
-  //             onPress={requestPermission}
-  //           >
-  //             <RegularText
-  //               style={{
-  //                 fontSize: 15 / fontScale,
-  //                 textAlign: "center",
-  //                 color: Colors.white,
-  //               }}
-  //             >
-  //               Grant access
-  //             </RegularText>
-  //           </Button>
-  //         </View>
-  //       </View>
-  //     );
-  //   }
-
-  //   if (hasPermission === false)
-  //     return (
-  //       <View style={{ flex: 1, backgroundColor: Colors.white }}>
-  //         <View
-  //           style={{
-  //             justifyContent: "center",
-  //             alignItems: "center",
-  //             flex: 1,
-  //             backgroundColor: Colors.white,
-  //             gap: 10,
-  //           }}
-  //         >
-  //           <RegularText
-  //             style={{
-  //               fontSize: 20 / fontScale,
-  //               textAlign: "center",
-  //             }}
-  //           >
-  //             No camera device please grant access!
-  //           </RegularText>
-  //           <Button
-  //             isLarge={false}
-  //             isWide={false}
-  //             variant="primary"
-  //             onPress={requestPermission}
-  //           >
-  //             <RegularText
-  //               style={{
-  //                 fontSize: 15 / fontScale,
-  //                 textAlign: "center",
-  //                 color: Colors.white,
-  //               }}
-  //             >
-  //               Grant access
-  //             </RegularText>
-  //           </Button>
-  //         </View>
-  //       </View>
-  //     );
 
   return (
     <Animated.View
@@ -184,21 +130,16 @@ const CustomCamera = ({ onPictureTaken, isVisible }: CameraT) => {
       }}
     >
       <View style={styles.cameraWrapper}>
-        <TensorCamera
-          ref={cameraRef}
-          style={styles.camera}
-          //   onCameraReady={() => console.log("camera ready")}
-          facing={"back"}
-          cameraTextureWidth={1920}
-          cameraTextureHeight={1080}
-          resizeWidth={152}
-          resizeHeight={200}
-          resizeDepth={1}
-          onReady={handleCameraStream}
-          autorender={true}
-          useCustomShadersToResize={false}
-        />
+        {
+          Platform.OS === "web"
+            ? <>
+              <Webcam style={styles.camera} ref={webcamRef} className="webcam" />
+              <canvas ref={canvasRef} className="canvas" />
+            </>
+            : <CameraView ref={cameraRef} style={StyleSheet.absoluteFillObject} />
+        }
       </View>
+
       <BlurView
         style={{
           position: "absolute",

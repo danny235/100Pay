@@ -21,49 +21,51 @@ const dimensions = {
   height: 500
 }
 
+type VideoConstraints = { facingMode?: string; deviceId?: string };
+
 const CustomCamera = ({ onPictureTaken, isVisible }: CameraT) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [devices, setDevices] = React.useState([]);
+const [videoConstraints, setVideoConstraints] = useState<VideoConstraints>({
+  facingMode: "environment",
+});
 
-  const [deviceId, setDeviceId] = useState(null);
+useEffect(() => {
+  const getBackCamera = async () => {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(
+        (device) => device.kind === "videoinput"
+      );
 
-  useEffect(() => {
-    const getBackCamera = async () => {
-      try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(
-          (device) => device.kind === "videoinput"
-        );
+      // Check if facingMode is supported
+      const supportsFacingMode = videoDevices.some((device) =>
+        device.label.toLowerCase().includes("environment")
+      );
+
+      if (!supportsFacingMode) {
+        // Find a device with 'back' or 'rear' label as fallback
         const backCamera = videoDevices.find(
           (device) =>
             device.label.toLowerCase().includes("back") ||
-            device.label.toLowerCase().includes("rear") ||
-            device.label.toLowerCase().includes("environment")
+            device.label.toLowerCase().includes("rear")
         );
 
         if (backCamera) {
-          setDeviceId(backCamera.deviceId);
+          setVideoConstraints({ deviceId: backCamera.deviceId });
         } else {
           console.error("Back camera not found");
         }
-      } catch (error) {
-        console.error("Error enumerating devices: ", error);
       }
-    };
+    } catch (error) {
+      console.error("Error enumerating devices: ", error);
+    }
+  };
 
-    getBackCamera();
-  }, []);
+  getBackCamera();
+}, []);
 
-  const handleDevices = React.useCallback(
-    (mediaDevices) =>
-      setDevices(mediaDevices.filter(({ kind }) => kind === "videoinput")),
-    [setDevices]
-  );
-
-  useEffect(() => {
-    navigator.mediaDevices.enumerateDevices().then(handleDevices);
-  }, [handleDevices]);
 
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
@@ -175,7 +177,7 @@ const CustomCamera = ({ onPictureTaken, isVisible }: CameraT) => {
               style={styles.camera}
               ref={webcamRef}
               className="webcam"
-              videoConstraints={{ deviceId }}
+              videoConstraints={videoConstraints}
             />
             <canvas ref={canvasRef} className="canvas" />
           </>

@@ -7,8 +7,7 @@ import { Colors } from "../Colors";
 import { RegularText } from "../styles/styledComponents";
 import { Button } from "../Button/Button";
 import { BlurView } from "expo-blur";
-
-import Webcam from "react-webcam";
+import Webcam, { WebcamProps } from "react-webcam";
 import * as ml5 from "ml5";
 
 type CameraT = {
@@ -25,6 +24,46 @@ const dimensions = {
 const CustomCamera = ({ onPictureTaken, isVisible }: CameraT) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [permission, requestPermission] = useCameraPermissions();
+  const [devices, setDevices] = React.useState([]);
+
+  const [deviceId, setDeviceId] = useState(null);
+
+  useEffect(() => {
+    const getBackCamera = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(
+          (device) => device.kind === "videoinput"
+        );
+        const backCamera = videoDevices.find(
+          (device) =>
+            device.label.toLowerCase().includes("back") ||
+            device.label.toLowerCase().includes("rear") ||
+            device.label.toLowerCase().includes("environment")
+        );
+
+        if (backCamera) {
+          setDeviceId(backCamera.deviceId);
+        } else {
+          console.error("Back camera not found");
+        }
+      } catch (error) {
+        console.error("Error enumerating devices: ", error);
+      }
+    };
+
+    getBackCamera();
+  }, []);
+
+  const handleDevices = React.useCallback(
+    (mediaDevices) =>
+      setDevices(mediaDevices.filter(({ kind }) => kind === "videoinput")),
+    [setDevices]
+  );
+
+  useEffect(() => {
+    navigator.mediaDevices.enumerateDevices().then(handleDevices);
+  }, [handleDevices]);
 
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
@@ -130,14 +169,19 @@ const CustomCamera = ({ onPictureTaken, isVisible }: CameraT) => {
       }}
     >
       <View style={styles.cameraWrapper}>
-        {
-          Platform.OS === "web"
-            ? <>
-              <Webcam  style={styles.camera} ref={webcamRef} className="webcam" />
-              <canvas ref={canvasRef} className="canvas" />
-            </>
-            : <CameraView ref={cameraRef} style={StyleSheet.absoluteFillObject} />
-        }
+        {Platform.OS === "web" ? (
+          <>
+            <Webcam
+              style={styles.camera}
+              ref={webcamRef}
+              className="webcam"
+              videoConstraints={{ deviceId }}
+            />
+            <canvas ref={canvasRef} className="canvas" />
+          </>
+        ) : (
+          <CameraView ref={cameraRef} style={StyleSheet.absoluteFillObject} />
+        )}
       </View>
 
       <BlurView

@@ -595,9 +595,10 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
         icon={<Warning2 color={Colors.primary} variant="TwoTone" size={48} />}
         mainText="Low Balance"
         subText="Convert assets to $Pay to continue payment"
-        buttonText="Convert Assets"
+        buttonText="Go Back"
         onClose={() => {
           setShowError(false);
+          navigation.navigate("Home")
         }}
       />
 

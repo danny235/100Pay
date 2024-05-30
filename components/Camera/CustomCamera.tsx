@@ -4,7 +4,7 @@ import { View, StyleSheet, useWindowDimensions, Animated, Platform } from "react
 import { Camera, CameraView, useCameraPermissions } from "expo-camera";
 import * as ImageManipulator from "expo-image-manipulator";
 import { Colors } from "../Colors";
-import { RegularText } from "../styles/styledComponents";
+import { MediumText, RegularText } from "../styles/styledComponents";
 import { Button } from "../Button/Button";
 import { BlurView } from "expo-blur";
 import Webcam, { WebcamProps } from "react-webcam";
@@ -121,6 +121,7 @@ useEffect(() => {
         objectDetector.detect(webcamRef.current.video, (err, results) => {
           const ctx = canvasRef.current.getContext('2d');
           ctx.clearRect(0, 0, width, height);
+          canvasRef.current
           if (results && results.length) {
             console.log(results)
             if (results.length > 1) {
@@ -185,6 +186,8 @@ useEffect(() => {
           <CameraView ref={cameraRef} style={StyleSheet.absoluteFillObject} />
         )}
       </View>
+
+     
 
       <BlurView
         style={{

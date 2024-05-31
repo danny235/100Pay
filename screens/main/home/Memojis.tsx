@@ -24,6 +24,13 @@ type MemojiT = {
   onPress?: () => void
 }
 
+const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#33FFD2'];
+
+// Function to get initials from account name
+const getInitials = (name) => {
+  return name.split(' ').map(word => word[0].toUpperCase()).join('');
+};
+
 const sampleUsers: User[] = [
   {id: 1, username: 'Oscar .R', avatar: AvatarA},
   {id: 2, username: 'Ikenna .I', avatar: AvatarB},
@@ -43,10 +50,16 @@ const Memojis: React.FC<MemojiT> = ({onPress}) => {
         <ArrowFrontIcon />
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {sampleUsers.map(user => (
-          <Pressable onPress={onPress}  key={user.id} style={styles.userContainer}>
-            <Image source={user.avatar} style={styles.image} />
-            <SemiBoldText style={[styles.username, {color: Colors.grayText}]}>
+        {sampleUsers.map((user) => (
+          <Pressable
+            onPress={onPress}
+            key={user.id}
+            style={styles.userContainer}
+          >
+            <View style={styles.initialAvatar}>
+              <SemiBoldText style={{fontSize: 17 / fontScale, color: Colors.white, }}>{getInitials(user.username)}</SemiBoldText>
+            </View>
+            <SemiBoldText style={[styles.username, { color: Colors.grayText }]}>
               {user.username}
             </SemiBoldText>
           </Pressable>
@@ -94,6 +107,15 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 14,
   },
+  initialAvatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 60,
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.primary
+  }
 });
 
 export default Memojis;

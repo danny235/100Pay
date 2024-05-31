@@ -12,8 +12,10 @@ import { addCommas, truncateText } from '../../../../utils';
 import { Pressable } from 'react-native';
 import UserAvatar from '../../../../assets/images/DashboardEmojis/Avatar-a.png';
 import { Clock } from 'iconsax-react-native';
-import { ChargeType } from '../../../../features/account/accountSlice';
+import { ChargeType, PayoutsI } from '../../../../features/account/accountSlice';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../app/store';
 
 type TransactionsT = {
   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -25,8 +27,15 @@ export default function TransactionDetail({navigation, route}: TransactionsT) {
   const {
     detail,
     screen,
-  }: {detail?: ChargeType | undefined; screen?: string | undefined} =
+  }: {detail?: PayoutsI | undefined; screen?: string | undefined} =
     route.params ?? {};
+
+  const {
+
+    activeUserApp,
+  
+    
+  } = useSelector((state: RootState) => state.user);
 
   
   return (
@@ -39,13 +48,16 @@ export default function TransactionDetail({navigation, route}: TransactionsT) {
       <ScrollView>
         <View
           style={{
-            alignItems: 'center',
-            justifyContent: 'center',
+            alignItems: "center",
+            justifyContent: "center",
             paddingVertical: 20,
-          }}>
-          <LightText style={{fontSize: 14 / fontScale}}>Total Amount</LightText>
-          <BoldText style={{fontSize: 36 / fontScale}}>
-            {addCommas(detail?.billing.amount)}
+          }}
+        >
+          <LightText style={{ fontSize: 14 / fontScale }}>
+            Total Amount
+          </LightText>
+          <BoldText style={{ fontSize: 36 / fontScale }}>
+            {addCommas(detail?.amount)}
           </BoldText>
         </View>
 
@@ -56,17 +68,19 @@ export default function TransactionDetail({navigation, route}: TransactionsT) {
             paddingHorizontal: 20,
             borderRadius: 10,
             gap: 20,
-          }}>
+          }}
+        >
           <MediumText
             style={{
               fontSize: 14 / fontScale,
               borderBottomWidth: 1,
               borderBottomColor: Colors.modernBlack,
               paddingBottom: 7,
-            }}>
+            }}
+          >
             To Recipient
           </MediumText>
-          <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
             <Image style={styles.avatarImg} source={UserAvatar} />
             <MediumText
               style={{
@@ -74,22 +88,27 @@ export default function TransactionDetail({navigation, route}: TransactionsT) {
                 borderRightWidth: 1,
                 borderRightColor: Colors.modernBlack,
                 paddingRight: 5,
-              }}>
-              {detail?.customer.name}
+                textTransform: "capitalize"
+              }}
+            >
+              {detail?.destination_wallet?.replace(/_/g, " ")}
             </MediumText>
             <LightText
-              style={{fontSize: 13 / fontScale, color: Colors.grayText}}>
-              ID: {truncateText(detail?.customer.user_id, 9)}
+              style={{ fontSize: 13 / fontScale, color: Colors.grayText }}
+            >
+              Description: {truncateText(detail?.description, 9)}
             </LightText>
           </View>
         </View>
 
-        <View style={{gap: 10, paddingVertical: 20, height: height / 1.7}}>
+        <View style={{ gap: 10, paddingVertical: 20, height: height / 1.7 }}>
           <View style={[styles.trxDetailContainer, {}]}>
-            <LightText style={[{fontSize: 13 / fontScale}]}>
+            <LightText style={[{ fontSize: 13 / fontScale }]}>
               Transaction Fee:
             </LightText>
-            <BoldText style={[{fontSize: 13 / fontScale}]}>0 $Pay</BoldText>
+            <BoldText style={[{ fontSize: 13 / fontScale }]}>
+              0.00 {activeUserApp.currency}
+            </BoldText>
           </View>
           <View
             style={[
@@ -99,13 +118,15 @@ export default function TransactionDetail({navigation, route}: TransactionsT) {
                 borderBottomWidth: 1,
                 paddingBottom: 10,
               },
-            ]}>
-            <LightText style={[{fontSize: 13 / fontScale}]}>
+            ]}
+          >
+            <LightText style={[{ fontSize: 13 / fontScale }]}>
               Payment Ref Code:
             </LightText>
             <Pressable
-              style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
-              <BoldText style={[{fontSize: 13 / fontScale}]}>
+              style={{ flexDirection: "row", gap: 5, alignItems: "center" }}
+            >
+              <BoldText style={[{ fontSize: 13 / fontScale }]}>
                 {truncateText(detail?._id, 14)}
               </BoldText>
 
@@ -122,8 +143,8 @@ export default function TransactionDetail({navigation, route}: TransactionsT) {
           </View> */}
 
           <View>
-            <BoldText style={{fontSize: 12 / fontScale}}>Note:</BoldText>
-            <MediumText style={{fontSize: 12 / fontScale, width: '90%'}}>
+            <BoldText style={{ fontSize: 12 / fontScale }}>Note:</BoldText>
+            <MediumText style={{ fontSize: 12 / fontScale, width: "90%" }}>
               Make sure to confirm the all details of this transaction to ensure
               you are making payments to the right recipient.
             </MediumText>

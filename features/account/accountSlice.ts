@@ -6,6 +6,13 @@ import { getPayments, getPaymentsT } from "../../apis/getpayments";
 import { ChargeT, getCharge } from "../../apis/gettransactions";
 import { getBankRequest, GetBankT } from "../../apis/createbank";
 import { getPaymentLinks } from "../../apis/createpaymentlink";
+import { getPayouts } from "../../apis/payout";
+type PayoutsT = {
+  appId: string | any;
+  token: string | any;
+}
+
+
 
 export const fetchPayments = createAsyncThunk(
   "user/fetchPayments",
@@ -22,6 +29,15 @@ export const fetchCharge = createAsyncThunk(
     return response;
   }
 );
+
+export const fetchPayouts = createAsyncThunk(
+  "user/fetchPayouts",
+  async ({ appId, token }: PayoutsT) => {
+    const response = await getPayouts({ appId, token });
+    return response;
+  }
+);
+
 export const fetchPaymentsLinks = createAsyncThunk(
   "user/fetchPaymentsLinks",
   async ({ token, apiKey }: ChargeT) => {
@@ -46,6 +62,22 @@ type BillingType = {
   amount: string;
   // Add more properties as needed
 };
+
+export interface PayoutsI {
+  status: string;
+  payoutType: string;
+  paymentReference: null;
+  type: string;
+  _id: string;
+  app_id: string;
+  amount: number;
+  destination_wallet: string;
+  date: string;
+  bank_account_id: string;
+  description: string;
+  walletAddress: string;
+  __v: number;
+}
 
 type CustomerType = {
   user_id: string;
@@ -168,6 +200,9 @@ type AccountType = {
   paymentLinks: PaymentLinkType[] | null;
   paymentLinksLoading: string;
   paymentLinksError: string | undefined;
+  payOuts: PayoutsI[] | null;
+  payOutsLoading: string;
+  payOutsError: string;
 };
 
 const initialState: AccountType = {
@@ -183,7 +218,10 @@ const initialState: AccountType = {
   activeBankId: "",
   paymentLinks: null,
   paymentLinksLoading: "idle",
-  paymentLinksError: ""
+  paymentLinksError: "",
+  payOuts: null,
+  payOutsLoading: "idle",
+  payOutsError: ""
 };
 
 export const accountSlice = createSlice({
@@ -215,6 +253,22 @@ export const accountSlice = createSlice({
     builder.addCase(fetchCharge.rejected, (state, action) => {
       state.chargesLoading = "rejected";
       state.chargesError = action.error.message;
+    });
+
+    /*-----------*/
+    /*----- Get payouts ---------*/
+    builder.addCase(fetchPayouts.pending, (state, action) => {
+      state.payOutsLoading = "loading";
+    });
+
+    builder.addCase(fetchPayouts.fulfilled, (state, action) => {
+      state.payOutsLoading = "success";
+      state.payOuts = action.payload.slice().reverse();
+    });
+
+    builder.addCase(fetchPayouts.rejected, (state, action) => {
+      state.payOutsLoading = "rejected";
+      state.payOutsError = action.error.message;
     });
 
     /*-----------*/

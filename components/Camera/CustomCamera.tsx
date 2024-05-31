@@ -163,7 +163,7 @@ useEffect(() => {
     <Animated.View
       style={{
         position: "absolute",
-        height: "40%",
+        height: "58%",
         width: "100%",
         top: 0,
         borderBottomLeftRadius: 30,

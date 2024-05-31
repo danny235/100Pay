@@ -55,6 +55,7 @@ import {
   fetchCharge,
   fetchPayments,
   fetchPaymentsLinks,
+  fetchPayouts,
 } from "../../../features/account/accountSlice";
 import { ThunkDispatch } from "redux-thunk";
 import { GenerateArray } from "../../../utils";
@@ -229,6 +230,12 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
         appId: activeUserApp?._id,
       })
     );
+    dispatch(
+      fetchPayouts({
+        token,
+        appId: activeUserApp?._id,
+      })
+    );
   }, [activeUserApp?.keys?.pub_keys[0].value, userAppsLoading]);
 
   useEffect(() => {
@@ -325,7 +332,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
           />
         </View>
         <View style={{ paddingHorizontal: 10, marginTop: 80 }}>
-          <Memojis onPress={() => navigation.navigate("SendPayment")} />
+          <Memojis onPress={() => null /* navigation.navigate("SendPayment") */} />
         </View>
         <View
           style={{

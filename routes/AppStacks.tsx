@@ -38,7 +38,7 @@ import { useSelector } from 'react-redux';
 import { NavigationState, useNavigation } from '@react-navigation/native';
 import { useEffect } from 'react';
 import { RootState } from '../app/store';
-import { ChargeType } from '../features/account/accountSlice';
+import { ChargeType, PayoutsI } from '../features/account/accountSlice';
 import PersonalInfo from '../screens/authentication/PersonalInfo';
 import { UserAppType } from '../features/user/userSlice';
 
@@ -83,7 +83,7 @@ export type RootStackParamList = {
   Transactions: undefined;
   TransactionDetail: {
     screen?: string;
-    detail?: ChargeType;
+    detail?: PayoutsI;
     initial?: boolean;
   };
   Payouts: undefined;

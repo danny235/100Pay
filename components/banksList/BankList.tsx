@@ -137,7 +137,7 @@ export default function BankList({ isOpen, onBankPress, onClose }: BankListI) {
                 key={bank.code}
                 style={{ flexDirection: "row", gap: 10 }}
               >
-                <DotIcon />
+                {/* <DotIcon /> */}
                 <MediumText
                   style={{
                     fontSize: 14 / fontScale,

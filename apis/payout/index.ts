@@ -8,7 +8,6 @@ const axiosInstance = axios.create({
 
 let token: string | null;
 
-
 interface CreatePayout {
   amount: string;
   app_id: string;
@@ -116,6 +115,30 @@ export const createBankPayoutRequest = async (
     console.log("bank creation POST err", err);
     console.log(err.response.data);
 
+    throw Error(err.response.data);
+  }
+};
+
+export const getPayouts = async ({ appId, token }) => {
+  let config = {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json",
+      "Auth-Token": token,
+    },
+    data: {
+      appId,
+    },
+  };
+
+  try {
+    const res = await axios(
+      `https://api.100pay.co/api/v1/user/payouts`,
+      config
+    );
+
+    return res.data
+  } catch (err: any) {
     throw Error(err.response.data);
   }
 };

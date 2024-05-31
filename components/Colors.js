@@ -20,4 +20,5 @@ export const Colors = {
   balanceBlack: "#4B5563",
   memojiBackground: "#F9FAFB",
   iconColor: "#6B7280",
+  warning: "#F29339"
 };

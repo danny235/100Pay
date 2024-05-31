@@ -25,7 +25,7 @@ export default function TransactionsList({
 }: TransactionsT) {
   const {userApps, activeUserApp, userAppsError, userAppsLoading, token} =
     useSelector((state: RootState) => state.user);
-  const {charges, chargesLoading} = useSelector(
+  const {charges, chargesLoading, payOuts, payOutsLoading} = useSelector(
     (state: RootState) => state.account,
   );
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
@@ -44,18 +44,18 @@ export default function TransactionsList({
   }, []);
   return (
     <View style={{flex: 1, gap: 20, paddingVertical: 4}}>
-      {chargesLoading === 'loading' && (
+      {payOutsLoading === 'loading' && (
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
           <ActivityIndicator color={Colors.primary} size={30} />
         </View>
       )}
-      {charges?.length === 0 && (
+      {payOuts?.length === 0 && (
         <MediumText style={{textAlign: 'center'}}>
           No transactions here
         </MediumText>
       )}
-      {charges?.length !== 0 &&
-        charges?.slice(sliceFrom, sliceTo).map((item, i) => (
+      {payOuts?.length !== 0 &&
+        payOuts?.slice(sliceFrom, sliceTo).map((item, i) => (
           <TransactionItem
             key={item._id}
             onPress={() =>

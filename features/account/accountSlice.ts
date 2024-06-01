@@ -7,12 +7,15 @@ import { ChargeT, getCharge } from "../../apis/gettransactions";
 import { getBankRequest, GetBankT } from "../../apis/createbank";
 import { getPaymentLinks } from "../../apis/createpaymentlink";
 import { getPayouts } from "../../apis/payout";
+import { BenefeciariesT, getBeneficiaries } from "../../apis/beneficiaries";
 type PayoutsT = {
-  appId: string | any;
+  appId?: string | any;
   token: string | any;
+};
+
+type GetBeneficiaries = {
+  token?: string;
 }
-
-
 
 export const fetchPayments = createAsyncThunk(
   "user/fetchPayments",
@@ -50,6 +53,14 @@ export const fetchBanks = createAsyncThunk(
   "user/fetchBanks",
   async ({ token, apiKey }: GetBankT) => {
     const response = await getBankRequest({ token, apiKey });
+    return response;
+  }
+);
+
+export const fetchBeneficiaries = createAsyncThunk(
+  "user/fetchBeneficiaries",
+  async (token:string) => {
+    const response = await getBeneficiaries({ token });
     return response;
   }
 );
@@ -171,20 +182,20 @@ type PaymentType = {
 };
 
 type PaymentLinkType = {
-  amount: string
-  app_id: string
-  business_name: string
-  call_back_url: string
-  code: string
-  createdAt: string
-  currency: string
-  custom_fields: any
-  description: string 
-  link_name: string
-  userId: string
-  __v: number
-  _id: string
-}
+  amount: string;
+  app_id: string;
+  business_name: string;
+  call_back_url: string;
+  code: string;
+  createdAt: string;
+  currency: string;
+  custom_fields: any;
+  description: string;
+  link_name: string;
+  userId: string;
+  __v: number;
+  _id: string;
+};
 
 type AccountType = {
   charges: ChargeType[] | null;
@@ -203,6 +214,9 @@ type AccountType = {
   payOuts: PayoutsI[] | null;
   payOutsLoading: string;
   payOutsError: string;
+  beneficiaries: BenefeciariesT[] | null;
+  beneficiariesLoading: string;
+  beneficiariesError: string;
 };
 
 const initialState: AccountType = {
@@ -221,7 +235,10 @@ const initialState: AccountType = {
   paymentLinksError: "",
   payOuts: null,
   payOutsLoading: "idle",
-  payOutsError: ""
+  payOutsError: "",
+  beneficiaries: null,
+  beneficiariesLoading: "idle",
+  beneficiariesError: "",
 };
 
 export const accountSlice = createSlice({
@@ -303,7 +320,6 @@ export const accountSlice = createSlice({
     builder.addCase(fetchBanks.rejected, (state, action) => {
       state.bankAccountsLoading = "rejected";
       state.bankAccountsError = action.error.message;
-     
     });
 
     /*-----------*/
@@ -321,7 +337,23 @@ export const accountSlice = createSlice({
     builder.addCase(fetchPaymentsLinks.rejected, (state, action) => {
       state.paymentLinksLoading = "rejected";
       state.bankAccountsError = action.error.message;
-     
+    });
+
+    /*-----------*/
+
+    /*----- Get beneficiaries ---------*/
+    builder.addCase(fetchBeneficiaries.pending, (state, action) => {
+      state.beneficiariesLoading = "loading";
+    });
+
+    builder.addCase(fetchBeneficiaries.fulfilled, (state, action) => {
+      state.beneficiariesLoading = "success";
+      state.beneficiaries = action.payload.slice().reverse();
+    });
+
+    builder.addCase(fetchBeneficiaries.rejected, (state, action) => {
+      state.beneficiariesLoading = "rejected";
+      state.beneficiariesError = action.error.message;
     });
 
     /*-----------*/

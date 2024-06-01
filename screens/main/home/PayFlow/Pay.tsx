@@ -60,27 +60,27 @@ type PayHomeT = {
 };
 
 export type BankT = {
-  id: number;
-  name: string;
-  slug: string;
-  code: string;
-  longcode: string;
-  gateway: string;
-  pay_with_bank: boolean;
-  supports_transfer: boolean;
-  active: boolean;
-  country: string;
-  currency: string;
-  type: string;
-  is_deleted: boolean;
-  createdAt: string;
-  updatedAt: string;
+  id?: number;
+  name?: string;
+  slug?: string;
+  code?: string;
+  longcode?: string;
+  gateway?: string;
+  pay_with_bank?: boolean;
+  supports_transfer?: boolean;
+  active?: boolean;
+  country?: string;
+  currency?: string;
+  type?: string;
+  is_deleted?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type BankDetailsT = {
-  account_name: string;
-  account_number: string;
-  bank_id: number;
+  account_name: string | any;
+  account_number: string | any;
+  bank_id: number | any;
 };
 
 export default function PayHome({ navigation }: PayHomeT) {
@@ -400,7 +400,7 @@ export default function PayHome({ navigation }: PayHomeT) {
               </Pressable>
             )}
             <View>
-              <Memojis onPress={() => navigation.navigate("SendPayment")} />
+              <Memojis navigation={navigation} />
 
               <MediumText
                 style={[styles.countryButtonText, { fontSize: 15 / fontScale }]}

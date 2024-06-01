@@ -1,24 +1,51 @@
-import { View, Text, Image, Animated } from "react-native";
-import React, { useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  Image,
+  Animated,
+  Platform,
+  UIManager,
+  LayoutAnimation,
+} from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import { BlurView } from "expo-blur";
-import BgImage from "../../assets/images/bg.png"
+import BgImage from "../../assets/images/bg.png";
 
+// Enable LayoutAnimation on Android
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
-export default function CustomCameraImage({isVisible}) {
-    const opacity = useRef(new Animated.Value(isVisible ? 1 : 0)).current;
+export default function CustomCameraImage({ isVisible }) {
+  const opacity = useRef(new Animated.Value(isVisible ? 1 : 0)).current;
+  const [contentHeight, setContentHeight] = useState(0);
+  const contentRef = useRef(null);
 
-    useEffect(() => {
-      Animated.timing(opacity, {
-        toValue: isVisible ? 0 : 1,
-        duration: 500,
-        useNativeDriver: true,
-      }).start();
-    }, [isVisible]);
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.measure((x, y, width, height) => {
+        setContentHeight(height);
+      });
+    }
+    Animated.timing(opacity, {
+      toValue: isVisible ? 0 : 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  }, [isVisible]);
+
+  const handleLayout = (event) => {
+    const { height } = event.nativeEvent.layout;
+    setContentHeight(height);
+  };
   return (
     <Animated.View
       style={{
         position: "absolute",
-        height: "58%",
+        height: "40%",
         width: "100%",
         top: 0,
         opacity,
@@ -28,11 +55,11 @@ export default function CustomCameraImage({isVisible}) {
         style={{
           height: "100%",
           width: "100%",
-
           borderBottomLeftRadius: 10,
           borderBottomRightRadius: 10,
         }}
         source={BgImage}
+        resizeMode="cover"
       />
       <BlurView
         style={{

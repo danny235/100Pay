@@ -37,13 +37,15 @@ export default function Action({onPayPress, onRecievePress, onScanPress}: Action
           styles.btn,
           {
             flexBasis: "5%",
-            backgroundColor: showCamera ? Colors.white : "rgba(0, 0, 0, 0.1)",
+            backgroundColor: showCamera
+              ? Colors.white
+              : "rgba(255, 255, 255, 0.2)",
           },
         ]}
       >
         <Scan
           variant="TwoTone"
-          color={showCamera ? Colors.modernBlack : Colors.white}
+          color={showCamera ? "rgba(75, 85, 99, 1)" : Colors.white}
         />
       </Pressable>
     </View>
@@ -52,13 +54,13 @@ export default function Action({onPayPress, onRecievePress, onScanPress}: Action
 
 const styles = StyleSheet.create({
   btn: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 10,
     paddingHorizontal: 20,
-    backgroundColor: "rgba(0, 0, 0, 0.1)",
-    flexBasis: '20%',
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    flexBasis: "20%",
     flexGrow: 1,
     paddingVertical: 14,
     gap: 10,

@@ -1,18 +1,31 @@
-import React from 'react';
-import {View, Text, ScrollView, Image, StyleSheet, Pressable} from 'react-native';
-import AvatarA from '../../../assets/images/DashboardEmojis/Avatar-a.png';
-import AvatarB from '../../../assets/images/DashboardEmojis/Avatar-b.png';
-import AvatarC from '../../../assets/images/DashboardEmojis/Avatar-c.png';
-import AvatarD from '../../../assets/images/DashboardEmojis/Avatar-d.png';
-import AvatarE from '../../../assets/images/DashboardEmojis/Avatar-e.png';
-import AvatarF from '../../../assets/images/DashboardEmojis/Avatar-f.png';
+import React from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  StyleSheet,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
+import AvatarA from "../../../assets/images/DashboardEmojis/Avatar-a.png";
+import AvatarB from "../../../assets/images/DashboardEmojis/Avatar-b.png";
+import AvatarC from "../../../assets/images/DashboardEmojis/Avatar-c.png";
+import AvatarD from "../../../assets/images/DashboardEmojis/Avatar-d.png";
+import AvatarE from "../../../assets/images/DashboardEmojis/Avatar-e.png";
+import AvatarF from "../../../assets/images/DashboardEmojis/Avatar-f.png";
 import {
   BoldText,
   SemiBoldText,
-} from '../../../components/styles/styledComponents';
-import {Colors} from '../../../components/Colors';
-import {ArrowFrontIcon} from '../../../components/SvgAssets';
-import {useWindowDimensions} from 'react-native';
+} from "../../../components/styles/styledComponents";
+import { Colors } from "../../../components/Colors";
+import { ArrowFrontIcon } from "../../../components/SvgAssets";
+import { useWindowDimensions } from "react-native";
+import { RootState } from "../../../app/store";
+import { useSelector } from "react-redux";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../../routes/AppStacks";
+import { truncateText } from "../../../utils";
 
 interface User {
   id: number;
@@ -21,49 +34,78 @@ interface User {
 }
 
 type MemojiT = {
-  onPress?: () => void
-}
+  navigation: NativeStackNavigationProp<RootStackParamList> | any;
+  onPress?: () => void;
+};
 
-const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#33FFD2'];
+const colors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A1", "#33FFD2"];
 
 // Function to get initials from account name
 const getInitials = (name) => {
-  return name.split(' ').map(word => word[0].toUpperCase()).join('');
+  return name
+    .split(" ")
+    .map((word) => word[0].toUpperCase())
+    .join("");
 };
 
 const sampleUsers: User[] = [
-  {id: 1, username: 'Oscar .R', avatar: AvatarA},
-  {id: 2, username: 'Ikenna .I', avatar: AvatarB},
-  {id: 3, username: 'Ibeneme .I', avatar: AvatarC},
-  {id: 4, username: 'Daniel .B', avatar: AvatarD},
-  {id: 5, username: 'Ikenna', avatar: AvatarE},
-  {id: 6, username: 'Ibeneme', avatar: AvatarF},
+  { id: 1, username: "Oscar .R", avatar: AvatarA },
+  { id: 2, username: "Ikenna .I", avatar: AvatarB },
+  { id: 3, username: "Ibeneme .I", avatar: AvatarC },
+  { id: 4, username: "Daniel .B", avatar: AvatarD },
+  { id: 5, username: "Ikenna", avatar: AvatarE },
+  { id: 6, username: "Ibeneme", avatar: AvatarF },
 ];
 
-const Memojis: React.FC<MemojiT> = ({onPress}) => {
-  const {fontScale} = useWindowDimensions();
+const Memojis = ({ navigation }: MemojiT) => {
+  const { beneficiaries, beneficiariesError, beneficiariesLoading } =
+    useSelector((state: RootState) => state.account);
+  const { fontScale } = useWindowDimensions();
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.line} />
         <BoldText style={styles.headerText}>Recents</BoldText>
-        <ArrowFrontIcon />
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {sampleUsers.map((user) => (
-          <Pressable
-            onPress={onPress}
-            key={user.id}
-            style={styles.userContainer}
-          >
-            <View style={styles.initialAvatar}>
-              <SemiBoldText style={{fontSize: 17 / fontScale, color: Colors.white, }}>{getInitials(user.username)}</SemiBoldText>
-            </View>
-            <SemiBoldText style={[styles.username, { color: Colors.grayText }]}>
-              {user.username}
-            </SemiBoldText>
-          </Pressable>
-        ))}
+        {beneficiariesLoading === "loading" ? (
+          <View style={{ alignItems: "center", justifyContent: "center" }}>
+            <ActivityIndicator size={24} color={Colors.primary} />
+          </View>
+        ) : (
+          beneficiaries?.map((user) => (
+            <Pressable
+              onPress={() =>
+                navigation.navigate("SendPayment", {
+                  bankDetails: {
+                      account_name: user?.account_name,
+                      account_number: user?.account_number,
+                      bank_id: user?._id,
+                  },
+                  bank: {
+                    name: user?.bank_name,
+                    code: user?.bank_code
+                  },
+                })
+              }
+              key={user?.__v}
+              style={styles.userContainer}
+            >
+              <View style={styles.initialAvatar}>
+                <SemiBoldText
+                  style={{ fontSize: 17 / fontScale, color: Colors.white }}
+                >
+                  {getInitials(user?.bank_name)}
+                </SemiBoldText>
+              </View>
+              <SemiBoldText
+                style={[styles.username, { color: Colors.grayText }]}
+              >
+                {truncateText(user?.account_name, 9)}
+              </SemiBoldText>
+            </Pressable>
+          ))
+        )}
       </ScrollView>
     </View>
   );
@@ -72,18 +114,17 @@ const Memojis: React.FC<MemojiT> = ({onPress}) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.memojiBackground,
-
     borderRadius: 12,
     padding: 16,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   line: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     borderLeftColor: Colors.primary,
     borderLeftWidth: 5,
     borderRadius: 20,
@@ -95,7 +136,7 @@ const styles = StyleSheet.create({
   },
   userContainer: {
     marginRight: 16,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 12,
   },
   image: {
@@ -114,8 +155,8 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Colors.primary
-  }
+    backgroundColor: Colors.primary,
+  },
 });
 
 export default Memojis;

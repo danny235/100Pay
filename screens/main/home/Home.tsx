@@ -52,6 +52,7 @@ import {
 } from "../../../features/user/userSlice";
 import {
   fetchBanks,
+  fetchBeneficiaries,
   fetchCharge,
   fetchPayments,
   fetchPaymentsLinks,
@@ -209,6 +210,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
   useEffect(() => {
     dispatch(fetchUserApps(token));
     dispatch(fetchUserData(token));
+    dispatch(fetchBeneficiaries(token));
   }, []);
 
   useEffect(() => {
@@ -245,7 +247,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
   }, [isPinSheetVisible, userProfile?.hasSetPin, userProfileLoading]);
   // console.log(activeUserApp?.keys.pub_keys[0].value)
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: Colors.white }}>
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: 40 }}
@@ -332,7 +334,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
           />
         </View>
         <View style={{ paddingHorizontal: 10, marginTop: 80 }}>
-          <Memojis onPress={() => null /* navigation.navigate("SendPayment") */} />
+          <Memojis navigation={navigation} />
         </View>
         <View
           style={{

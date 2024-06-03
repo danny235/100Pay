@@ -1,4 +1,10 @@
-import { View, Text, useWindowDimensions } from "react-native";
+import {
+  View,
+  Text,
+  useWindowDimensions,
+  StyleSheet,
+  Pressable,
+} from "react-native";
 import React, {
   useCallback,
   useEffect,
@@ -15,30 +21,26 @@ import {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
-import { BoldText, LightText } from "../styles/styledComponents";
+import { BoldText, LightText, SemiBoldText } from "../styles/styledComponents";
 import { Profile } from "iconsax-react-native";
 import { Colors } from "../Colors";
 import { CustomBackdrop } from "../ChooseAccountBalance/ChooseAccountBalance";
 import { ScrollView } from "react-native-gesture-handler";
+import { truncateText } from "../../utils";
+import { updateShowBookAccounts } from "../../features/account/accountSlice";
 
 type SelectAccountT = {
-  navigation?: NavigationProp<RootStackParamList>;
+  navigation?: NavigationProp<RootStackParamList> | any;
   showSelectAccount: boolean;
-  onClose: () => void;
+  onClose?: () => void;
 };
 
-export default function RecognizedBookAccount( {navigation,
+export default function RecognizedBookAccount({
+  navigation,
   showSelectAccount,
   onClose,
 }: SelectAccountT) {
-    const {
-    userApps,
-    activeUserApp,
-    userAppsError,
-    userAppsLoading,
-    token,
-    userProfile,
-  } = useSelector((state: RootState) => state.user);
+  const { beneficiaries } = useSelector((state: RootState) => state.account);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
@@ -53,6 +55,7 @@ export default function RecognizedBookAccount( {navigation,
   }, []);
   const handlePresentModalClose = useCallback(() => {
     onClose();
+    dispatch(updateShowBookAccounts(false))
     bottomSheetModalRef.current?.dismiss();
   }, []);
   const handleSheetChanges = useCallback((index: number) => {
@@ -104,7 +107,8 @@ export default function RecognizedBookAccount( {navigation,
             </BoldText>
           </View>
           <LightText style={{ fontSize: 15 / fontScale }}>
-            Select any of the accounts below to make payments.
+            Paylens detected {beneficiaries?.length} banks with the same account number, please select
+            one to continue.
           </LightText>
         </View>
         <ScrollView
@@ -113,8 +117,86 @@ export default function RecognizedBookAccount( {navigation,
 
             gap: 10,
           }}
-        ></ScrollView>
+        >
+          {beneficiaries?.map((user) => (
+            <Pressable
+              onPress={() =>{
+                handlePresentModalClose()
+                navigation.navigate("SendPayment", {
+                  bankDetails: {
+                    account_name: user?.account_name,
+                    account_number: user?.account_number,
+                    bank_id: user?._id,
+                  },
+                  bank: {
+                    name: user?.bank_name,
+                    code: user?.bank_code,
+                  },
+                })}
+              }
+              key={user._id}
+              style={styles.userContainer}
+            >
+              <View style={styles.initialAvatar}></View>
+              <View style={{ gap: 10 }}>
+                <SemiBoldText
+                  style={[styles.username, { fontSize: 14 / fontScale }]}
+                >
+                  {user?.bank_name}
+                </SemiBoldText>
+                  <LightText
+                    style={[styles.userId, { fontSize: 12 / fontScale }]}
+                  >
+                    {user?.account_number}
+                  </LightText>
+              
+              </View>
+            </Pressable>
+          ))}
+        </ScrollView>
       </BottomSheetModal>
     </BottomSheetModalProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    paddingVertical: 12,
+  },
+  userContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+    gap: 10,
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  userInfo: {
+    flexDirection: "column",
+    borderLeftWidth: 1,
+    borderLeftColor: Colors.ash,
+    paddingLeft: 12,
+  },
+  username: {
+    color: Colors.balanceBlack,
+    paddingRight: 12,
+    textTransform: "capitalize",
+  },
+  userId: {
+    color: "gray",
+  },
+  initialAvatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.ash,
+  },
+});

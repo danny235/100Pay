@@ -260,7 +260,7 @@ export const accountSlice = createSlice({
       state.showFaceAccounts = action.payload
     },
     updateShowBookAccounts: (state, action) => {
-      state.bookAccounts = action.payload
+      state.showBookAccounts = action.payload
     },
     clearAccount: (state) => {
       state.charges = null;

@@ -8,6 +8,9 @@ import { BlurView } from "expo-blur";
 import Webcam, { WebcamProps } from "react-webcam";
 import * as ml5 from "ml5";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { ThunkDispatch } from "redux-thunk";
+import { updateShowBookAccounts } from "../../features/account/accountSlice";
 
 type CameraT = {
   onPictureTaken?: (photo) => void;
@@ -44,6 +47,7 @@ const CustomCamera = ({ onPictureTaken, isVisible, children }: CameraT) => {
   const [predictions, setPredictions] = useState([]);
   const { fontScale, height, width } = useWindowDimensions();
   const opacity = useRef(new Animated.Value(isVisible ? 1 : 0)).current;
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const [videoConstraints, setVideoConstraints] = useState<VideoConstraints>({
     facingMode: "environment",
@@ -59,6 +63,7 @@ const CustomCamera = ({ onPictureTaken, isVisible, children }: CameraT) => {
     //   },
     // });
     console.log(imageBlob)
+    dispatch(updateShowBookAccounts(true))
     // if (response.success) {
     //   // navigate("/dashboard/send-funds", { state: { data: response.data }, replace: true });
     // }

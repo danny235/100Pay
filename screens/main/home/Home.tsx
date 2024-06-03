@@ -73,6 +73,8 @@ import {
 } from "../../../apis/createtransactionpin";
 import CustomCamera from "../../../components/Camera/CustomCamera";
 import CustomCameraImage from "../../../components/Camera/CustomCameraImage";
+import RecognizedBookAccount from "../../../components/SelectBank/RecognizedBookAccount";
+import RecognizedFaceAccounts from "../../../components/SelectBank/RecognizedFaceAccounts";
 
 interface CustomBackdropProps {
   animatedIndex: SharedValue<number>;
@@ -102,7 +104,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     userProfileLoading,
     showCamera,
   } = useSelector((state: RootState) => state.user);
-  const { charges, beneficiaries } = useSelector(
+  const { charges, beneficiaries, showBookAccounts, showFaceAccounts } = useSelector(
     (state: RootState) => state.account
   );
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
@@ -432,6 +434,8 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
         onClose={setIsConfirmPinSheetVisible}
         onSubmit={handleConfirmPinSubmit}
       />
+      <RecognizedBookAccount showSelectAccount={showBookAccounts} navigation={navigation} onClose={()=> null} />
+      <RecognizedFaceAccounts showSelectAccount={showFaceAccounts} navigation={navigation} onClose={()=> null} />
 
       <Loader
         visible={

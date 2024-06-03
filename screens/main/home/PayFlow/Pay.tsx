@@ -424,7 +424,7 @@ export default function PayHome({ navigation }: PayHomeT) {
               >
                 Send Money To:
               </SemiBoldText>
-              <UserPayList onPress={() => null} />
+              <UserPayList navigation={navigation} />
             </View>
           </View>
         </View>

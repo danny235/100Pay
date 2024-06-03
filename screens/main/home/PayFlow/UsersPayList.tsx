@@ -1,11 +1,23 @@
-import React from 'react';
-import { View, Image, Text, StyleSheet, Pressable } from 'react-native';
-import AvatarE from '../../../../assets/images/DashboardEmojis/Avatar-e.png';
+import React from "react";
+import {
+  View,
+  Image,
+  Text,
+  StyleSheet,
+  Pressable,
+  useWindowDimensions,
+} from "react-native";
+import AvatarE from "../../../../assets/images/DashboardEmojis/Avatar-e.png";
 import {
   LightText,
   SemiBoldText,
-} from '../../../../components/styles/styledComponents';
-import { Colors } from '../../../../components/Colors';
+} from "../../../../components/styles/styledComponents";
+import { Colors } from "../../../../components/Colors";
+import { RootState } from "../../../../app/store";
+import { useSelector } from "react-redux";
+import { truncateText } from "../../../../utils";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../../../routes/AppStacks";
 
 interface User {
   id: string;
@@ -15,39 +27,56 @@ interface User {
 
 interface UserPayListProps {
   renderSingleItem?: boolean;
-  onPress?: () => void
+  onPress?: () => void;
+  navigation: NativeStackNavigationProp<RootStackParamList> | any
 }
 
-const UserPayList: React.FC<UserPayListProps> = ({ renderSingleItem, onPress }) => {
-  const avatars: User[] = [
-    { id: 'ID: 234GH6', username: 'Ugo matt', avatar: AvatarE },
-    { id: 'ID: 235GH6', username: 'Brainy Josh', avatar: AvatarE },
-    { id: 'ID: 236GH6', username: 'Daniel Barima', avatar: AvatarE },
-    { id: 'ID: 237GH6', username: 'Emmanuel GOAT', avatar: AvatarE },
-    { id: 'ID: 238GH6', username: 'Ibeneme Ibeneme', avatar: AvatarE },
-  ];
+const UserPayList: React.FC<UserPayListProps> = ({
+  renderSingleItem,
+  onPress,
+  navigation
+}) => {
+  const { beneficiaries, beneficiariesError, beneficiariesLoading } =
+    useSelector((state: RootState) => state.account);
+  const { fontScale } = useWindowDimensions();
 
   return (
     <View style={styles.container}>
-      {renderSingleItem ? (
-        <View key={avatars[0].id} style={styles.userContainer}>
-          <Image source={avatars[0].avatar} style={styles.avatar} />
-          <SemiBoldText style={styles.username}>{avatars[0].username}</SemiBoldText>
-          <View style={styles.userInfo}>
-            <LightText style={styles.userId}>ID: {avatars[0].id}</LightText>
+      {beneficiaries.map((user) => (
+        <Pressable
+          onPress={() =>
+            navigation.navigate("SendPayment", {
+              bankDetails: {
+                account_name: user?.account_name,
+                account_number: user?.account_number,
+                bank_id: user?._id,
+              },
+              bank: {
+                name: user?.bank_name,
+                code: user?.bank_code,
+              },
+            })
+          }
+          key={user._id}
+          style={styles.userContainer}
+        >
+          <View style={styles.initialAvatar}>
+            <SemiBoldText
+              style={{ fontSize: 10 / fontScale, color: Colors.white }}
+            >
+              {truncateText(user?.bank_name, 4)}
+            </SemiBoldText>
           </View>
-        </View>
-      ) : (
-        avatars.map(user => (
-          <Pressable onPress={onPress} key={user.id} style={styles.userContainer}>
-            <Image source={user.avatar} style={styles.avatar} />
-            <SemiBoldText style={styles.username}>{user.username}</SemiBoldText>
-            <View style={styles.userInfo}>
-              <LightText style={styles.userId}>ID: {user.id}</LightText>
-            </View>
-          </Pressable>
-        ))
-      )}
+          <SemiBoldText style={styles.username}>
+            {truncateText(user?.account_name, 10)}
+          </SemiBoldText>
+          <View style={styles.userInfo}>
+            <LightText style={styles.userId}>
+              Account: {user?.account_number}
+            </LightText>
+          </View>
+        </Pressable>
+      ))}
     </View>
   );
 };
@@ -58,8 +87,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   userContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
     gap: 3,
   },
@@ -70,7 +99,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   userInfo: {
-    flexDirection: 'column',
+    flexDirection: "column",
     borderLeftWidth: 1,
     borderLeftColor: Colors.ash,
     paddingLeft: 12,
@@ -79,10 +108,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.balanceBlack,
     paddingRight: 12,
+    textTransform: "capitalize"
   },
   userId: {
     fontSize: 13,
-    color: 'gray',
+    color: "gray",
+  },
+  initialAvatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.primary,
   },
 });
 

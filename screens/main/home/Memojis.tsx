@@ -48,14 +48,7 @@ const getInitials = (name) => {
     .join("");
 };
 
-const sampleUsers: User[] = [
-  { id: 1, username: "Oscar .R", avatar: AvatarA },
-  { id: 2, username: "Ikenna .I", avatar: AvatarB },
-  { id: 3, username: "Ibeneme .I", avatar: AvatarC },
-  { id: 4, username: "Daniel .B", avatar: AvatarD },
-  { id: 5, username: "Ikenna", avatar: AvatarE },
-  { id: 6, username: "Ibeneme", avatar: AvatarF },
-];
+
 
 const Memojis = ({ navigation }: MemojiT) => {
   const { beneficiaries, beneficiariesError, beneficiariesLoading } =

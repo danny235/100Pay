@@ -6,6 +6,7 @@ import {
   Platform,
   UIManager,
   LayoutAnimation,
+  useWindowDimensions,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { BlurView } from "expo-blur";
@@ -21,15 +22,10 @@ if (
 
 export default function CustomCameraImage({ isVisible }) {
   const opacity = useRef(new Animated.Value(isVisible ? 1 : 0)).current;
-  const [contentHeight, setContentHeight] = useState(0);
-  const contentRef = useRef(null);
+ const {height} = useWindowDimensions()
 
   useEffect(() => {
-    if (contentRef.current) {
-      contentRef.current.measure((x, y, width, height) => {
-        setContentHeight(height);
-      });
-    }
+   
     Animated.timing(opacity, {
       toValue: isVisible ? 0 : 1,
       duration: 500,
@@ -37,15 +33,12 @@ export default function CustomCameraImage({ isVisible }) {
     }).start();
   }, [isVisible]);
 
-  const handleLayout = (event) => {
-    const { height } = event.nativeEvent.layout;
-    setContentHeight(height);
-  };
+
   return (
     <Animated.View
       style={{
         position: "absolute",
-        height: "40%",
+        height: height / 1.7,
         width: "100%",
         top: 0,
         opacity,

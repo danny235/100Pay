@@ -10,7 +10,7 @@ export type getPaymentsT = {
 };
 
 export async function getPayments({token, apiKey, appId}: getPaymentsT) {
-  console.log({ token, apiKey, appId });
+
   try {
     const response = await axios.post(
       "https://api.100pay.co/api/v1/pay/crypto/app/payments",

@@ -1,11 +1,11 @@
-import React from 'react';
-import {Pressable, StyleSheet, View, useWindowDimensions} from 'react-native';
-import {Colors} from '../../../components/Colors';
-import {PayIcon, RecieveIcon} from '../../../components/SvgAssets';
-import {MediumText} from '../../../components/styles/styledComponents';
-import { Scan } from 'iconsax-react-native';
-import { RootState } from '../../../app/store';
-import { useSelector } from 'react-redux';
+import React from "react";
+import { Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
+import { Colors } from "../../../components/Colors";
+import { PayIcon, RecieveIcon } from "../../../components/SvgAssets";
+import { MediumText } from "../../../components/styles/styledComponents";
+import { ExportSquare, Import, ImportSquare, Scan } from "iconsax-react-native";
+import { RootState } from "../../../app/store";
+import { useSelector } from "react-redux";
 
 interface ActionProps {
   onPayPress: () => void;
@@ -13,20 +13,26 @@ interface ActionProps {
   onScanPress: () => void;
 }
 
-export default function Action({onPayPress, onRecievePress, onScanPress}: ActionProps): React.JSX.Element {
-  const {fontScale} = useWindowDimensions();
+export default function Action({
+  onPayPress,
+  onRecievePress,
+  onScanPress,
+}: ActionProps): React.JSX.Element {
+  const { fontScale } = useWindowDimensions();
   const { showCamera } = useSelector((state: RootState) => state.user);
 
   return (
-    <View style={{ gap: 20, flexDirection: "row" }}>
+    <View
+      style={{ gap: 20, flexDirection: "row", justifyContent: "space-around" }}
+    >
       <Pressable onPress={onPayPress} style={styles.btn}>
-        <PayIcon color={Colors.white} />
+        <ExportSquare variant="TwoTone" color={Colors.white} />
         <MediumText style={{ fontSize: 15 / fontScale, color: Colors.white }}>
           Pay
         </MediumText>
       </Pressable>
       <Pressable onPress={onRecievePress} style={styles.btn}>
-        <RecieveIcon color={Colors.white} />
+        <ImportSquare variant="TwoTone" color={Colors.white} />
         <MediumText style={{ fontSize: 15 / fontScale, color: Colors.white }}>
           Recieve
         </MediumText>
@@ -36,10 +42,10 @@ export default function Action({onPayPress, onRecievePress, onScanPress}: Action
         style={[
           styles.btn,
           {
-            flexBasis: "5%",
             backgroundColor: showCamera
               ? Colors.white
               : "rgba(255, 255, 255, 0.2)",
+              flexBasis: "auto"
           },
         ]}
       >
@@ -60,8 +66,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 20,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    flexBasis: "20%",
-    flexGrow: 1,
+    flexBasis: "35%",
     paddingVertical: 14,
     gap: 10,
   },

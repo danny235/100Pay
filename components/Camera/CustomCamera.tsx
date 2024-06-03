@@ -27,6 +27,7 @@ const CustomCamera = ({ onPictureTaken, isVisible }: CameraT) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [devices, setDevices] = React.useState([]);
+
 const [videoConstraints, setVideoConstraints] = useState<VideoConstraints>({
   facingMode: "environment",
 });
@@ -163,7 +164,7 @@ useEffect(() => {
     <Animated.View
       style={{
         position: "absolute",
-        height: "40%",
+        height: height / 1.7,
         width: "100%",
         top: 0,
         borderBottomLeftRadius: 30,
@@ -180,14 +181,12 @@ useEffect(() => {
               className="webcam"
               videoConstraints={videoConstraints}
             />
-            <canvas ref={canvasRef} className="canvas" />
+              <canvas ref={canvasRef} className="canvas" />
           </>
         ) : (
           <CameraView ref={cameraRef} style={StyleSheet.absoluteFillObject} />
         )}
       </View>
-
-     
 
       <BlurView
         style={{

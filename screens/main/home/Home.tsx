@@ -11,7 +11,7 @@ import {
   useWindowDimensions,
   Animated,
   Easing,
-  StyleSheet
+  StyleSheet,
 } from "react-native";
 import { Colors } from "../../../components/Colors";
 import {
@@ -80,8 +80,6 @@ interface CustomBackdropProps {
   onPress: () => void;
 }
 
-
-
 interface HomeProps {
   navigation: NativeStackNavigationProp<RootStackParamList>;
 }
@@ -103,7 +101,9 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     userProfileLoading,
     showCamera,
   } = useSelector((state: RootState) => state.user);
-  const { charges } = useSelector((state: RootState) => state.account);
+  const { charges, beneficiaries } = useSelector(
+    (state: RootState) => state.account
+  );
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -114,19 +114,18 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
   const [confirmTPin, setConfirmTPin] = useState("");
   const [creatingPin, setCreatingPin] = useState(false);
 
+  const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity value for camera is 1
 
-   const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity value for camera is 1
-
-   const toggleCamera = () => {
-     Animated.timing(fadeAnim, {
-       toValue: showCamera ? 0 : 1, // Toggle between 0 and 1
-       duration: 500,
-       easing: Easing.linear,
-       useNativeDriver: true,
-     }).start(() => {
-       dispatch(toggleCamera())
-     });
-   };
+  const toggleCamera = () => {
+    Animated.timing(fadeAnim, {
+      toValue: showCamera ? 0 : 1, // Toggle between 0 and 1
+      duration: 500,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start(() => {
+      dispatch(toggleCamera());
+    });
+  };
 
   const handlePinSubmit = (pin) => {
     setIsPinSheetVisible(false);
@@ -260,9 +259,12 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
           />
         }
       >
-        
-          {showCamera ? <CustomCamera isVisible={showCamera} /> : <CustomCameraImage isVisible={showCamera} />}
-       
+        {showCamera ? (
+          <CustomCamera isVisible={showCamera} />
+        ) : (
+          <CustomCameraImage isVisible={showCamera} />
+        )}
+
         <View
           style={{
             flexDirection: "row",
@@ -324,7 +326,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
             </Pressable>
           </View>
         </View>
-        <View style={{ gap: 10, paddingHorizontal: 10 }}>
+        <View style={{ gap: 10, paddingHorizontal: 10, marginBottom: 70 }}>
           <Balance />
 
           <Action
@@ -333,46 +335,55 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
             onScanPress={() => dispatch(toggleShowCamera())}
           />
         </View>
-        <View style={{ paddingHorizontal: 10, marginTop: 80 }}>
-          <Memojis navigation={navigation} />
-        </View>
-        <View
-          style={{
-            backgroundColor: Colors.memojiBackground,
-            padding: 16,
-            borderRadius: 12,
-            gap: 10,
-          }}
-        >
-          <Pressable
-            onPress={() => navigation.navigate("Transactions")}
+
+        <View style={{paddingHorizontal: 10, flex: 1, gap: 20}}>
+          {beneficiaries.length !== 0 && (
+  
+              <Memojis navigation={navigation} />
+   
+          )}
+          <View
             style={{
-              flexDirection: "row",
+              backgroundColor: Colors.memojiBackground,
+              padding: 16,
+              borderRadius: 12,
               gap: 10,
-              alignItems: "center",
             }}
           >
-            <View
+            <Pressable
+              onPress={() => navigation.navigate("Transactions")}
               style={{
                 flexDirection: "row",
-                justifyContent: "space-between",
-                borderLeftColor: Colors.primary,
-                borderLeftWidth: 5,
-                borderRadius: 20,
-                height: 16,
-              }}
-            />
-            <BoldText
-              style={{
-                fontSize: 17 / fontScale,
-                color: Colors.balanceBlack,
+                gap: 10,
+                alignItems: "center",
               }}
             >
-              History
-            </BoldText>
-            <ArrowFrontIcon />
-          </Pressable>
-          <TransactionsList navigation={navigation} sliceFrom={0} sliceTo={5} />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  borderLeftColor: Colors.primary,
+                  borderLeftWidth: 5,
+                  borderRadius: 20,
+                  height: 16,
+                }}
+              />
+              <BoldText
+                style={{
+                  fontSize: 17 / fontScale,
+                  color: Colors.balanceBlack,
+                }}
+              >
+                History
+              </BoldText>
+              <ArrowFrontIcon />
+            </Pressable>
+            <TransactionsList
+              navigation={navigation}
+              sliceFrom={0}
+              sliceTo={5}
+            />
+          </View>
         </View>
       </ScrollView>
       <SwitchBusiness
@@ -419,8 +430,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  
   content: {
-    position: "relative"
+    position: "relative",
   },
 });

@@ -67,24 +67,26 @@ const Memojis = ({ navigation }: MemojiT) => {
         <View style={styles.line} />
         <BoldText style={styles.headerText}>Recents</BoldText>
       </View>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {beneficiariesLoading === "loading" ? (
-          <View style={{ alignItems: "center", justifyContent: "center" }}>
-            <ActivityIndicator size={24} color={Colors.primary} />
-          </View>
-        ) : (
-          beneficiaries?.map((user) => (
+      {beneficiariesLoading === "loading" ? (
+        <View
+          style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
+        >
+          <ActivityIndicator size={35} color={Colors.primary} />
+        </View>
+      ) : (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {beneficiaries?.map((user) => (
             <Pressable
               onPress={() =>
                 navigation.navigate("SendPayment", {
                   bankDetails: {
-                      account_name: user?.account_name,
-                      account_number: user?.account_number,
-                      bank_id: user?._id,
+                    account_name: user?.account_name,
+                    account_number: user?.account_number,
+                    bank_id: user?._id,
                   },
                   bank: {
                     name: user?.bank_name,
-                    code: user?.bank_code
+                    code: user?.bank_code,
                   },
                 })
               }
@@ -93,9 +95,9 @@ const Memojis = ({ navigation }: MemojiT) => {
             >
               <View style={styles.initialAvatar}>
                 <SemiBoldText
-                  style={{ fontSize: 17 / fontScale, color: Colors.white }}
+                  style={{ fontSize: 10 / fontScale, color: Colors.white }}
                 >
-                  {getInitials(user?.bank_name)}
+                  {truncateText(user?.bank_name, 4)}
                 </SemiBoldText>
               </View>
               <SemiBoldText
@@ -104,9 +106,9 @@ const Memojis = ({ navigation }: MemojiT) => {
                 {truncateText(user?.account_name, 9)}
               </SemiBoldText>
             </Pressable>
-          ))
-        )}
-      </ScrollView>
+          ))}
+        </ScrollView>
+      )}
     </View>
   );
 };
@@ -149,10 +151,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   initialAvatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 60,
-    padding: 10,
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    padding: 20,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: Colors.primary,

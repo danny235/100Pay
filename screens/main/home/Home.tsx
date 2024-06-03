@@ -84,6 +84,7 @@ interface HomeProps {
   navigation: NativeStackNavigationProp<RootStackParamList>;
 }
 
+
 export default function Home({ navigation }: HomeProps): React.JSX.Element {
   const { fontScale } = useWindowDimensions();
   const [showSwitchBalanceModal, setShowSwithBalanceModal] = useState(false);
@@ -245,26 +246,13 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     setIsPinSheetVisible(true);
   }, [isPinSheetVisible, userProfile?.hasSetPin, userProfileLoading]);
   // console.log(activeUserApp?.keys.pub_keys[0].value)
-  return (
-    <View style={{ flex: 1, backgroundColor: Colors.white }}>
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 40 }}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            shouldRasterizeIOS={true}
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
-        }
-      >
-        {showCamera ? (
-          <CustomCamera isVisible={showCamera} />
-        ) : (
-          <CustomCameraImage isVisible={showCamera} />
-        )}
 
+  // THIS IS THE CAMERA CHILDREN PROPS 
+
+  const CameraChildren = () => {
+    return (
+
+      <>
         <View
           style={{
             flexDirection: "row",
@@ -289,11 +277,11 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
                 style={{ fontSize: 16 / fontScale, color: Colors.white }}
               >
                 {userProfileLoading === "loading" ||
-                userProfileLoading === "rejected"
+                  userProfileLoading === "rejected"
                   ? "*****"
                   : userProfileLoading === "success"
-                  ? `Hello ${userProfile?.first_name}` || "*****"
-                  : undefined}{" "}
+                    ? `Hello ${userProfile?.first_name}` || "*****"
+                    : undefined}{" "}
                 👋
               </BoldText>
               <View
@@ -306,11 +294,11 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
                   }}
                 >
                   {userAppsLoading === "loading" ||
-                  userAppsLoading === "rejected"
+                    userAppsLoading === "rejected"
                     ? "*****"
                     : userAppsLoading === "success"
-                    ? activeUserApp?.business_name || "*****"
-                    : undefined}
+                      ? activeUserApp?.business_name || "*****"
+                      : undefined}
                 </LightText>
                 <ArrowDownIcon />
               </View>
@@ -334,13 +322,40 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
             onRecievePress={() => setShowRecieveModal(true)}
             onScanPress={() => dispatch(toggleShowCamera())}
           />
-        </View>
+        </View></>
+    )
+  }
+  return (
+    <View style={{ flex: 1, backgroundColor: Colors.white }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            shouldRasterizeIOS={true}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+      >
+        {showCamera ? (
+          <CustomCamera isVisible={showCamera}>
+            {CameraChildren()}
+          </CustomCamera>
+        ) : (
+          <CustomCameraImage isVisible={showCamera} >
+            {CameraChildren()}
+          </CustomCameraImage>
+        )}
 
-        <View style={{paddingHorizontal: 10, flex: 1, gap: 20}}>
-          {beneficiaries.length !== 0 && (
-  
-              <Memojis navigation={navigation} />
-   
+
+
+        <View style={{ paddingHorizontal: 10, flex: 1, gap: 20 }}>
+          {beneficiaries?.length !== 0 && (
+
+            <Memojis navigation={navigation} />
+
           )}
           <View
             style={{

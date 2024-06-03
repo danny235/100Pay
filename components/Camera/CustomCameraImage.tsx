@@ -20,12 +20,12 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-export default function CustomCameraImage({ isVisible }) {
+export default function CustomCameraImage({ isVisible, children }) {
   const opacity = useRef(new Animated.Value(isVisible ? 1 : 0)).current;
- const {height} = useWindowDimensions()
+  const { height } = useWindowDimensions()
 
   useEffect(() => {
-   
+
     Animated.timing(opacity, {
       toValue: isVisible ? 0 : 1,
       duration: 500,
@@ -37,36 +37,43 @@ export default function CustomCameraImage({ isVisible }) {
   return (
     <Animated.View
       style={{
-        position: "absolute",
-        height: height / 1.5,
+        // position: "absolute",
+        height: height / 2.3,
         width: "100%",
         top: 0,
         opacity,
       }}
     >
-      <Image
-        style={{
-          height: "100%",
-          width: "100%",
-          borderBottomLeftRadius: 10,
-          borderBottomRightRadius: 10,
-        }}
-        source={BgImage}
-        resizeMode="cover"
-      />
-      <BlurView
-        style={{
-          position: "absolute",
-          height: "100%",
-          width: "100%",
-          top: 0,
-          borderBottomLeftRadius: 10,
-          borderBottomRightRadius: 10,
-          overflow: "hidden",
-        }}
-        tint="systemThickMaterialDark"
-        intensity={80}
-      />
+      <>
+        <Image
+          style={{
+            height: "100%",
+            width: "100%",
+            borderBottomLeftRadius: 10,
+            borderBottomRightRadius: 10,
+          }}
+          source={BgImage}
+          resizeMode="cover"
+        />
+        <BlurView
+          style={{
+            position: "absolute",
+            height: "100%",
+            width: "100%",
+            top: 0,
+            borderBottomLeftRadius: 10,
+            borderBottomRightRadius: 10,
+            overflow: "hidden",
+          }}
+          tint="systemThickMaterialDark"
+          intensity={80}
+        />
+      </>
+
+
+      <View style={{ position: 'absolute', left: 0, right: 0 }}>
+        {children}
+      </View>
     </Animated.View>
   );
 }

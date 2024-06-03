@@ -110,21 +110,20 @@ export default function PayHome({ navigation }: PayHomeT) {
   } = useSelector((state: RootState) => state.user);
 
   const validateId = async (payId) => {
-    setFetching(true);
+    // setFetching(true);
     try {
       const res = await validatePayId(payId, token);
       console.log(typeof res.data, "from line 116")
 
       if (res.data !== "") {
-        setFetching(false);
+     
         setShowPayIdDetails(true)
         setPayIdDetails(res.data);
       } else {
-        setFetching(false);
         showToast("Error getting lens id 😢", "error");
       }
     } catch (err) {
-      setFetching(false);
+
       showToast(err?.message, "error");
     }
   };
@@ -163,11 +162,13 @@ export default function PayHome({ navigation }: PayHomeT) {
         validateId(accountNum);
       }, 1000);
     } else if (accountNum.length === 10) {
-      setShowPayIdDetails(false)
+      setShowPayIdDetails(false);
       setShowBankForm(true);
+    } else if (accountNum.length < 6) {
+      setShowPayIdDetails(false);
     } else if (accountNum.length < 10) {
       setShowBankForm(false);
-    }
+    } 
 
     return () => {
       if (fetchTimeoutRef.current) {

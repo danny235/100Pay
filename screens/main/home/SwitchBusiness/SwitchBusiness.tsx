@@ -92,7 +92,7 @@ export default function SwitchBusiness({
         index={1}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
-        enableContentPanningGesture={false}
+        // enableContentPanningGesture={false}
         enablePanDownToClose={false}
         handleIndicatorStyle={{
           borderWidth: 3,

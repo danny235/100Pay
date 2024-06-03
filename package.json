@@ -9,6 +9,7 @@
     "web": "expo start --web",
     "build:web": "expo export -p web && npx workbox-cli generateSW workbox-config.js"
   },
+  
   "dependencies": {
     "@expo/metro-runtime": "^3.2.1",
     "@gorhom/bottom-sheet": "^4",

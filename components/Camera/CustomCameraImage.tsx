@@ -38,7 +38,7 @@ export default function CustomCameraImage({ isVisible }) {
     <Animated.View
       style={{
         position: "absolute",
-        height: height / 1.7,
+        height: height / 1.5,
         width: "100%",
         top: 0,
         opacity,

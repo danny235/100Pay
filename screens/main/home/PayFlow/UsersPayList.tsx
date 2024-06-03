@@ -67,11 +67,11 @@ const UserPayList: React.FC<UserPayListProps> = ({
               {truncateText(user?.bank_name, 4)}
             </SemiBoldText>
           </View>
-          <SemiBoldText style={styles.username}>
+          <SemiBoldText style={[styles.username, {fontSize: 14 / fontScale}]}>
             {truncateText(user?.account_name, 10)}
           </SemiBoldText>
-          <View style={styles.userInfo}>
-            <LightText style={styles.userId}>
+          <View style={[styles.userInfo]}>
+            <LightText style={[styles.userId, {fontSize: 12 / fontScale}]}>
               Account: {user?.account_number}
             </LightText>
           </View>
@@ -105,13 +105,13 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
   },
   username: {
-    fontSize: 16,
+
     color: Colors.balanceBlack,
     paddingRight: 12,
     textTransform: "capitalize"
   },
   userId: {
-    fontSize: 13,
+
     color: "gray",
   },
   initialAvatar: {

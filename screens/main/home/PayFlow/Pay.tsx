@@ -181,7 +181,7 @@ export default function PayHome({ navigation }: PayHomeT) {
     <CustomView>
       <CustomHeader
         text="Send payment"
-        icon={<ScanRedIcon />}
+        icon={<ScanRedIcon color={Colors.primary} />}
         onPress={() => navigation.goBack()}
       />
       <ScrollView showsVerticalScrollIndicator={false}>

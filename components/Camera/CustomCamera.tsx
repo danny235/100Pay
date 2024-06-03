@@ -30,6 +30,7 @@ const CustomCamera = ({ onPictureTaken, isVisible }: CameraT) => {
 
 const [videoConstraints, setVideoConstraints] = useState<VideoConstraints>({
   facingMode: "environment",
+  
 });
 
 useEffect(() => {

@@ -217,6 +217,10 @@ type AccountType = {
   beneficiaries: BenefeciariesT[] | null;
   beneficiariesLoading: string;
   beneficiariesError: string;
+  showFaceAccounts: boolean;
+  faceAccounts: [];
+  showBookAccounts: boolean;
+  bookAccounts: []
 };
 
 const initialState: AccountType = {
@@ -239,6 +243,10 @@ const initialState: AccountType = {
   beneficiaries: null,
   beneficiariesLoading: "idle",
   beneficiariesError: "",
+  showBookAccounts: false,
+  bookAccounts: [],
+  showFaceAccounts: false,
+  faceAccounts: []
 };
 
 export const accountSlice = createSlice({
@@ -248,11 +256,22 @@ export const accountSlice = createSlice({
     updateActiveBankId: (state, action) => {
       state.activeBankId = action.payload;
     },
+    updateShowFaceAccounts: (state, action) => {
+      state.showFaceAccounts = action.payload
+    },
+    updateShowBookAccounts: (state, action) => {
+      state.bookAccounts = action.payload
+    },
     clearAccount: (state) => {
       state.charges = null;
       state.payments = null;
       state.bankAccounts = null;
       state.activeBankId = "";
+      state.faceAccounts = [];
+      state.paymentLinks = null;
+      state.showBookAccounts = false;
+      state.showFaceAccounts = false;
+      state.bookAccounts = []
     },
   },
 
@@ -360,6 +379,6 @@ export const accountSlice = createSlice({
   },
 });
 
-export const { updateActiveBankId, clearAccount } = accountSlice.actions;
+export const { updateActiveBankId, clearAccount, updateShowBookAccounts, updateShowFaceAccounts } = accountSlice.actions;
 
 export default accountSlice.reducer;

@@ -75,7 +75,7 @@ const Memojis = ({ navigation }: MemojiT) => {
         </View>
       ) : (
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {beneficiaries?.map((user) => (
+          {beneficiaries?.map((user, i) => (
             <Pressable
               onPress={() =>
                 navigation.navigate("SendPayment", {
@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.memojiBackground,
     borderRadius: 12,
     padding: 16,
+    gap: 20
   },
   header: {
     flexDirection: "row",
@@ -137,9 +138,9 @@ const styles = StyleSheet.create({
     color: Colors.balanceBlack,
   },
   userContainer: {
-    marginRight: 16,
+    marginHorizontal: 10,
     alignItems: "center",
-    marginTop: 12,
+    
   },
   image: {
     width: 64,
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   username: {
-    marginTop: 5,
+    
     fontSize: 14,
   },
   initialAvatar: {

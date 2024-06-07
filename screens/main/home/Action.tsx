@@ -38,7 +38,7 @@ export default function Action({
         </MediumText>
       </Pressable>
       <Pressable
-        onPress={onScanPress}
+        onPress={()=>onScanPress()}
         style={[
           styles.btn,
           {

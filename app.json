@@ -25,7 +25,17 @@
         }
       ],
 
-      "expo-router"
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Paylens needs access to your camera to allow you update your profile photo.",
+          "cameraPermission": "Allow $(PRODUCT_NAME) to open the camera",
+
+          "//": "Disables the microphone permission",
+          "microphonePermission": false
+        }
+      ]
       
     ],
     "web": {

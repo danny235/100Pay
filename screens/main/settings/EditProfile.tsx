@@ -5,29 +5,30 @@ import {
   Image,
   Pressable,
   useWindowDimensions,
-} from 'react-native';
-import React from 'react';
-import CustomView from '../../../components/Views/CustomView';
-import CustomHeader from '../../../components/headers/CustomHeaders';
-import {CopyIcon, EditIcon} from '../../../components/SvgAssets';
-import {NavigationProp} from '@react-navigation/native';
-import {RootStackParamList} from '../../../routes/AppStacks';
-import {StyleSheet} from 'react-native';
-import {Colors} from '../../../components/Colors';
-import Avatar from '../../../assets/images/DashboardEmojis/Avatar-a.png';
+} from "react-native";
+import React from "react";
+import CustomView from "../../../components/Views/CustomView";
+import CustomHeader from "../../../components/headers/CustomHeaders";
+import { CopyIcon, EditIcon } from "../../../components/SvgAssets";
+import { NavigationProp } from "@react-navigation/native";
+import { RootStackParamList } from "../../../routes/AppStacks";
+import { StyleSheet } from "react-native";
+import { Colors } from "../../../components/Colors";
+import Avatar from "../../../assets/images/DashboardEmojis/Avatar-a.png";
 import {
   MediumText,
   RegularText,
-} from '../../../components/styles/styledComponents';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../app/store';
+} from "../../../components/styles/styledComponents";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../app/store";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 type EditProfileT = {
-  navigation: NavigationProp<RootStackParamList>;
+  navigation: NativeStackNavigationProp<RootStackParamList>;
 };
 
-export default function EditProfile({navigation}: EditProfileT) {
-  const {fontScale} = useWindowDimensions();
+export default function EditProfile({ navigation }: EditProfileT) {
+  const { fontScale } = useWindowDimensions();
   const {
     userApps,
     activeUserApp,
@@ -46,24 +47,33 @@ export default function EditProfile({navigation}: EditProfileT) {
 
       <ScrollView>
         <View style={styles.imageWrapper}>
-          <Image style={styles.userPhoto} source={Avatar} />
+          <Image
+            style={styles.userPhoto}
+            source={
+              userProfile?.avatar && userProfile?.avatar !== "user.png"
+                ? { uri: userProfile.avatar }
+                : Avatar
+            }
+          />
           <Pressable
+            onPress={() => navigation.navigate("EditPhoto")}
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
+              flexDirection: "row",
+              alignItems: "center",
               gap: 10,
               backgroundColor: Colors.memojiBackground,
               padding: 10,
               borderRadius: 20,
-            }}>
-            <MediumText style={{fontSize: 14 / fontScale}}>
+            }}
+          >
+            <MediumText style={{ fontSize: 14 / fontScale }}>
               Edit Photo
             </MediumText>
             <EditIcon />
           </Pressable>
         </View>
 
-        <MediumText style={{fontSize: 18 / fontScale, marginVertical: 15}}>
+        <MediumText style={{ fontSize: 18 / fontScale, marginVertical: 15 }}>
           Profile Details
         </MediumText>
 
@@ -73,28 +83,36 @@ export default function EditProfile({navigation}: EditProfileT) {
             padding: 20,
             borderRadius: 10,
             gap: 20,
-          }}>
+          }}
+        >
           <View style={styles.borderWrapper}>
-            <RegularText style={[styles.textLeft, {fontSize: 15 / fontScale}]}>
+            <RegularText
+              style={[styles.textLeft, { fontSize: 15 / fontScale }]}
+            >
               Name
             </RegularText>
-            <MediumText style={[styles.textRight, {fontSize: 15 / fontScale}]}>
-             {userProfile?.first_name} {userProfile?.last_name}
+            <MediumText
+              style={[styles.textRight, { fontSize: 15 / fontScale }]}
+            >
+              {userProfile?.first_name} {userProfile?.last_name}
             </MediumText>
           </View>
 
           <View style={styles.borderWrapper}>
-            <RegularText style={[styles.textLeft, {fontSize: 15 / fontScale}]}>
-              Pay ID
+            <RegularText
+              style={[styles.textLeft, { fontSize: 15 / fontScale }]}
+            >
+              Lens ID
             </RegularText>
 
             <Pressable style={styles.buttonGroup}>
               <MediumText
                 style={{
-                  textTransform: 'uppercase',
+                  textTransform: "uppercase",
                   fontSize: 15 / fontScale,
                   color: Colors.balanceBlack,
-                }}>
+                }}
+              >
                 {activeUserApp?.referralCode}
               </MediumText>
               <CopyIcon />
@@ -111,17 +129,20 @@ export default function EditProfile({navigation}: EditProfileT) {
           </View> */}
 
           <View style={styles.borderWrapper}>
-            <RegularText style={[styles.textLeft, {fontSize: 15 / fontScale}]}>
+            <RegularText
+              style={[styles.textLeft, { fontSize: 15 / fontScale }]}
+            >
               Phone No
             </RegularText>
 
             <Pressable style={styles.buttonGroup}>
               <MediumText
                 style={{
-                  textTransform: 'uppercase',
+                  textTransform: "uppercase",
                   fontSize: 15 / fontScale,
                   color: Colors.balanceBlack,
-                }}>
+                }}
+              >
                 {userProfile?.phone}
               </MediumText>
               <EditIcon />
@@ -129,36 +150,40 @@ export default function EditProfile({navigation}: EditProfileT) {
           </View>
 
           <View style={styles.borderWrapper}>
-            <RegularText style={[styles.textLeft, {fontSize: 15 / fontScale}]}>
+            <RegularText
+              style={[styles.textLeft, { fontSize: 15 / fontScale }]}
+            >
               Country
             </RegularText>
 
             <Pressable style={styles.buttonGroup}>
               <MediumText
                 style={{
-                  
                   fontSize: 15 / fontScale,
                   color: Colors.balanceBlack,
-                }}>
-              {userProfile?.country}
+                }}
+              >
+                {userProfile?.country}
               </MediumText>
               <EditIcon />
             </Pressable>
           </View>
 
-          <View style={[styles.borderWrapper,{borderBottomWidth: 0}]}>
-            <RegularText style={[styles.textLeft, {fontSize: 15 / fontScale}]}>
+          <View style={[styles.borderWrapper, { borderBottomWidth: 0 }]}>
+            <RegularText
+              style={[styles.textLeft, { fontSize: 15 / fontScale }]}
+            >
               Email
             </RegularText>
 
             <Pressable style={styles.buttonGroup}>
               <MediumText
                 style={{
-                  
                   fontSize: 15 / fontScale,
                   color: Colors.balanceBlack,
-                }}>
-               {userProfile?.email}
+                }}
+              >
+                {userProfile?.email}
               </MediumText>
               <EditIcon />
             </Pressable>
@@ -176,8 +201,8 @@ const styles = StyleSheet.create({
     borderRadius: 90,
   },
   imageWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     gap: 20,
   },
   pressableButton: {
@@ -188,9 +213,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.ash,
     paddingBottom: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   textLeft: {
     color: Colors.grayText,
@@ -198,5 +223,5 @@ const styles = StyleSheet.create({
   textRight: {
     color: Colors.balanceBlack,
   },
-  buttonGroup: {flexDirection: 'row', gap: 10, alignItems: "center"},
+  buttonGroup: { flexDirection: "row", gap: 10, alignItems: "center" },
 });

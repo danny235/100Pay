@@ -169,6 +169,7 @@ export const userSlice = createSlice({
       state.userApps = null
       state.activeUserApp = null;
       state.isLoggedIn = false;
+      state.showCamera = false;
     },
     updateAccountBalanceType: (state, action) => {
       state.accountBalanceType = action.payload;
@@ -183,8 +184,8 @@ export const userSlice = createSlice({
     updateActiveApps: (state, action) => {
       state.activeUserApp = action.payload;
     },
-    toggleShowCamera: (state) => {
-      state.showCamera = !state.showCamera
+    toggleShowCamera: (state, action) => {
+      state.showCamera = action.payload
     }
   },
 

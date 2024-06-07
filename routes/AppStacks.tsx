@@ -4,6 +4,7 @@ import {
   AssetScreen,
   ConvertAssetScreen,
   DiscoverScreen,
+  EditPhotoScreen,
   EditProfileScreen,
   GenerateRequestLinkScreen,
   GeneratedCodeScreen,
@@ -78,6 +79,7 @@ export type RootStackParamList = {
   GeneratedCode: undefined;
   Assets: undefined;
   EditProfile: undefined;
+  EditPhoto: undefined;
   SingleCoin: undefined;
   ConvertAsset: undefined;
   Transactions: undefined;
@@ -172,6 +174,7 @@ export function SettingsStackScreen(): React.JSX.Element {
       }}>
       <SettingsStack.Screen name="Setting" component={SettingsScreen} />
       <SettingsStack.Screen name="EditProfile" component={EditProfileScreen} />
+      <SettingsStack.Screen name="EditPhoto" component={EditPhotoScreen} />
       <SettingsStack.Screen
         name="Transactions"
         component={TransactionsScreen}

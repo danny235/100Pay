@@ -10,7 +10,7 @@ import * as ml5 from "ml5";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
-import { updateShowBookAccounts } from "../../features/account/accountSlice";
+import { updateShowBookAccounts, updateShowFaceAccounts } from "../../features/account/accountSlice";
 
 type CameraT = {
   onPictureTaken?: (photo) => void;
@@ -63,7 +63,8 @@ const CustomCamera = ({ onPictureTaken, isVisible, children }: CameraT) => {
     //   },
     // });
     console.log(imageBlob)
-    dispatch(updateShowBookAccounts(true))
+    // dispatch(updateShowBookAccounts(true))
+    dispatch(updateShowFaceAccounts(true))
     // if (response.success) {
     //   // navigate("/dashboard/send-funds", { state: { data: response.data }, replace: true });
     // }
@@ -194,7 +195,7 @@ const CustomCamera = ({ onPictureTaken, isVisible, children }: CameraT) => {
     <Animated.View
       style={{
         // position: "absolute",
-        height: height / 2.4,
+        height: height / 2,
         width: "100%",
         top: 0,
         borderBottomLeftRadius: 30,

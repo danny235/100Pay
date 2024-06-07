@@ -1,50 +1,103 @@
-import React from 'react';
-import {Image, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions} from 'react-native';
-import CustomView from '../../../components/Views/CustomView';
-import Avatar from "../../../assets/images/DashboardEmojis/Avatar-a.png"
-import { BoldText, LightText, MediumText } from '../../../components/styles/styledComponents';
-import { Colors } from '../../../components/Colors';
-import { CSServiceIcon, CopyIcon, EditIcon, InfoIcon, RateIcon, ReferralIcon, SecuritySafeIcon, TransactionIcon } from '../../../components/SvgAssets';
-import { useToast } from '../../../components/CustomToast/ToastContext';
+import React from "react";
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
+import CustomView from "../../../components/Views/CustomView";
+import Avatar from "../../../assets/images/DashboardEmojis/Avatar-a.png";
+import {
+  BoldText,
+  LightText,
+  MediumText,
+} from "../../../components/styles/styledComponents";
+import { Colors } from "../../../components/Colors";
+import {
+  CSServiceIcon,
+  CopyIcon,
+  EditIcon,
+  InfoIcon,
+  RateIcon,
+  ReferralIcon,
+  SecuritySafeIcon,
+  TransactionIcon,
+} from "../../../components/SvgAssets";
+import { useToast } from "../../../components/CustomToast/ToastContext";
 import * as Clipboard from "expo-clipboard";
-import { NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../../routes/AppStacks';
-import { useDispatch, useSelector } from 'react-redux';
-import { HeartAdd, Login, LoginCurve, MusicPlay, Note, ProfileAdd, ProfileCircle, SecuritySafe } from 'iconsax-react-native';
-import { addToken, logOut, toggleIsLoggedIn } from '../../../features/user/userSlice';
-import { RootState, logoutUser } from '../../../app/store';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { clearAccount } from '../../../features/account/accountSlice';
+import { NavigationProp } from "@react-navigation/native";
+import { RootStackParamList } from "../../../routes/AppStacks";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  HeartAdd,
+  Login,
+  LoginCurve,
+  MusicPlay,
+  Note,
+  ProfileAdd,
+  ProfileCircle,
+  SecuritySafe,
+} from "iconsax-react-native";
+import {
+  addToken,
+  logOut,
+  toggleIsLoggedIn,
+} from "../../../features/user/userSlice";
+import { RootState, logoutUser } from "../../../app/store";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { clearAccount } from "../../../features/account/accountSlice";
 
 type SettingsT = {
   navigation: NativeStackNavigationProp<RootStackParamList>;
 };
 
-export default function Settings({navigation}: SettingsT): React.JSX.Element {
-  const {fontScale} = useWindowDimensions()
-  const {showToast} = useToast();
-  const {userApps, activeUserApp, userAppsError, userAppsLoading, token, userProfile} =
-    useSelector((state: RootState) => state.user);
-  const dispatch = useDispatch()
-
+export default function Settings({ navigation }: SettingsT): React.JSX.Element {
+  const { fontScale } = useWindowDimensions();
+  const { showToast } = useToast();
+  const {
+    userApps,
+    activeUserApp,
+    userAppsError,
+    userAppsLoading,
+    token,
+    userProfile,
+  } = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
 
   const logout = () => {
-    dispatch(logOut())
-    dispatch(clearAccount())
-  }
+    dispatch(logOut());
+    dispatch(clearAccount());
+  };
   const settingList = [
     {
       id: 1,
       title: "Business Settings",
       description: "Business Name, Country, Web Address, Web Hook...",
-      icon: <ProfileCircle variant="TwoTone" width={24} height={24} color={Colors.primary} />,
+      icon: (
+        <ProfileCircle
+          variant="TwoTone"
+          width={24}
+          height={24}
+          color={Colors.primary}
+        />
+      ),
       onPress: () => null,
     },
     {
       id: 2,
       title: "Security",
       description: "Password, Biometrics, Payment Pin, Freeze Account...",
-      icon: <SecuritySafe variant="TwoTone" width={24} height={24} color={Colors.primary} />,
+      icon: (
+        <SecuritySafe
+          variant="TwoTone"
+          width={24}
+          height={24}
+          color={Colors.primary}
+        />
+      ),
       onPress: () => null,
     },
     {
@@ -83,13 +136,13 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
       onPress: () => logout(),
     },
   ];
-  const copyToClipboard = async() => {
+  const copyToClipboard = async () => {
     await Clipboard.setStringAsync(`${activeUserApp?.referralCode}`);
-    showToast('Copied successfully', "success");
+    showToast("Copied successfully", "success");
   };
   return (
     <CustomView>
-      <ScrollView>
+      <ScrollView showsHorizontalScrollIndicator={false}>
         <View
           style={{
             gap: 10,
@@ -98,7 +151,14 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
             marginVertical: 30,
           }}
         >
-          <Image style={styles.userPhoto} source={Avatar} />
+          <Image
+            style={styles.userPhoto}
+            source={
+              userProfile?.avatar && userProfile?.avatar !== "user.png"
+                ? { uri: userProfile.avatar }
+                : Avatar
+            }
+          />
           <BoldText
             style={{
               textTransform: "capitalize",
@@ -204,12 +264,11 @@ export default function Settings({navigation}: SettingsT): React.JSX.Element {
   );
 }
 
-
 const styles = StyleSheet.create({
   userPhoto: {
-    width: 90, 
+    width: 90,
     height: 90,
-    borderRadius: 90
+    borderRadius: 90,
   },
   pressableCTA: {
     paddingVertical: 13,
@@ -220,6 +279,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.memojiBackground,
     paddingHorizontal: 20,
     borderRadius: 10,
-    flexGrow: 1
-  }
-})
+    flexGrow: 1,
+  },
+});

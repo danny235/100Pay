@@ -1,6 +1,6 @@
-import { UpdateUserData } from "../../components/types/user"; 
-const API_URL = process.env.NEXT_PUBLIC_BASE_API;
-const API_KEY = process.env.NEXT_PUBLIC_API_KEY || "";
+import axios from "axios";
+import { UpdateUserData, UserData } from "../../components/types/user"; 
+
 
 const constructUserData: (values: any) => UpdateUserData = (values) => {
   return {
@@ -22,25 +22,27 @@ const constructUserData: (values: any) => UpdateUserData = (values) => {
 const updateUserRequest = async ({
   data,
   token,
+  apiKey,
+
 }: {
-  data: UpdateUserData;
+  data: any;
   token: string;
+  apiKey: string;
+
 }) => {
   const userData = constructUserData(data);
   try {
-    const res = await fetch(`${API_URL}/user`, {
+    const res = await axios(`https://api.100pay.co/api/v1/user`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "Auth-Token": token,
-        "Api-Key": API_KEY,
+        "Api-Key": apiKey,
       },
-      body: JSON.stringify(userData),
+      data,
     });
-    return res;
+    return res.data;
   } catch (error: any) {
-    console.log("user update POST err", error);
-    console.log(error.response.data);
     throw Error(error.response.data);
   }
 };

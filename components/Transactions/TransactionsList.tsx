@@ -31,6 +31,8 @@ export default function TransactionsList({
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   useEffect(() => {
+    if (userAppsLoading === "loading") return;
+    if (!activeUserApp?.keys?.pub_keys[0]?.value) return;
     dispatch(
       fetchPayments({
         token,
@@ -39,9 +41,9 @@ export default function TransactionsList({
       })
     );
     dispatch(
-      fetchCharge({token, apiKey: activeUserApp?.keys.pub_keys[0].value}),
+      fetchCharge({ token, apiKey: activeUserApp?.keys.pub_keys[0].value })
     );
-  }, []);
+  }, [activeUserApp?.keys?.pub_keys[0].value, userAppsLoading]);
   return (
     <View style={{flex: 1, gap: 20, paddingVertical: 4}}>
       {payOutsLoading === 'loading' && (

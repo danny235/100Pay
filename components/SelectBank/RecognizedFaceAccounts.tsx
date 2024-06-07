@@ -27,6 +27,7 @@ import { Colors } from "../Colors";
 import { CustomBackdrop } from "../ChooseAccountBalance/ChooseAccountBalance";
 import { ScrollView } from "react-native-gesture-handler";
 import { updateShowFaceAccounts } from "../../features/account/accountSlice";
+import { toggleShowCamera } from "../../features/user/userSlice";
 
 type SelectAccountT = {
   navigation?: NavigationProp<RootStackParamList> | any;
@@ -53,13 +54,17 @@ export default function RecognizedFaceAccounts({
     bottomSheetModalRef.current?.present();
   }, []);
   const handlePresentModalClose = useCallback(() => {
-    onClose();
+     if (onClose) onClose();
+    dispatch(toggleShowCamera(false))
     dispatch(updateShowFaceAccounts(false));
     bottomSheetModalRef.current?.dismiss();
   }, []);
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
-  }, []);
+  const handleSheetChanges = useCallback(
+    (index: number) => {
+      console.log("handleSheetChanges", index);
+    },
+    [dispatch, onClose]
+  );
 
   useEffect(() => {
     if (showSelectAccount) {
@@ -73,6 +78,7 @@ export default function RecognizedFaceAccounts({
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={1}
+        key={"RecognizedFaceAccounts"}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         // enableContentPanningGesture={false}
@@ -120,6 +126,7 @@ export default function RecognizedFaceAccounts({
             <Pressable
               onPress={() => {
                 handlePresentModalClose();
+      
                 navigation.navigate("SendPayment", {
                   bankDetails: {
                     account_name: user?.account_name,
@@ -166,7 +173,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
-    gap: 3,
+    gap: 10,
   },
   avatar: {
     width: 50,

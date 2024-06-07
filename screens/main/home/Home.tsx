@@ -75,6 +75,7 @@ import CustomCamera from "../../../components/Camera/CustomCamera";
 import CustomCameraImage from "../../../components/Camera/CustomCameraImage";
 import RecognizedBookAccount from "../../../components/SelectBank/RecognizedBookAccount";
 import RecognizedFaceAccounts from "../../../components/SelectBank/RecognizedFaceAccounts";
+import Avatar from "../../../assets/images/DashboardEmojis/Avatar-a.png";
 
 interface CustomBackdropProps {
   animatedIndex: SharedValue<number>;
@@ -119,16 +120,16 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
 
   const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity value for camera is 1
 
-  const toggleCamera = () => {
-    Animated.timing(fadeAnim, {
-      toValue: showCamera ? 0 : 1, // Toggle between 0 and 1
-      duration: 500,
-      easing: Easing.linear,
-      useNativeDriver: true,
-    }).start(() => {
-      dispatch(toggleCamera());
-    });
-  };
+  // const toggleCamera = () => {
+  //   Animated.timing(fadeAnim, {
+  //     toValue: showCamera ? 0 : 1, // Toggle between 0 and 1
+  //     duration: 500,
+  //     easing: Easing.linear,
+  //     useNativeDriver: true,
+  //   }).start(() => {
+  //     dispatch(toggleShowCamera());
+  //   });
+  // };
 
   const handlePinSubmit = (pin) => {
     setIsPinSheetVisible(false);
@@ -253,7 +254,6 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
 
   const CameraChildren = () => {
     return (
-
       <>
         <View
           style={{
@@ -269,9 +269,11 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
           >
             <Image
               style={{ borderRadius: 40, height: 40, width: 40 }}
-              source={{
-                uri: "https://plus.unsplash.com/premium_photo-1703617663829-ac7430988118?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3fHx8ZW58MHx8fHx8",
-              }}
+              source={
+                userProfile?.avatar && userProfile?.avatar !== "user.png"
+                  ? { uri: userProfile.avatar }
+                  : Avatar
+              }
             />
 
             <View style={{ gap: 4 }}>
@@ -279,11 +281,11 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
                 style={{ fontSize: 16 / fontScale, color: Colors.white }}
               >
                 {userProfileLoading === "loading" ||
-                  userProfileLoading === "rejected"
+                userProfileLoading === "rejected"
                   ? "*****"
                   : userProfileLoading === "success"
-                    ? `Hello ${userProfile?.first_name}` || "*****"
-                    : undefined}{" "}
+                  ? `Hello ${userProfile?.first_name}` || "*****"
+                  : undefined}{" "}
                 👋
               </BoldText>
               <View
@@ -296,11 +298,11 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
                   }}
                 >
                   {userAppsLoading === "loading" ||
-                    userAppsLoading === "rejected"
+                  userAppsLoading === "rejected"
                     ? "*****"
                     : userAppsLoading === "success"
-                      ? activeUserApp?.business_name || "*****"
-                      : undefined}
+                    ? activeUserApp?.business_name || "*****"
+                    : undefined}
                 </LightText>
                 <ArrowDownIcon />
               </View>
@@ -322,10 +324,11 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
           <Action
             onPayPress={() => navigation.navigate("Pay")}
             onRecievePress={() => setShowRecieveModal(true)}
-            onScanPress={() => dispatch(toggleShowCamera())}
+            onScanPress={() => dispatch(toggleShowCamera(!showCamera))}
           />
-        </View></>
-    )
+        </View>
+      </>
+    );
   }
   return (
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
@@ -435,7 +438,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
         onSubmit={handleConfirmPinSubmit}
       />
       <RecognizedBookAccount showSelectAccount={showBookAccounts} navigation={navigation} onClose={()=> null} />
-      <RecognizedFaceAccounts showSelectAccount={showFaceAccounts} navigation={navigation} onClose={()=> null} />
+      {/* <RecognizedFaceAccounts showSelectAccount={showFaceAccounts} navigation={navigation} onClose={()=> null} /> */}
 
       <Loader
         visible={

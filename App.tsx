@@ -19,6 +19,7 @@ import { persistor, store } from "./app/store";
 import { ToastProvider } from "./components/CustomToast/ToastContext";
 import NavigationContent from "./routes/AppStacks";
 import { useFonts } from "expo-font";
+import ErrorBoundary from "./ErrorBoundary";
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -49,19 +50,21 @@ function App(): React.JSX.Element {
       return null;
     }
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <NavigationContainer>
-          <SafeAreaProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <ToastProvider>
-                <NavigationContent />
-              </ToastProvider>
-            </GestureHandlerRootView>
-          </SafeAreaProvider>
-        </NavigationContainer>
-      </PersistGate>
-    </Provider>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <NavigationContainer>
+            <SafeAreaProvider>
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <ToastProvider>
+                  <NavigationContent />
+                </ToastProvider>
+              </GestureHandlerRootView>
+            </SafeAreaProvider>
+          </NavigationContainer>
+        </PersistGate>
+      </Provider>
+    </ErrorBoundary>
   );
 }
 

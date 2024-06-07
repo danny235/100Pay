@@ -28,6 +28,7 @@ import { CustomBackdrop } from "../ChooseAccountBalance/ChooseAccountBalance";
 import { ScrollView } from "react-native-gesture-handler";
 import { truncateText } from "../../utils";
 import { updateShowBookAccounts } from "../../features/account/accountSlice";
+import { toggleShowCamera } from "../../features/user/userSlice";
 
 type SelectAccountT = {
   navigation?: NavigationProp<RootStackParamList> | any;
@@ -54,10 +55,11 @@ export default function RecognizedBookAccount({
     bottomSheetModalRef.current?.present();
   }, []);
   const handlePresentModalClose = useCallback(() => {
-    onClose();
-    dispatch(updateShowBookAccounts(false))
+     if (onClose) onClose();
+    dispatch(toggleShowCamera(false));
+    dispatch(updateShowBookAccounts(false));
     bottomSheetModalRef.current?.dismiss();
-  }, []);
+  }, [dispatch, onClose]);
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
   }, []);
@@ -76,6 +78,7 @@ export default function RecognizedBookAccount({
         index={1}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
+        key={"RecognizedBookAccounts"}
         // enableContentPanningGesture={false}
         enablePanDownToClose={false}
         handleIndicatorStyle={{
@@ -122,6 +125,7 @@ export default function RecognizedBookAccount({
             <Pressable
               onPress={() =>{
                 handlePresentModalClose()
+                
                 navigation.navigate("SendPayment", {
                   bankDetails: {
                     account_name: user?.account_name,

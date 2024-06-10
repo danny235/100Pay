@@ -228,7 +228,7 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
     <CustomView>
       <CustomHeader
         text="Send Payment"
-        icon={<PayIcon />}
+        icon={<PayIcon color={Colors.primary} />}
         onPress={() => navigation.goBack()}
       />
       <ScrollView>
@@ -243,13 +243,14 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
               <Image style={styles.avatarImg} source={UserAvatar} />
             </View>
             <View style={styles.userTextWrapper}>
-              <LightText style={{ fontSize: 15 / fontScale }}>
+              <LightText style={{ fontSize: 15 / fontScale, textAlign: "center" }}>
                 Send money to
               </LightText>
               <MediumText
-                style={{ fontSize: 15 / fontScale, color: Colors.iconColor }}
+                style={{ fontSize: 15 / fontScale, color: Colors.iconColor, textAlign: "center" }}
               >
                 {bankDetails ? bankDetails.account_name : pay.app_name}
+             
               </MediumText>
             </View>
           </View>
@@ -643,8 +644,9 @@ const styles = StyleSheet.create({
     borderRadius: 80,
   },
   userTextWrapper: {
-    flexDirection: "row",
     gap: 3,
+    alignItems: "center",
+    justifyContent: "center"
   },
   payWithToggle: {
     flexDirection: "row",

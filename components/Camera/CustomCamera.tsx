@@ -57,14 +57,14 @@ const CustomCamera = ({ onPictureTaken, isVisible, children }: CameraT) => {
   const handleImageUpload = async (imageBlob) => {
     const data = new FormData();
     data.append("image", imageBlob, 'lens_image.png')
+    dispatch(updateShowBookAccounts(true))
     // const response = await axios.post("http://localhost:9000/api/v1/payment/transfer/send-funds/scan-image", data, {
     //   headers: {
     //     "Content-Type": "multipart/form-data",
     //   },
     // });
     console.log(imageBlob)
-    // dispatch(updateShowBookAccounts(true))
-    dispatch(updateShowFaceAccounts(true))
+    // dispatch(updateShowFaceAccounts(true))
     // if (response.success) {
     //   // navigate("/dashboard/send-funds", { state: { data: response.data }, replace: true });
     // }

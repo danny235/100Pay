@@ -20,7 +20,7 @@ import {
 import {Colors} from '../../../components/Colors';
 import {NavigationProp} from '@react-navigation/native';
 import {RootStackParamList} from '../../../routes/AppStacks';
-import {Money4} from 'iconsax-react-native';
+import {Money4, ShoppingCart} from 'iconsax-react-native';
 
 type DiscoverT = {
   navigation: NavigationProp<RootStackParamList>;
@@ -91,6 +91,26 @@ export default function Discover({navigation}: DiscoverT): React.JSX.Element {
                 width: '80%',
               }}>
               Connect your payment QR Code to your 100Pay account
+            </RegularText>
+          </View>
+          <View style={{marginLeft: 'auto'}}>
+            <ArrowForwardIcon color={Colors.iconColor} />
+          </View>
+        </Pressable>
+
+        <Pressable style={styles.discoverCTA}>
+          <ShoppingCart color={Colors.primary} size={24} />
+          <View style={{gap: 10, flexShrink: 1}}>
+            <MediumText style={{fontSize: 17 / fontScale}}>
+              Contest App
+            </MediumText>
+            <RegularText
+              style={{
+                fontSize: 13 / fontScale,
+                color: Colors.grayText,
+                width: '80%',
+              }}>
+              Shop amazing products at 99% discount
             </RegularText>
           </View>
           <View style={{marginLeft: 'auto'}}>

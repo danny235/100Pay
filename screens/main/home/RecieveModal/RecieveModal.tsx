@@ -26,6 +26,7 @@ import {
   AddCircleIcon,
   CircleIcon,
   CoinIcon,
+  GearIcon,
   GreenNairaIcon,
   LinkHookIcon,
   ProfileIcon,
@@ -83,7 +84,7 @@ export default function RecieveModal({
 
   // Recieve Via Options
   const recieveSheetModalRef = useRef<BottomSheetModal>(null);
-  const [recieveSnapTo, setRecieveSnapTo] = useState(["38%", "50%"]);
+  const [recieveSnapTo, setRecieveSnapTo] = useState(["38%", "70%"]);
   const recieveSnapPoints = useMemo(() => recieveSnapTo, [recieveSnapTo]);
   const handlePresentRecieveModalPress = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
@@ -103,7 +104,7 @@ export default function RecieveModal({
       id: 1,
       name: "Bank Transfer",
       subTitle: "Receive money via bank transfer",
-      icon: <ProfileIcon />,
+      icon: <GearIcon />,
       cb: () => {
         return null;
         // handlePresentRecieveModalClose();
@@ -113,7 +114,7 @@ export default function RecieveModal({
       id: 2,
       name: "Pay ID",
       subTitle: "Receive with your Pay ID",
-      icon: <ProfileIcon />,
+      icon: <GearIcon />,
       cb: () => {
         handlePresentRecieveModalClose();
 
@@ -130,7 +131,7 @@ export default function RecieveModal({
       id: 3,
       name: "Payment Link",
       subTitle: "Send a payment link to recieve money",
-      icon: <LinkHookIcon />,
+      icon: <GearIcon />,
       cb: () => {
         handlePresentRecieveModalClose();
         navigation.navigate("MainTabs", {
@@ -146,7 +147,7 @@ export default function RecieveModal({
       id: 4,
       name: "Pay Checkout",
       subTitle: "Recieve money from any digital asset",
-      icon: <LinkHookIcon />,
+      icon: <GearIcon />,
       cb: () => {
         handlePresentRecieveModalClose();
         setShowInstantRecieve(true);
@@ -389,16 +390,20 @@ export default function RecieveModal({
           animateOnMount={true}
         >
           <View style={{ paddingVertical: 20, gap: 20, paddingHorizontal: 20 }}>
-            <View className="flex flex-row">
+            <View className="flex flex-row items-center gap-3">
               <ImportSquare variant="TwoTone" color={Colors.primary} />
               <MediumText
+                className={`border-l border-gray-400 pl-3`}
                 style={{
                   fontSize: 20 / fontScale,
                 }}
               >
-                Recieve Via
+                Recieve Payments Via:
               </MediumText>
             </View>
+            <LightText style={{ fontSize: 15 / fontScale, color: Colors.grayText }}>
+              Select how you want to receive money to your paylens account.
+            </LightText>
             <View style={{ gap: 10 }}>
               {recieveItems.map((item, i) => (
                 <Pressable
@@ -406,17 +411,22 @@ export default function RecieveModal({
                     flexDirection: "row",
                     gap: 10,
                     alignItems: "center",
-                    borderBottomColor: Colors.ash,
-                    borderBottomWidth: item.id === 3 ? 0 : 1,
                     paddingVertical: 15,
                   }}
                   onPress={item.cb}
                   key={item.id}
                 >
-                  {item.icon}
+                  <View className="bg-gray-100 items-center justify-center rounded-md p-3">
+                    {item.icon}
+                  </View>
+                  <View className="gap-2">
                   <RegularText style={{ fontSize: 15 / fontScale }}>
                     {item.name}
                   </RegularText>
+                  <LightText style={{fontSize: 14 / fontScale, color: Colors.grayText}}>
+                    {item.subTitle}
+                  </LightText>
+                  </View>
                 </Pressable>
               ))}
             </View>

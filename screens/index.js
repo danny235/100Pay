@@ -23,4 +23,4 @@ export {default as TransactionDetailScreen} from "./main/settings/Transactions/T
 export {default as PayoutScreen} from "./main/discover/Payouts"
 export {default as AddBankScreen} from "./main/discover/AddBankAccount"
 export {default as EditPhotoScreen} from "./main/settings/EditPhoto"
-
+export {default as ContestScreen } from "./main/discover/Contest"

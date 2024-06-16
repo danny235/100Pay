@@ -2,6 +2,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {
   AddBankScreen,
   AssetScreen,
+  ContestScreen,
   ConvertAssetScreen,
   DiscoverScreen,
   EditPhotoScreen,
@@ -90,6 +91,7 @@ export type RootStackParamList = {
   };
   Payouts: undefined;
   AddBank: undefined;
+  Contest: undefined;
   ConnectQr: undefined;
   MainTabs: {
     screen: string;
@@ -162,6 +164,7 @@ export function DiscoverStackScreen(): React.JSX.Element {
       <DiscoverStack.Screen name="GeneratedCode" component={GeneratedCodeScreen} />
       <DiscoverStack.Screen name="Payouts" component={PayoutScreen} />
       <DiscoverStack.Screen name="AddBank" component={AddBankScreen} />
+      <DiscoverStack.Screen name="Contest" component={ContestScreen} />
     </DiscoverStack.Navigator>
   );
 }

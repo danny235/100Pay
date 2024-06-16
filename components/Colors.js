@@ -1,7 +1,7 @@
 export const Colors = {
   white: "#ffffff",
   black: "#000000",
-  primary: "#1F2937", // #F20732
+  primary: "#F20732", // #F20732 // #1F2937
   primaryLight: "#F3F4F6", // #FDDAE0
   secondary: "#D3D3F7",
   neutral8: "#374151",
@@ -20,5 +20,5 @@ export const Colors = {
   balanceBlack: "#4B5563",
   memojiBackground: "#F9FAFB",
   iconColor: "#6B7280",
-  warning: "#F29339"
+  warning: "#F29339",
 };

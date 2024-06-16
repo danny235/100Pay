@@ -21,6 +21,8 @@ import NavigationContent from "./routes/AppStacks";
 import { useFonts } from "expo-font";
 import ErrorBoundary from "./ErrorBoundary";
 
+import "./styles.css";
+
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;

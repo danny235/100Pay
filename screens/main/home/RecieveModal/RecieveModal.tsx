@@ -38,7 +38,7 @@ import {
   RegularText,
 } from "../../../../components/styles/styledComponents";
 import { RootStackParamList } from "../../../../routes/AppStacks";
-import { Flash, Flashy } from "iconsax-react-native";
+import { Flash, Flashy, Import, ImportSquare } from "iconsax-react-native";
 import InstantRecieveModal from "./InstantRecieveModal";
 import {
   NativeStackNavigationProp,
@@ -101,7 +101,18 @@ export default function RecieveModal({
   const recieveItems = [
     {
       id: 1,
+      name: "Bank Transfer",
+      subTitle: "Receive money via bank transfer",
+      icon: <ProfileIcon />,
+      cb: () => {
+        return null;
+        // handlePresentRecieveModalClose();
+      },
+    },
+    {
+      id: 2,
       name: "Pay ID",
+      subTitle: "Receive with your Pay ID",
       icon: <ProfileIcon />,
       cb: () => {
         handlePresentRecieveModalClose();
@@ -115,6 +126,32 @@ export default function RecieveModal({
         });
       },
     },
+    {
+      id: 3,
+      name: "Payment Link",
+      subTitle: "Send a payment link to recieve money",
+      icon: <LinkHookIcon />,
+      cb: () => {
+        handlePresentRecieveModalClose();
+        navigation.navigate("MainTabs", {
+          screen: "Discover",
+          params: {
+            screen: "GenerateLink",
+            initial: false,
+          },
+        });
+      },
+    },
+    {
+      id: 4,
+      name: "Pay Checkout",
+      subTitle: "Recieve money from any digital asset",
+      icon: <LinkHookIcon />,
+      cb: () => {
+        handlePresentRecieveModalClose();
+        setShowInstantRecieve(true);
+      },
+    },
     // {
     //   id: 2,
     //   name: "Asset Deposit",
@@ -126,21 +163,6 @@ export default function RecieveModal({
     //     });
     //   },
     // },
-    {
-      id: 3,
-      name: "Payment Link",
-      icon: <LinkHookIcon />,
-      cb: () => {
-        handlePresentRecieveModalClose();
-        navigation.navigate("MainTabs", {
-          screen: "Discover",
-          params: {
-            screen: "GenerateLink",
-            initial: false
-          },
-        });
-      },
-    },
   ];
 
   // useEffect(() => {
@@ -153,14 +175,14 @@ export default function RecieveModal({
 
   useEffect(() => {
     if (showRecieve) {
-      handlePresentModalPress();
+      handlePresentRecieveModalPress();
     } else {
-      handlePresentModalClose();
+      handlePresentRecieveModalClose();
     }
   }, [showRecieve]);
   return (
     <>
-      <BottomSheetModalProvider>
+      {/* <BottomSheetModalProvider>
         <BottomSheetModal
           ref={bottomSheetModalRef}
           index={1}
@@ -231,8 +253,8 @@ export default function RecieveModal({
                 paymentLinks.map((paymentLink, i) => {
                   return (
                     <Pressable
-                      onPress={() => { 
-                        onClose()
+                      onPress={() => {
+                        onClose();
                         handlePresentModalClose();
                         navigation.navigate("MainTabs", {
                           screen: "Discover",
@@ -341,7 +363,7 @@ export default function RecieveModal({
             </ScrollView>
           </View>
         </BottomSheetModal>
-      </BottomSheetModalProvider>
+      </BottomSheetModalProvider> */}
 
       {/* Recieve Modal */}
       <BottomSheetModalProvider>
@@ -367,13 +389,16 @@ export default function RecieveModal({
           animateOnMount={true}
         >
           <View style={{ paddingVertical: 20, gap: 20, paddingHorizontal: 20 }}>
-            <MediumText
-              style={{
-                fontSize: 20 / fontScale,
-              }}
-            >
-              Recieve Via
-            </MediumText>
+            <View className="flex flex-row">
+              <ImportSquare variant="TwoTone" color={Colors.primary} />
+              <MediumText
+                style={{
+                  fontSize: 20 / fontScale,
+                }}
+              >
+                Recieve Via
+              </MediumText>
+            </View>
             <View style={{ gap: 10 }}>
               {recieveItems.map((item, i) => (
                 <Pressable

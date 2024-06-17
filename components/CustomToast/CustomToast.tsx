@@ -73,6 +73,7 @@ const CustomToast: React.FC<CustomToastProps> = ({message, type, onClose}) => {
   return (
     <View style={styles.outerContainer}>
       <Animated.View
+        className="shadow-md"
         style={[
           styles.container,
           {

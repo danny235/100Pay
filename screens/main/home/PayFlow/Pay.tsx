@@ -258,6 +258,7 @@ export default function PayHome({ navigation }: PayHomeT) {
 
             {showBankForm && (
               <Pressable
+                className="transition-all"
                 onPress={() => setBankOpen(true)}
                 style={styles.accountDetailPressable}
               >

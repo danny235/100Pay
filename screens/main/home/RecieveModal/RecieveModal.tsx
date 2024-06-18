@@ -39,7 +39,7 @@ import {
   RegularText,
 } from "../../../../components/styles/styledComponents";
 import { RootStackParamList } from "../../../../routes/AppStacks";
-import { Flash, Flashy, Import, ImportSquare } from "iconsax-react-native";
+import { Bank, Flash, Flashy, Import, ImportSquare, Link, Profile, Wallet3 } from "iconsax-react-native";
 import InstantRecieveModal from "./InstantRecieveModal";
 import {
   NativeStackNavigationProp,
@@ -104,7 +104,7 @@ export default function RecieveModal({
       id: 1,
       name: "Bank Transfer",
       subTitle: "Receive money via bank transfer",
-      icon: <GearIcon />,
+      icon: <Bank variant="TwoTone" color={Colors.primary} />,
       cb: () => {
         return null;
         // handlePresentRecieveModalClose();
@@ -114,7 +114,7 @@ export default function RecieveModal({
       id: 2,
       name: "Pay ID",
       subTitle: "Receive with your Pay ID",
-      icon: <GearIcon />,
+      icon: <Profile color={Colors.primary} variant="TwoTone" />,
       cb: () => {
         handlePresentRecieveModalClose();
 
@@ -131,7 +131,7 @@ export default function RecieveModal({
       id: 3,
       name: "Payment Link",
       subTitle: "Send a payment link to recieve money",
-      icon: <GearIcon />,
+      icon: <Link color={Colors.primary} variant="TwoTone" />,
       cb: () => {
         handlePresentRecieveModalClose();
         navigation.navigate("MainTabs", {
@@ -147,7 +147,7 @@ export default function RecieveModal({
       id: 4,
       name: "Pay Checkout",
       subTitle: "Recieve money from any digital asset",
-      icon: <GearIcon />,
+      icon: <Wallet3 variant="TwoTone" color={Colors.primary} />,
       cb: () => {
         handlePresentRecieveModalClose();
         setShowInstantRecieve(true);
@@ -393,7 +393,7 @@ export default function RecieveModal({
             <View className="flex flex-row items-center gap-3">
               <ImportSquare variant="TwoTone" color={Colors.primary} />
               <MediumText
-                className={`border-l border-gray-400 pl-3`}
+                className={`border-l border-[#E5E7EB] pl-3`}
                 style={{
                   fontSize: 20 / fontScale,
                 }}
@@ -401,7 +401,9 @@ export default function RecieveModal({
                 Recieve Payments Via:
               </MediumText>
             </View>
-            <LightText style={{ fontSize: 15 / fontScale, color: Colors.grayText }}>
+            <LightText
+              style={{ fontSize: 15 / fontScale, color: Colors.grayText }}
+            >
               Select how you want to receive money to your paylens account.
             </LightText>
             <View style={{ gap: 10 }}>
@@ -420,12 +422,17 @@ export default function RecieveModal({
                     {item.icon}
                   </View>
                   <View className="gap-2">
-                  <RegularText style={{ fontSize: 15 / fontScale }}>
-                    {item.name}
-                  </RegularText>
-                  <LightText style={{fontSize: 14 / fontScale, color: Colors.grayText}}>
-                    {item.subTitle}
-                  </LightText>
+                    <RegularText style={{ fontSize: 15 / fontScale }}>
+                      {item.name}
+                    </RegularText>
+                    <LightText
+                      style={{
+                        fontSize: 14 / fontScale,
+                        color: Colors.grayText,
+                      }}
+                    >
+                      {item.subTitle}
+                    </LightText>
                   </View>
                 </Pressable>
               ))}

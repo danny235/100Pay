@@ -7,7 +7,7 @@
 
 import { NavigationContainer } from "@react-navigation/native";
 import type { PropsWithChildren } from "react";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Platform, useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -21,6 +21,7 @@ import NavigationContent from "./routes/AppStacks";
 import { useFonts } from "expo-font";
 import ErrorBoundary from "./ErrorBoundary";
 
+
 import "./styles.css";
 
 type SectionProps = PropsWithChildren<{
@@ -29,7 +30,8 @@ type SectionProps = PropsWithChildren<{
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === "dark";
-  const toastRef = useRef<any>(null);
+  const [isOffline, setIsOffline] = useState(true)
+  
 
   let [fontsLoaded, fontsError] = useFonts({
     "SpaceGroteskBold": require("./assets/fonts/SpaceGroteskBold.ttf"),
@@ -42,6 +44,7 @@ function App(): React.JSX.Element {
   // Make sure that all fonts has been loaded before rendering
   // const backgroundStyle = {
     //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+   
     // };
     
     useEffect(() => {

@@ -22,3 +22,9 @@ export const Colors = {
   iconColor: "#6B7280",
   warning: "#F29339",
 };
+
+// border-#E5E7EB
+// border-#E5E7EB
+// border-#E5E7EB
+// border-#E5E7EB
+// border-#E5E7EB

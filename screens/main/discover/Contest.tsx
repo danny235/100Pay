@@ -13,7 +13,7 @@ type ContestT = {
 };
 
 export default function Contest({navigation}: ContestT ) {
-    const contestLink = "https://contest-react.netlify.app"
+    const contestLink = "https://play.joincontest.app"
      const [webViewLoading, setWebViewLoading] = useState(false);
      const webViewRef = useRef<WebView>(null);
 
@@ -91,7 +91,7 @@ export default function Contest({navigation}: ContestT ) {
                 console.error("iframe error:", e);
                 setWebViewLoading(false); // Ensure to hide loader on error
               }}
-            ></iframe>
+            />
           ) : (
             <WebView
               source={{ uri: contestLink }}

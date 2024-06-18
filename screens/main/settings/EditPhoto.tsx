@@ -197,7 +197,7 @@ export default function EditPhoto({ navigation }: EditProfileT) {
       
     });
 
-    console.log(result, "resultttttt");
+    
 
     if (!result.canceled) {
       if (result.assets[0].uri) {

@@ -225,7 +225,7 @@ export default function PayHome({ navigation }: PayHomeT) {
           <View style={{ marginTop: 12, gap: 24 }}>
             {showPayIdDetails && (
               <Pressable
-              disabled={true}
+                disabled={true}
                 onPress={() =>
                   navigation.navigate("SendPayment", {
                     pay: payIdDetails,
@@ -258,7 +258,7 @@ export default function PayHome({ navigation }: PayHomeT) {
 
             {showBankForm && (
               <Pressable
-                className="transition-all"
+                className="transition-alltransition ease-in-out delay-150"
                 onPress={() => setBankOpen(true)}
                 style={styles.accountDetailPressable}
               >
@@ -347,7 +347,7 @@ export default function PayHome({ navigation }: PayHomeT) {
                 onPress={() =>
                   navigation.navigate("SendPayment", {
                     bankDetails: bankDetails,
-                    bank: activeBank
+                    bank: activeBank,
                   })
                 }
                 style={styles.accountDetailPressable}

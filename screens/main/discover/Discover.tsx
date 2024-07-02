@@ -40,7 +40,7 @@ export default function Discover({ navigation }: DiscoverT): React.JSX.Element {
       </View>
 
       <View style={{ gap: 20 }}>
-        <Pressable onPress={()=> navigation.navigate("Contest")} style={styles.discoverCTA}>
+        {/* <Pressable onPress={()=> navigation.navigate("Contest")} style={styles.discoverCTA}>
           <ShoppingCart color={Colors.primary} size={24} />
           <View style={{ gap: 10, flexShrink: 1 }}>
             <View className="flex-row gap-2 items-center">
@@ -62,7 +62,7 @@ export default function Discover({ navigation }: DiscoverT): React.JSX.Element {
           <View style={{ marginLeft: "auto" }}>
             <ArrowForwardIcon color={Colors.iconColor} />
           </View>
-        </Pressable>
+        </Pressable> */}
         <Pressable
           style={styles.discoverCTA}
           onPress={() => navigation.navigate("GenerateLink")}

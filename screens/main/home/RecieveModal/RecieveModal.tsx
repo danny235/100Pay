@@ -122,7 +122,7 @@ export default function RecieveModal({
           screen: "Discover",
           params: {
             screen: "GeneratedCode",
-            initial: false,
+            initial: true,
           },
         });
       },
@@ -138,7 +138,7 @@ export default function RecieveModal({
           screen: "Discover",
           params: {
             screen: "GenerateLink",
-            initial: false,
+            initial: true,
           },
         });
       },

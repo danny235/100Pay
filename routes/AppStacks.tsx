@@ -247,14 +247,18 @@ export default function NavigationContent() {
           <Stack.Group>
             <Stack.Screen name="FaceInfo" component={FaceInfoScreen} />
             <Stack.Screen name="ScanFace" component={ScanFaceScreen} />
-
           </Stack.Group>
         ) : (
-          <Stack.Screen
-            name="MainTabs"
-            options={{ headerShown: false }}
-            component={MainTabs}
-          />
+          <Stack.Group>
+            <Stack.Screen name="FaceInfo" component={FaceInfoScreen} />
+            <Stack.Screen name="ScanFace" component={ScanFaceScreen} />
+
+            <Stack.Screen
+              name="MainTabs"
+              options={{ headerShown: false }}
+              component={MainTabs}
+            />
+          </Stack.Group>
         )
       ) : (
         <Stack.Group>

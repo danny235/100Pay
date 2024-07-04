@@ -23,7 +23,16 @@ export default function ScanFace({navigation}: ScanFaceT) {
   const { fontScale } = useWindowDimensions();
   const [percentage, setPercentage] = useState(25)
   const next = () => {
-    if(percentage === 100) return
+    if(percentage === 100) {
+      navigation.navigate("MainTabs", {
+        screen: "Dashboard",
+        params: {
+          screen: "GenerateLink",
+          initial: true,
+        },
+      });
+      return
+    }
     setPercentage((prevPercentage) => prevPercentage + 25);
   }
 

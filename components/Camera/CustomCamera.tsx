@@ -1,6 +1,13 @@
 // CameraComponent.js
 import React, { useState, useRef, useEffect, ReactNode } from "react";
-import { View, StyleSheet, useWindowDimensions, Animated, Platform, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  useWindowDimensions,
+  Animated,
+  Platform,
+  Text,
+} from "react-native";
 import { Camera, CameraView, useCameraPermissions } from "expo-camera";
 import * as ImageManipulator from "expo-image-manipulator";
 import { Colors } from "../Colors";
@@ -10,29 +17,32 @@ import * as ml5 from "ml5";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
-import { updateShowBookAccounts, updateShowFaceAccounts } from "../../features/account/accountSlice";
+import {
+  updateShowBookAccounts,
+  updateShowFaceAccounts,
+} from "../../features/account/accountSlice";
 
 type CameraT = {
   onPictureTaken?: (photo) => void;
-  children: ReactNode
+  children: ReactNode;
   isVisible: boolean;
 };
 
 // TODO: Add these properties to the constant directory
-const allowedObjects = ['book', 'paper', 'person', 'tv', 'sheet']
+const allowedObjects = ["book", "paper", "person", "tv", "sheet"];
 
 const dimensions = {
   cameraWidth: 500,
-  CameraHeight: 1000
-}
+  cameraHeight: 500,
+};
 
 // TEMP:
-const { cameraWidth, CameraHeight } = dimensions
+const { cameraWidth, cameraHeight } = dimensions;
 
 type VideoConstraints = { facingMode?: string; deviceId?: string };
 
 const CustomCamera = ({ onPictureTaken, isVisible, children }: CameraT) => {
-  // DECLARE ALL 
+  // DECLARE ALL
   const [permission, requestPermission] = useCameraPermissions();
   const [hasPermission, setHasPermission] = useState(null);
   const [devices, setDevices] = React.useState([]);
@@ -40,7 +50,7 @@ const CustomCamera = ({ onPictureTaken, isVisible, children }: CameraT) => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const [capturedImage, setCapturedImage] = useState(null);
-  const [restartCamera, setRestartCamera] = useState(false)
+  const [restartCamera, setRestartCamera] = useState(false);
 
   const cameraRef = useRef(null);
   const [model, setModel] = useState(null);
@@ -56,20 +66,19 @@ const CustomCamera = ({ onPictureTaken, isVisible, children }: CameraT) => {
   // Call the recognize end point
   const handleImageUpload = async (imageBlob) => {
     const data = new FormData();
-    data.append("image", imageBlob, 'lens_image.png')
+    data.append("image", imageBlob, "lens_image.png");
     dispatch(updateShowBookAccounts(true))
     // const response = await axios.post("http://localhost:9000/api/v1/payment/transfer/send-funds/scan-image", data, {
     //   headers: {
     //     "Content-Type": "multipart/form-data",
     //   },
     // });
-    console.log(imageBlob)
     // dispatch(updateShowFaceAccounts(true))
+    console.log(imageBlob);
     // if (response.success) {
     //   // navigate("/dashboard/send-funds", { state: { data: response.data }, replace: true });
     // }
   };
-
 
   const handleCapturedImage = (blob: Blob) => {
     let reader = new FileReader();
@@ -134,44 +143,46 @@ const CustomCamera = ({ onPictureTaken, isVisible, children }: CameraT) => {
   useEffect(() => {
     let detectionInterval;
 
-
     const modelLoaded = () => {
       webcamRef.current.video.width = cameraWidth;
-      webcamRef.current.video.height = CameraHeight;
+      webcamRef.current.video.height = cameraHeight;
       canvasRef.current.width = cameraWidth;
-      canvasRef.current.height = CameraHeight;
+      canvasRef.current.height = cameraHeight;
 
       detectionInterval = setInterval(() => {
         detect();
       }, 200);
     };
 
-    const objectDetector = ml5.objectDetector('cocossd', modelLoaded);
+    const objectDetector = ml5.objectDetector("cocossd", modelLoaded);
 
     const detect = () => {
       if (webcamRef.current.video.readyState !== 4) {
-        console.warn('Video not ready yet');
+        console.warn("Video not ready yet");
         return;
       }
 
       try {
         objectDetector.detect(webcamRef.current.video, (err, results) => {
           if (results && results.length) {
-            console.log(results)
+            console.log(results);
             for (let all of results) {
               if (allowedObjects.includes(all.label)) {
-                const ctx = canvasRef.current.getContext('2d');
+                const ctx = canvasRef.current.getContext("2d");
                 // ctx.clearRect(0, 0, width, height);
                 // ctx.drawImage(webcamRef.current.video, 0, 0, width, height);
-                canvasRef.current.toBlob(handleCapturedImage);
-                clearInterval(detectionInterval)
+                if(canvasRef.current) {
+                  canvasRef.current.toBlob(handleCapturedImage);
+                  clearInterval(detectionInterval);
+
+                }
               }
             }
           }
         });
       } catch (e) {
         console.log(e);
-        clearInterval(detectionInterval)
+        clearInterval(detectionInterval);
       }
     };
 
@@ -179,8 +190,7 @@ const CustomCamera = ({ onPictureTaken, isVisible, children }: CameraT) => {
       if (detectionInterval) {
         clearInterval(detectionInterval);
       }
-    }
-
+    };
   }, [width, height, restartCamera]);
 
   useEffect(() => {
@@ -195,12 +205,13 @@ const CustomCamera = ({ onPictureTaken, isVisible, children }: CameraT) => {
     <Animated.View
       style={{
         // position: "absolute",
-        height: height / 2,
+        height: 444,
         width: "100%",
         top: 0,
         borderBottomLeftRadius: 30,
         borderBottomRightRadius: 30,
         opacity,
+        marginBottom: 30
       }}
     >
       <View style={styles.cameraWrapper}>
@@ -210,8 +221,9 @@ const CustomCamera = ({ onPictureTaken, isVisible, children }: CameraT) => {
               ref={webcamRef}
               style={styles.camera}
               videoConstraints={videoConstraints}
+              height={300}
             />
-            <canvas style={styles.camera} ref={canvasRef} />
+            <canvas ref={canvasRef} />
           </>
         ) : (
           <CameraView ref={cameraRef} style={StyleSheet.absoluteFillObject} />
@@ -225,7 +237,7 @@ const CustomCamera = ({ onPictureTaken, isVisible, children }: CameraT) => {
         />
       </View>
 
-      <View style={{ position: 'absolute', left: 0, right: 0 }}>
+      <View style={{ position: "absolute", left: 0, right: 0 }}>
         {children}
       </View>
     </Animated.View>
@@ -238,9 +250,14 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
+    height: 444,
+    
   },
   camera: {
     flex: 1,
+    height: 370,
+    minHeight: 500,
+    minWidth: 0
   },
   blurView: {
     position: "absolute",

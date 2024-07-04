@@ -1,4 +1,4 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   AddBankScreen,
   AssetScreen,
@@ -7,6 +7,7 @@ import {
   DiscoverScreen,
   EditPhotoScreen,
   EditProfileScreen,
+  FaceInfoScreen,
   GenerateRequestLinkScreen,
   GeneratedCodeScreen,
   GeneratedLinkScreen,
@@ -17,6 +18,7 @@ import {
   PayoutScreen,
   RecieveModalScreen,
   RootAuth,
+  ScanFaceScreen,
   ScanScreen,
   SettingsScreen,
   SignIn,
@@ -24,25 +26,25 @@ import {
   TransactionDetailScreen,
   TransactionPinScreen,
   TransactionsScreen,
-} from '../screens';
-import CreateAccount from '../screens/authentication/CreateAccount';
-import ForgotPassword from '../screens/authentication/ForgotPassword';
-import NewPassword from '../screens/authentication/NewPassword';
-import PhoneNumber from '../screens/authentication/PhoneNumber';
-import SecureCode from '../screens/authentication/SecureCode';
-import SetPassword from '../screens/authentication/SetPassword';
-import ConfirmPayment from '../screens/main/home/PayFlow/ConfirmPayment';
-import PayHome, { BankDetailsT, BankT } from '../screens/main/home/PayFlow/Pay';
-import SendPayment from '../screens/main/home/PayFlow/SendPayment';
-import MainTabs from './MainTabs';
-import Invitation from '../screens/authentication/Invitation';
-import { useSelector } from 'react-redux';
-import { NavigationState, useNavigation } from '@react-navigation/native';
-import { useEffect } from 'react';
-import { RootState } from '../app/store';
-import { ChargeType, PayoutsI } from '../features/account/accountSlice';
-import PersonalInfo from '../screens/authentication/PersonalInfo';
-import { UserAppType } from '../features/user/userSlice';
+} from "../screens";
+import CreateAccount from "../screens/authentication/CreateAccount";
+import ForgotPassword from "../screens/authentication/ForgotPassword";
+import NewPassword from "../screens/authentication/NewPassword";
+import PhoneNumber from "../screens/authentication/PhoneNumber";
+import SecureCode from "../screens/authentication/SecureCode";
+import SetPassword from "../screens/authentication/SetPassword";
+import ConfirmPayment from "../screens/main/home/PayFlow/ConfirmPayment";
+import PayHome, { BankDetailsT, BankT } from "../screens/main/home/PayFlow/Pay";
+import SendPayment from "../screens/main/home/PayFlow/SendPayment";
+import MainTabs from "./MainTabs";
+import Invitation from "../screens/authentication/Invitation";
+import { useSelector } from "react-redux";
+import { NavigationState, useNavigation } from "@react-navigation/native";
+import { useEffect } from "react";
+import { RootState } from "../app/store";
+import { ChargeType, PayoutsI } from "../features/account/accountSlice";
+import PersonalInfo from "../screens/authentication/PersonalInfo";
+import { UserAppType } from "../features/user/userSlice";
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -66,7 +68,7 @@ export type RootStackParamList = {
   SendPayment: {
     screen?: string;
     pay?: UserAppType;
-    bankDetails?: BankDetailsT,
+    bankDetails?: BankDetailsT;
     bank?: BankT;
     initial?: boolean;
   };
@@ -89,15 +91,21 @@ export type RootStackParamList = {
     detail?: PayoutsI;
     initial?: boolean;
   };
+  ScanFace: undefined;
   Payouts: undefined;
   AddBank: undefined;
   Contest: undefined;
   ConnectQr: undefined;
+  FaceInfo: undefined;
   MainTabs: {
     screen: string;
-    params?: { screen?: string; initial?: boolean, params?: {
-      detail: any
-    } };
+    params?: {
+      screen?: string;
+      initial?: boolean;
+      params?: {
+        detail: any;
+      };
+    };
     initial?: boolean;
   };
 
@@ -115,8 +123,9 @@ export function HomeStackScreen(): React.JSX.Element {
     <HomeStack.Navigator
       screenOptions={{
         headerShown: false,
-        animation: 'ios',
-      }}>
+        animation: "ios",
+      }}
+    >
       <HomeStack.Screen name="Dashboard" component={HomeScreen} />
       <HomeStack.Screen name="Pay" component={PayHome} />
       <HomeStack.Screen name="Scan" component={ScanScreen} />
@@ -131,19 +140,20 @@ export function HomeStackScreen(): React.JSX.Element {
         component={PaymentCompleteScreen}
       />
       <HomeStack.Screen name="Notification" component={NotificationScreen} />
-     
 
-   
       {/* Assets */}
-      
+
       {/* Discover */}
       {/* <HomeStack.Screen name="DiscoverS" component={DiscoverScreen} /> */}
       <HomeStack.Screen
         name="GenerateLink"
         component={GenerateRequestLinkScreen}
       />
-      <HomeStack.Screen name='Transactions' component={TransactionsScreen} />
-      <HomeStack.Screen name="TransactionDetail" component={TransactionDetailScreen} />
+      <HomeStack.Screen name="Transactions" component={TransactionsScreen} />
+      <HomeStack.Screen
+        name="TransactionDetail"
+        component={TransactionDetailScreen}
+      />
     </HomeStack.Navigator>
   );
 }
@@ -151,17 +161,24 @@ export function HomeStackScreen(): React.JSX.Element {
 export function DiscoverStackScreen(): React.JSX.Element {
   return (
     <DiscoverStack.Navigator
-      initialRouteName='DiscoverS'
+      initialRouteName="DiscoverS"
       screenOptions={{
         headerShown: false,
-      }}>
+      }}
+    >
       <DiscoverStack.Screen name="DiscoverS" component={DiscoverScreen} />
       <DiscoverStack.Screen
         name="GenerateLink"
         component={GenerateRequestLinkScreen}
       />
-      <DiscoverStack.Screen name="GeneratedLink" component={GeneratedLinkScreen} />
-      <DiscoverStack.Screen name="GeneratedCode" component={GeneratedCodeScreen} />
+      <DiscoverStack.Screen
+        name="GeneratedLink"
+        component={GeneratedLinkScreen}
+      />
+      <DiscoverStack.Screen
+        name="GeneratedCode"
+        component={GeneratedCodeScreen}
+      />
       <DiscoverStack.Screen name="Payouts" component={PayoutScreen} />
       <DiscoverStack.Screen name="AddBank" component={AddBankScreen} />
       <DiscoverStack.Screen name="Contest" component={ContestScreen} />
@@ -174,7 +191,8 @@ export function SettingsStackScreen(): React.JSX.Element {
     <SettingsStack.Navigator
       screenOptions={{
         headerShown: false,
-      }}>
+      }}
+    >
       <SettingsStack.Screen name="Setting" component={SettingsScreen} />
       <SettingsStack.Screen name="EditProfile" component={EditProfileScreen} />
       <SettingsStack.Screen name="EditPhoto" component={EditPhotoScreen} />
@@ -195,7 +213,8 @@ export function AssetStackScreen(): React.JSX.Element {
     <AssetStack.Navigator
       screenOptions={{
         headerShown: false,
-      }}>
+      }}
+    >
       <AssetStack.Screen name="Assets" component={AssetScreen} />
       <AssetStack.Screen name="SingleCoin" component={SingleCoinViewScreen} />
       <AssetStack.Screen name="ConvertAsset" component={ConvertAssetScreen} />
@@ -204,33 +223,43 @@ export function AssetStackScreen(): React.JSX.Element {
 }
 
 export default function NavigationContent() {
-  const {token, userOnboarded, isLoggedIn} = useSelector((state: RootState) => state.user);
+  const { token, userOnboarded, isLoggedIn, isFaceDetectionSet } = useSelector(
+    (state: RootState) => state.user
+  );
 
   const navigation = useNavigation();
 
   useEffect(() => {
     if (!userOnboarded) {
-      navigation.navigate('Onboarding' as never);
-    } else if (isLoggedIn) {
-      navigation.navigate('RootAuth' as never);
+      navigation.navigate("Onboarding" as never);
+    } else if (!isLoggedIn) {
+      navigation.navigate("RootAuth" as never);
     }
   }, [isLoggedIn, navigation, userOnboarded, token]);
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-      }}>
+      }}
+    >
       {isLoggedIn ? (
-        <Stack.Screen
-          name="MainTabs"
-          options={{headerShown: false}}
-          component={MainTabs}
-        />
+        isFaceDetectionSet ? (
+          <Stack.Group>
+            <Stack.Screen name="FaceInfo" component={FaceInfoScreen} />
+            <Stack.Screen name="ScanFace" component={ScanFaceScreen} />
+
+          </Stack.Group>
+        ) : (
+          <Stack.Screen
+            name="MainTabs"
+            options={{ headerShown: false }}
+            component={MainTabs}
+          />
+        )
       ) : (
         <Stack.Group>
           {!userOnboarded && (
             <>
-              
               <Stack.Screen name="Onboarding" component={OnboardingScreen} />
             </>
           )}
@@ -238,7 +267,7 @@ export default function NavigationContent() {
           <Stack.Screen name="SignIn" component={SignIn} />
           <Stack.Screen name="CreateAccount" component={CreateAccount} />
           <Stack.Screen name="PhoneNumber" component={PhoneNumber} />
-          <Stack.Screen name="PersonalInfo"  component={PersonalInfo} />
+          <Stack.Screen name="PersonalInfo" component={PersonalInfo} />
           <Stack.Screen name="SetPassword" component={SetPassword} />
           <Stack.Screen name="Invitation" component={Invitation} />
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} />

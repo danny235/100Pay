@@ -39,6 +39,13 @@ export function Button({
 }: ButtonProps) {
   return (
     <StyledButton
+      android_ripple={{
+        color: Colors.primaryLight,
+        foreground: true,
+        borderless: true,
+        radius: 10,
+        
+      }}
       disabled={isLoading}
       variant={variant}
       isLarge={isLarge}

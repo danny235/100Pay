@@ -45,7 +45,7 @@ class ErrorBoundary extends Component<Props, State> {
             <MediumText style={styles.errorText}>
               Oops!
             </MediumText>
-            <LightText style={{ fontSize: 17, color: Colors.grayText }}>
+            <LightText className="px-10 text-center" style={{ fontSize: 17, color: Colors.grayText }}>
               {this.state.errorMessage}
             </LightText>
             <CloseCircle variant="Bulk" size={100} color={Colors.primary} />

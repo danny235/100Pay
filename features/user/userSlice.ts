@@ -128,6 +128,7 @@ interface UserState {
   userAppsError: string | undefined;
   activeUserApp: UserAppType | null;
   showCamera: boolean;
+  isFaceDetectionSet: boolean;
 }
 
 const initialState: UserState = {
@@ -144,7 +145,8 @@ const initialState: UserState = {
   userAppsLoading: 'idle',
   userAppsError: '',
   showAccountBalance: true,
-  showCamera: false
+  showCamera: false,
+  isFaceDetectionSet: false
 };
 
 export const userSlice = createSlice({
@@ -162,6 +164,9 @@ export const userSlice = createSlice({
     },
     updateUserOnboarded: state => {
       state.userOnboarded = true;
+    },
+    updateIsFaceDetectionSet: state => {
+      state.isFaceDetectionSet = true
     },
     logOut: state => {
       state.token = '';
@@ -239,7 +244,8 @@ export const {
   updateShowAccountBalance,
   updateAccountBalance,
   updateActiveApps, 
-  toggleShowCamera
+  toggleShowCamera,
+  updateIsFaceDetectionSet
 } = userSlice.actions;
 
 export default userSlice.reducer;

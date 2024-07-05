@@ -45,23 +45,25 @@ export default function TransactionsList({
     );
   }, [activeUserApp?.keys?.pub_keys[0].value, userAppsLoading]);
   return (
-    <View style={{flex: 1, gap: 20, paddingVertical: 4}}>
-      {payOutsLoading === 'loading' && (
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+    <View style={{ flex: 1, gap: 20, paddingVertical: 4 }}>
+      {payOutsLoading === "loading" && (
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
           <ActivityIndicator color={Colors.primary} size={30} />
         </View>
       )}
       {payOuts?.length === 0 && (
-        <MediumText style={{textAlign: 'center'}}>
+        <MediumText style={{ textAlign: "center" }}>
           No transactions here
         </MediumText>
       )}
       {payOuts?.length !== 0 &&
         payOuts?.slice(sliceFrom, sliceTo).map((item, i) => (
           <TransactionItem
-            key={item._id}
+            key={`${item.date}${item._id}`}
             onPress={() =>
-              navigation.navigate('TransactionDetail', {
+              navigation.navigate("TransactionDetail", {
                 detail: item,
               })
             }

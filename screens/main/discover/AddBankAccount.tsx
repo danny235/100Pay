@@ -137,6 +137,9 @@ export default function AddBankAccount({navigation}: AddBankAccountT) {
                 }
           }
           onSubmit={async (values, actions) => {
+            navigation.navigate("MainTabs", {
+              screen: "Dashboard",
+            });
             console.log(values, "line 138");
              setShowModal(true);
           }}

@@ -180,7 +180,7 @@ export function DiscoverStackScreen(): React.JSX.Element {
         component={GeneratedCodeScreen}
       />
       <DiscoverStack.Screen name="Payouts" component={PayoutScreen} />
-      <DiscoverStack.Screen name="AddBank" component={AddBankScreen} />
+
       <DiscoverStack.Screen name="Contest" component={ContestScreen} />
     </DiscoverStack.Navigator>
   );
@@ -217,6 +217,7 @@ export function AssetStackScreen(): React.JSX.Element {
     >
       <AssetStack.Screen name="Assets" component={AssetScreen} />
       <AssetStack.Screen name="SingleCoin" component={SingleCoinViewScreen} />
+
       <AssetStack.Screen name="ConvertAsset" component={ConvertAssetScreen} />
     </AssetStack.Navigator>
   );
@@ -247,11 +248,13 @@ export default function NavigationContent() {
           <Stack.Group>
             <Stack.Screen name="FaceInfo" component={FaceInfoScreen} />
             <Stack.Screen name="ScanFace" component={ScanFaceScreen} />
+            <Stack.Screen name="AddBank" component={AddBankScreen} />
           </Stack.Group>
         ) : (
           <Stack.Group>
             <Stack.Screen name="FaceInfo" component={FaceInfoScreen} />
             <Stack.Screen name="ScanFace" component={ScanFaceScreen} />
+            <Stack.Screen name="AddBank" component={AddBankScreen} />
 
             <Stack.Screen
               name="MainTabs"

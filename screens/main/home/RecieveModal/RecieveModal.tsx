@@ -1,4 +1,5 @@
 import {
+  BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
@@ -39,7 +40,16 @@ import {
   RegularText,
 } from "../../../../components/styles/styledComponents";
 import { RootStackParamList } from "../../../../routes/AppStacks";
-import { Bank, Flash, Flashy, Import, ImportSquare, Link, Profile, Wallet3 } from "iconsax-react-native";
+import {
+  Bank,
+  Flash,
+  Flashy,
+  Import,
+  ImportSquare,
+  Link,
+  Profile,
+  Wallet3,
+} from "iconsax-react-native";
 import InstantRecieveModal from "./InstantRecieveModal";
 import {
   NativeStackNavigationProp,
@@ -166,6 +176,17 @@ export default function RecieveModal({
     // },
   ];
 
+  const renderBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={1}
+        appearsOnIndex={2}
+      />
+    ),
+    []
+  );
+
   // useEffect(() => {
   //   handlePresentModalPress();
   //   return () => {
@@ -177,9 +198,9 @@ export default function RecieveModal({
   useEffect(() => {
     if (showRecieve) {
       handlePresentRecieveModalPress();
-    } else {
-      handlePresentRecieveModalClose();
     }
+
+    return () => handlePresentModalClose();
   }, [showRecieve]);
   return (
     <>
@@ -373,8 +394,8 @@ export default function RecieveModal({
           index={1}
           snapPoints={recieveSnapPoints}
           onChange={handleRecieveSheetChanges}
-          enableContentPanningGesture={false}
-          enablePanDownToClose={false}
+          enableContentPanningGesture={true}
+          enablePanDownToClose={true}
           handleIndicatorStyle={{
             borderWidth: 3,
             borderColor: Colors.ash,

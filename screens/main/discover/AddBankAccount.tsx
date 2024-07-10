@@ -5,31 +5,46 @@ import {
   StyleSheet,
   Platform,
   Pressable,
-} from 'react-native';
-import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {NavigationProp} from '@react-navigation/native';
-import {RootStackParamList} from '../../../routes/AppStacks';
-import CustomView from '../../../components/Views/CustomView';
-import CustomHeader from '../../../components/headers/CustomHeaders';
-import {AddCircle, ArrowDown, ArrowDown2, ArrowDown3, Bank, Coin, TickCircle} from 'iconsax-react-native';
-import {Colors} from '../../../components/Colors';
+} from "react-native";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { NavigationProp } from "@react-navigation/native";
+import { RootStackParamList } from "../../../routes/AppStacks";
+import CustomView from "../../../components/Views/CustomView";
+import CustomHeader from "../../../components/headers/CustomHeaders";
+import {
+  AddCircle,
+  ArrowDown,
+  ArrowDown2,
+  ArrowDown3,
+  Bank,
+  Coin,
+  TickCircle,
+} from "iconsax-react-native";
+import { Colors } from "../../../components/Colors";
 import {
   LightText,
   MediumText,
   RegularText,
-} from '../../../components/styles/styledComponents';
-import {ScrollView, Switch, TextInput} from 'react-native-gesture-handler';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import * as yup from 'yup';
-import {ArrowRightIcon, CircleIcon, DotIcon} from '../../../components/SvgAssets';
-import {Button} from '../../../components/Button/Button';
-import Input from '../../../components/Input';
-import {Formik} from 'formik';
-import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { CustomBackdrop } from '../../../components/ChooseAccountBalance/ChooseAccountBalance';
-import {banks} from "../../../components/banks.json"
-import AlertModal from '../../../components/Alert/AlertModal';
-import BankList from '../../../components/banksList/BankList';
+} from "../../../components/styles/styledComponents";
+import { ScrollView, Switch, TextInput } from "react-native-gesture-handler";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import * as yup from "yup";
+import {
+  ArrowRightIcon,
+  CircleIcon,
+  DotIcon,
+} from "../../../components/SvgAssets";
+import { Button } from "../../../components/Button/Button";
+import Input from "../../../components/Input";
+import { Formik } from "formik";
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
+import { CustomBackdrop } from "../../../components/ChooseAccountBalance/ChooseAccountBalance";
+import { banks } from "../../../components/banks.json";
+import AlertModal from "../../../components/Alert/AlertModal";
+import BankList from "../../../components/banksList/BankList";
 
 type BankT = {
   name?: string;
@@ -44,30 +59,29 @@ type BankT = {
 };
 
 const bankSchema = yup.object().shape({
-  accountName: yup.string().required().label('Account Name'),
-  accounNumber: yup.string().required().label('Account Number'),
+  accountName: yup.string().required().label("Account Name"),
+  accounNumber: yup.string().required().label("Account Number"),
 });
 
 const walletAddressSchema = yup.object().shape({
-  walletAddress: yup.string().required().label('Wallet Address'),
+  walletAddress: yup.string().required().label("Wallet Address"),
 });
 
 type AddBankAccountT = {
   navigation: NavigationProp<RootStackParamList>;
 };
-export default function AddBankAccount({navigation}: AddBankAccountT) {
+export default function AddBankAccount({ navigation }: AddBankAccountT) {
   const [useCrypto, setUseCrypto] = useState(false);
-  const {fontScale} = useWindowDimensions();
-  const toggleSwitch = () => setUseCrypto(previousState => !previousState);
-  const [searchQuery, setSearchQuery] = useState<string>(''); // State to store search query
+  const { fontScale } = useWindowDimensions();
+  const toggleSwitch = () => setUseCrypto((previousState) => !previousState);
+  const [searchQuery, setSearchQuery] = useState<string>(""); // State to store search query
   const [activeBank, setActiveBank] = useState<BankT | null>(null); // State to store active bank
   const [filteredBanks, setFilteredBanks] = useState<BankT[]>(banks); // State to store filtered banks, initially set to all banks
-  const [showModal, setShowModal] = useState(false)
-  const [bankOpen, setBankOpen] = useState(false)
+  const [showModal, setShowModal] = useState(false);
+  const [bankOpen, setBankOpen] = useState(false);
 
- 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const [snapTo, setSnapTo] = useState(['38%', '100%']);
+  const [snapTo, setSnapTo] = useState(["38%", "100%"]);
   const snapPoints = useMemo(() => snapTo, [snapTo]);
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
@@ -76,22 +90,22 @@ export default function AddBankAccount({navigation}: AddBankAccountT) {
     bottomSheetModalRef.current?.dismiss();
   }, []);
   const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
+    console.log("handleSheetChanges", index);
   }, []);
-   const handleSearch = (query: string) => {
-     setSearchQuery(query); // Update search query state
-     // Filter banks based on search query
-     const filtered = banks.filter(bank =>
-       bank.name.toLowerCase().includes(query.toLowerCase()),
-     );
-     setFilteredBanks(filtered); // Update filtered banks state
-   };
+  const handleSearch = (query: string) => {
+    setSearchQuery(query); // Update search query state
+    // Filter banks based on search query
+    const filtered = banks.filter((bank) =>
+      bank.name.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredBanks(filtered); // Update filtered banks state
+  };
   //   formikProps.setFieldValue('amount', formattedAmount);
   //   formikProps.handleChange('amount');
   return (
     <CustomView>
       <CustomHeader
-        text={useCrypto ? 'Add Wallet Adderess' : 'Add Bank Account'}
+        text={useCrypto ? "Add Wallet Adderess" : "Add Bank Account"}
         icon={
           useCrypto ? (
             <Coin variant="TwoTone" color={Colors.primary} size={24} />
@@ -109,14 +123,15 @@ export default function AddBankAccount({navigation}: AddBankAccountT) {
             borderLeftColor: Colors.ash,
             borderLeftWidth: 1,
             paddingLeft: 10,
-          }}>
-          {useCrypto ? 'Use Bank Instead' : 'Use Crypto Instead'}
+          }}
+        >
+          {useCrypto ? "Use Bank Instead" : "Use Crypto Instead"}
         </MediumText>
-        <View style={{marginLeft: 'auto'}}>
+        <View style={{ marginLeft: "auto" }}>
           <Switch
             value={useCrypto}
             onValueChange={toggleSwitch}
-            trackColor={{true: Colors.primaryLight, false: Colors.ash}}
+            trackColor={{ true: Colors.primaryLight, false: Colors.ash }}
             thumbColor={Colors.white}
           />
         </View>
@@ -124,116 +139,89 @@ export default function AddBankAccount({navigation}: AddBankAccountT) {
 
       <KeyboardAwareScrollView
         showsVerticalScrollIndicator={true}
-        scrollEnabled={true}>
+        scrollEnabled={true}
+      >
         <Formik
-          initialValues={
-            useCrypto
-              ? {
-                  walletAddress: '',
-                }
-              : {
-                  accountName: '',
-                  accountNumber: '',
-                }
-          }
-          onSubmit={async (values, actions) => {
-            navigation.navigate("MainTabs", {
-              screen: "Dashboard",
-            });
-            console.log(values, "line 138");
-             setShowModal(true);
+          initialValues={{
+            accountName: "",
+            accountNumber: "",
           }}
-          validationSchema={useCrypto ? walletAddressSchema : bankSchema}>
-          {formikProps => (
+          onSubmit={async (values, actions) => {
+            
+            console.log(values, "line 138");
+            setShowModal(true);
+          }}
+          validationSchema={useCrypto ? walletAddressSchema : bankSchema}
+        >
+          {(formikProps) => (
             <>
-              {useCrypto ? (
-                <>
-                  <Input
-                    placeholder="Paste USDT Wallet Address"
-                    formikProps={formikProps}
-                    formikKey="name"
-                    value={formikProps.values.walletAddress}
-                    label="USDT Wallet Address"
-                    placeholderTextColor={Colors?.ash}
-                  />
-                  <LightText
-                    style={{
-                      fontSize: 14 / fontScale,
-                      color: Colors.grayText,
-                      marginBottom: 10,
-                    }}>
-                    Ensure that the network is “BEP20” if not you may loose your
-                    funds/asset.
-                  </LightText>
-                </>
-              ) : (
-                <View>
-                  <Input
-                    formikProps={formikProps}
-                    placeholder="e.g Daniel"
-                    formikKey="accountName"
-                    value={formikProps.values.accountName}
-                    label="Account Name"
-                    placeholderTextColor={Colors?.ash}
-                  />
+              <View>
+                <Input
+                  formikProps={formikProps}
+                  placeholder="e.g Daniel"
+                  formikKey="accountName"
+                  value={formikProps.values.accountName}
+                  label="Account Name"
+                  placeholderTextColor={Colors?.ash}
+                />
 
-                  <Input
-                    formikProps={formikProps}
-                    placeholder="000000000"
-                    formikKey="accountNumber"
-                    value={formikProps.values.accountNumber}
-                    label="Account Number"
-                    placeholderTextColor={Colors?.ash}
-                    keyboardType="number-pad"
-                    maxLength={10}
-                  />
+                <Input
+                  formikProps={formikProps}
+                  placeholder="000000000"
+                  formikKey="accountNumber"
+                  value={formikProps.values.accountNumber}
+                  label="Account Number"
+                  placeholderTextColor={Colors?.ash}
+                  keyboardType="number-pad"
+                  maxLength={10}
+                />
 
-                  <View style={styles.banksWrapper}>
-                    <RegularText style={{fontSize: 15 / fontScale}}>
-                      Bank
+                <View style={styles.banksWrapper}>
+                  <RegularText style={{ fontSize: 15 / fontScale }}>
+                    Bank
+                  </RegularText>
+                  <Pressable
+                    onPress={handlePresentModalPress}
+                    style={styles.bankSelect}
+                  >
+                    <RegularText style={{ fontSize: 15 / fontScale }}>
+                      {activeBank?.name ? activeBank?.name : "Select your bank"}
                     </RegularText>
-                    <Pressable
-                      onPress={handlePresentModalPress}
-                      style={styles.bankSelect}>
-                      <RegularText style={{fontSize: 15 / fontScale}}>
-                        {activeBank?.name
-                          ? activeBank?.name
-                          : 'Select your bank'}
-                      </RegularText>
-                      <ArrowDown2
-                        variant="Bold"
-                        color={Colors.grayText}
-                        size={24}
-                      />
-                    </Pressable>
-                  </View>
-
-                  <LightText
-                    style={{
-                      fontSize: 14 / fontScale,
-                      color: Colors.grayText,
-                      marginVertical: 20,
-                    }}>
-                    Details added in this page will be used for payout, please
-                    confirm the details are correct before submitting
-                  </LightText>
+                    <ArrowDown2
+                      variant="Bold"
+                      color={Colors.grayText}
+                      size={24}
+                    />
+                  </Pressable>
                 </View>
-              )}
+
+                <LightText
+                  style={{
+                    fontSize: 14 / fontScale,
+                    color: Colors.grayText,
+                    marginVertical: 20,
+                  }}
+                >
+                  Details added in this page will be used for payout, please
+                  confirm the details are correct before submitting
+                </LightText>
+              </View>
 
               <Button
                 variant="primary"
                 isLarge={false}
                 isWide={true}
                 style={{
-                  marginTop: 'auto',
+                  marginTop: "auto",
                   marginBottom: 10,
                 }}
                 onPress={() => {
-                    formikProps.handleSubmit();
-                   
-                }}>
+                  formikProps.handleSubmit();
+                }}
+              >
                 <MediumText
-                  style={{color: Colors.white, fontSize: 15 / fontScale}}>
+                  style={{ color: Colors.white, fontSize: 15 / fontScale }}
+                >
                   Continue
                 </MediumText>
                 <ArrowRightIcon />
@@ -243,7 +231,11 @@ export default function AddBankAccount({navigation}: AddBankAccountT) {
         </Formik>
       </KeyboardAwareScrollView>
 
-     <BankList isOpen={bankOpen} onBankPress={(bank)=>setActiveBank(bank)} onClose={()=> setBankOpen(false)} />
+      <BankList
+        isOpen={bankOpen}
+        onBankPress={(bank) => setActiveBank(bank)}
+        onClose={() => setBankOpen(false)}
+      />
       <AlertModal
         show={showModal}
         icon={<TickCircle color={Colors.primary} variant="TwoTone" size={48} />}
@@ -258,13 +250,13 @@ export default function AddBankAccount({navigation}: AddBankAccountT) {
 
 const styles = StyleSheet.create({
   searchBox: {
-    paddingVertical: Platform.OS === 'android' ? 2 : 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    paddingVertical: Platform.OS === "android" ? 2 : 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
     borderWidth: 1,
     borderColor: Colors.ash,
     borderRadius: 50,
-    alignItems: 'center',
+    alignItems: "center",
     paddingHorizontal: 20,
   },
   grayBg: {
@@ -274,22 +266,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginVertical: 20,
     gap: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   acctContainer: {
     borderBottomColor: Colors.ash,
     borderBottomWidth: 1,
     paddingBottom: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   acctDetContainer: {
     gap: 10,
     flex: 1,
   },
   banksWrapper: {
-    gap: 10
+    gap: 10,
   },
   bankSelect: {
     flexDirection: "row",
@@ -299,5 +291,5 @@ const styles = StyleSheet.create({
     padding: 12,
     alignItems: "center",
     borderRadius: 10,
-  }
+  },
 });

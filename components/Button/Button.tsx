@@ -15,13 +15,11 @@ const StyledButton = styled.Pressable<ButtonProps>`
     variant === 'primary' ? Colors.primary : Colors.white};
   color: ${({variant}) =>
     variant === 'primary' ? Colors.white : Colors.primary};
-  padding: ${({isLarge}) => (isLarge ? '20px' : '15px')};
+  padding: ${({isLarge}) => (isLarge ? '15px' : '9px')};
   border: ${({variant}) =>
     variant === 'primary' ? 'none' : `2px solid ${Colors.ash}`};
   width: ${({isWide}) => (isWide ? '100%' : null)};
   border-radius: 10px;
-  font-weight: 500;
-  font-size: 17px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,13 +37,7 @@ export function Button({
 }: ButtonProps) {
   return (
     <StyledButton
-      android_ripple={{
-        color: Colors.primaryLight,
-        foreground: true,
-        borderless: true,
-        radius: 10,
-        
-      }}
+    
       disabled={isLoading}
       variant={variant}
       isLarge={isLarge}

@@ -24,6 +24,14 @@ export const fetchUserData = createAsyncThunk(
   }
 );
 
+export type BankAccountT = {
+  account_number: string;
+  account_name: string;
+  bankCode: string;
+  bank_name: string;
+  isFavourite: boolean;
+};
+
 
 interface CreateUser {
   country: string; //"AF";
@@ -37,6 +45,7 @@ interface CreateUser {
   countryName: string;
   countryFlag: string;
   inviteCode: string;
+  bankAccountList: BankAccountT[]
 }
 
 const initialState: CreateUser = {
@@ -50,7 +59,8 @@ const initialState: CreateUser = {
   countryDialCode: "",
   countryName: "",
   countryFlag: "",
-  inviteCode: ""
+  inviteCode: "",
+  bankAccountList: []
 };
 
 export const authSlice = createSlice({
@@ -58,8 +68,17 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     updateFormInput: (state, action) => {
-        return { ...state, ...action.payload };
+      return { ...state, ...action.payload };
     },
+    addBankAccount: (state, action: PayloadAction<BankAccountT>) => {
+      state.bankAccountList.push(action.payload);
+    },
+    removeBankAccount: (state, action: PayloadAction<string>) => {
+      state.bankAccountList = state.bankAccountList.filter(
+        (account) => account.account_number !== action.payload
+      );
+    },
+
     clearField: (state) => {
       state.country = "";
       state.email = "";
@@ -72,7 +91,9 @@ export const authSlice = createSlice({
 });
 
 export const {
-  updateFormInput
+  updateFormInput,
+  addBankAccount,
+  removeBankAccount
 } = authSlice.actions;
 
 export default authSlice.reducer;

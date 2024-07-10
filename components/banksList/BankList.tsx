@@ -27,7 +27,7 @@ import { CircleIcon, DotIcon } from "../SvgAssets";
 import { MediumText } from "../styles/styledComponents";
 import { banks } from "../banks.json";
 
-type BankT = {
+export type BankT = {
   name?: string;
   slug?: string;
   code?: string;
@@ -58,7 +58,7 @@ export default function BankList({ isOpen, onBankPress, onClose }: BankListI) {
     bottomSheetModalRef.current?.present();
   }, []);
   const handlePresentModalClose = useCallback(() => {
-    onClose()
+    onClose();
     bottomSheetModalRef.current?.dismiss();
   }, []);
   const handleSheetChanges = useCallback((index: number) => {
@@ -126,7 +126,7 @@ export default function BankList({ isOpen, onBankPress, onClose }: BankListI) {
             <CircleIcon color={Colors.grayText} />
           </View>
 
-          <ScrollView style={{gap: 10}} contentContainerStyle={{ gap: 10 }}>
+          <ScrollView style={{ gap: 10 }} contentContainerStyle={{ gap: 10 }}>
             {filteredBanks.map((bank, i) => (
               <Pressable
                 onPress={() => {

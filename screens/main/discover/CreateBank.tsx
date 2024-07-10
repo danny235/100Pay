@@ -22,10 +22,15 @@ import CustomHeader from "../../../components/headers/CustomHeaders";
 import {
   Add,
   AddCircle,
+  Arrow,
+  ArrowForward,
+  ArrowRight,
   Edit,
   Flashy,
   Money4,
   More,
+  Scan,
+  ScanBarcode,
   Star,
   StarSlash,
 } from "iconsax-react-native";
@@ -57,7 +62,12 @@ import { RefreshControl } from "react-native-gesture-handler";
 import { ActivityIndicator } from "react-native";
 import updateDashboardRequest from "../../../apis/instantPayouts";
 import { useToast } from "../../../components/CustomToast/ToastContext";
-import { UserAppType, updateActiveApps } from "../../../features/user/userSlice";
+import {
+  UserAppType,
+  updateActiveApps,
+} from "../../../features/user/userSlice";
+import BankForm from "../home/FaceRecognition/BankForm";
+import { addBankAccount } from "../../../features/auth/authSlice";
 
 type PayoutsT = {
   navigation: NavigationProp<RootStackParamList>;
@@ -73,15 +83,12 @@ export default function Payouts({ navigation }: PayoutsT) {
     userAppsLoading,
     token,
   } = useSelector((state: RootState) => state.user);
-  const { bankAccounts, bankAccountsLoading, activeBankId } = useSelector(
-    (state: RootState) => state.account
-  );
-  const [currentBankId, setCurrentBankId] = useState("");
-  const [instantPay, setInstantPay] = useState(activeUserApp.instantPayout);
+  const { bankAccountList } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [snapTo, setSnapTo] = useState(["38%", "50%"]);
   const snapPoints = useMemo(() => snapTo, [snapTo]);
+  const [showBankForm, setShowBankForm] = useState(false);
   const { showToast } = useToast();
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
@@ -92,40 +99,6 @@ export default function Payouts({ navigation }: PayoutsT) {
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
   }, []);
-
-  const toggleSwitch = async ({ bankAccountId, payout }) => {
-    if (activeBankId === "" || activeBankId === "false") {
-      showToast("Please select a bank below or add a new bank account😢", "info");
-      return;
-    }
-    setInstantPay(payout);
-    try {
-      const values = {
-        instantPayoutAccountId: payout ? bankAccountId : "false",
-        instantPayout: payout,
-      };
-      const response:UserAppType = await updateDashboardRequest({
-        data: { ...activeUserApp, ...values },
-        token,
-        apiKey: activeUserApp?.keys.pub_keys[0].value,
-      });
-
-      if (response._id) {
-        setInstantPay(response.instantPayout)
-        dispatch(updateActiveApps(response))
-        if(response.instantPayout) {
-          dispatch(updateActiveBankId(response.instantPayoutAccountId));
-          
-        }
-        dispatch(updateActiveBankId(""));
-        
-        showToast(`Instant Payout is turned ${response.instantPayout ? "on" : "off"}`, "success")
-      }
-    } catch (err) {
-      showToast(err.message, "error")
-      console.log(err.message);
-    }
-  };
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -150,23 +123,22 @@ export default function Payouts({ navigation }: PayoutsT) {
   return (
     <CustomView>
       <CustomHeader
-        icon={<Money4 color={Colors.primary} size={24} />}
-        text="Payouts"
+        icon={<Scan variant="TwoTone" color={Colors.primary} size={24} />}
+        text="Bank Accounts"
         onPress={() => navigation.goBack()}
       />
-      <View style={styles.searchBox}>
-        <TextInput
-          placeholder="Search assets here"
-          style={{
-            fontFamily: "SpaceGrotesk-SemiBold",
-            color: Colors.black,
-            width: "70%",
-            fontSize: 15 / fontScale,
-          }}
-          placeholderTextColor={Colors.grayText}
-        />
-        <CircleIcon color={Colors.grayText} />
-      </View>
+
+      <LightText
+        style={{
+          fontSize: 16 / fontScale,
+          color: Colors.grayText,
+          marginVertical: 30,
+        }}
+      >
+        Add bank account options to your paylens . These accounts will appear to
+        anyone that scans your face.
+      </LightText>
+
       <ScrollView
         refreshControl={
           <RefreshControl
@@ -176,69 +148,27 @@ export default function Payouts({ navigation }: PayoutsT) {
           />
         }
       >
-        {bankAccountsLoading === "loading" && (
+        <MediumText style={{ fontSize: 16 / fontScale, marginVertical: 20 }}>
+          Bank Accounts
+        </MediumText>
+        {/* {bankAccountsLoading === "loading" && (
           <View
             style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
           >
             <ActivityIndicator color={Colors.primary} size={30} />
           </View>
-        )}
-
-        <View style={styles.grayBg}>
-          <View
-            style={{
-              borderBottomColor: Colors.ash,
-              borderBottomWidth: 1,
-              paddingBottom: 10,
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 10,
-            }}
-          >
-            <Flashy color={Colors.primary} variant="TwoTone" size={24} />
-            <MediumText
-              style={{
-                fontSize: 17 / fontScale,
-                borderLeftColor: Colors.ash,
-                borderLeftWidth: 1,
-                paddingLeft: 10,
-              }}
-            >
-              Instant Payouts
-            </MediumText>
-            <View style={{ marginLeft: "auto" }}>
-              <Switch
-                value={instantPay}
-                onValueChange={() =>
-                  toggleSwitch({
-                    bankAccountId: activeBankId,
-                    payout: !instantPay,
-                  })
-                }
-                trackColor={{ true: Colors.primaryLight, false: Colors.ash }}
-                thumbColor={Colors.white}
-              />
-            </View>
-          </View>
-          <LightText
-            style={{ fontSize: 15 / fontScale, color: Colors.grayText }}
-          >
-            Turn On/Off instant payout. instant payout moves money sent to you
-            directly to your bank account, if this option is “off” the process
-            can still be done manually
-          </LightText>
-        </View>
+        )} */}
 
         <View style={{ gap: 20 }}>
-          {bankAccounts?.length === 0 && (
-            <MediumText style={{ textAlign: "center" }}>
+          {bankAccountList?.length === 0 && (
+            <MediumText style={{ textAlign: "center", color: Colors.grayText }}>
               No bank accounts added
             </MediumText>
           )}
-          {bankAccounts?.map((account, i) => {
+          {bankAccountList?.map((account, i) => {
             // console.log(account._id, activeBankId);
             return (
-              <Pressable key={account._id} style={styles.acctContainer}>
+              <Pressable key={i} style={styles.acctContainer}>
                 <View style={styles.acctDetContainer}>
                   <View style={styles.topAccDet}>
                     <Image
@@ -256,9 +186,7 @@ export default function Payouts({ navigation }: PayoutsT) {
                     >
                       {account.bank_name}
                     </LightText>
-                    {account._id === activeBankId && (
-                      <StarIcon />
-                    )}
+                    {account.isFavourite && <StarIcon />}
                   </View>
                   <View style={styles.bottomAccDet}>
                     <MediumText
@@ -286,7 +214,7 @@ export default function Payouts({ navigation }: PayoutsT) {
                 <Pressable
                   onPress={() => {
                     handlePresentModalPress();
-                    setCurrentBankId(account._id);
+                    // setCurrentBankId(i);
                   }}
                 >
                   <More color={Colors.ash} size={24} />
@@ -296,86 +224,47 @@ export default function Payouts({ navigation }: PayoutsT) {
           })}
         </View>
       </ScrollView>
-
-      <Button
-        variant="primary"
-        isLarge={false}
-        isWide={true}
-        style={{
-          marginTop: "auto",
-          marginBottom: 30,
-        }}
-        onPress={() => navigation.navigate("AddBank")}
-      >
-        <MediumText style={{ color: Colors.white, fontSize: 15 / fontScale }}>
-          Add Bank Account
-        </MediumText>
-        <AddCircle size={24} color={Colors.white} variant="TwoTone" />
-      </Button>
-
-      <BottomSheetModalProvider>
-        <BottomSheetModal
-          ref={bottomSheetModalRef}
-          index={1}
-          snapPoints={snapPoints}
-          onChange={handleSheetChanges}
-          enableContentPanningGesture={false}
-          enablePanDownToClose={false}
-          handleIndicatorStyle={{
-            borderWidth: 3,
-            borderColor: Colors.ash,
-            width: "20%",
-          }}
-          backdropComponent={({ animatedIndex, style }) => (
-            <CustomBackdrop
-              onPress={handlePresentModalClose}
-              animatedIndex={animatedIndex}
-              style={style}
-            />
-          )}
-          animateOnMount={true}
+      <View className="flex-row gap-5 pb-10 mt-auto items-center">
+        <Button
+          variant="secondary"
+          isLarge={false}
+          isWide={false}
+          onPress={() => setShowBankForm(true)}
+          className="w-[46%]"
         >
-          <View style={{ paddingHorizontal: 20, paddingVertical: 20, gap: 20 }}>
-            <SemiBoldText style={{ fontSize: 17 / fontScale }}>
-              More Actions
-            </SemiBoldText>
+          <AddCircle size={24} color={Colors.primary} variant="TwoTone" />
+          <MediumText style={{ fontSize: 15 / fontScale }}>Add Bank</MediumText>
+        </Button>
 
-            <Pressable
-              onPress={() => {
-                if(instantPay) {
-                  showToast("Please disable intant payout to switch banks", "info")
-                }
-                handlePresentModalClose();
-                dispatch(updateActiveBankId(currentBankId));
-              }}
-              style={styles.moreActionsContainer}
-            >
-              <Star color={Colors.primary} size={24} />
-              <MediumText style={{ fontSize: 17 / fontScale }}>
-                Make Defualt Payout Account
-              </MediumText>
-            </Pressable>
-            {/* <Pressable
-              onPress={handlePresentModalClose}
-              style={styles.moreActionsContainer}
-            >
-              <Edit color={Colors.primary} size={24} />
-              <MediumText style={{ fontSize: 17 / fontScale }}>
-                Edit Bank Account Details
-              </MediumText>
-            </Pressable>
-            <Pressable
-              onPress={handlePresentModalClose}
-              style={styles.moreActionsContainer}
-            >
-              <Edit color={Colors.primary} size={24} />
-              <MediumText style={{ fontSize: 17 / fontScale }}>
-                Delete Bank Account
-              </MediumText>
-            </Pressable> */}
-          </View>
-        </BottomSheetModal>
-      </BottomSheetModalProvider>
+        <Button
+          variant="primary"
+          isLarge={false}
+          isWide={false}
+          onPress={() =>
+            bankAccountList.length !== 0 &&
+            navigation.navigate("MainTabs", {
+              screen: "Dashboard",
+            })
+          }
+          className="w-[46%]"
+        >
+          <MediumText style={{ color: Colors.white, fontSize: 15 / fontScale }}>
+            Finish
+          </MediumText>
+          <ArrowRight size={24} color={Colors.white} variant="TwoTone" />
+        </Button>
+      </View>
+
+      <BankForm
+        handleShowForm={() => setShowBankForm(!showBankForm)}
+        onClose={() => setShowBankForm(false)}
+        onSubmit={(values) => {
+          setShowBankForm(false);
+          dispatch(addBankAccount(values));
+        }}
+        showForm={showBankForm}
+        key={"BankForm"}
+      />
     </CustomView>
   );
 }

@@ -53,13 +53,13 @@ function Scan({ navigation }: Props) {
   const [scanned, setScanned] = useState(false);
   const [scannedData, setScannedData] = useState("");
   const [permission, requestPermission] = useCameraPermissions();
+  const cameraRef = useRef<CameraView>()
 
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const [isUnfocused, setIsUnfocused] = useState(false)
   const [capturedImage, setCapturedImage] = useState();
 
-  const cameraRef = useRef<CameraView>()
   const [facing, setFacing] = useState<string | any>("back");
 
   const [model, setModel] = useState(null);

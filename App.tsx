@@ -21,7 +21,6 @@ import NavigationContent from "./routes/AppStacks";
 import { useFonts } from "expo-font";
 import ErrorBoundary from "./ErrorBoundary";
 
-
 import "./styles.css";
 
 type SectionProps = PropsWithChildren<{
@@ -30,30 +29,29 @@ type SectionProps = PropsWithChildren<{
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === "dark";
-  const [isOffline, setIsOffline] = useState(true)
-  
+  const [isOffline, setIsOffline] = useState(true);
 
   let [fontsLoaded, fontsError] = useFonts({
-    "SpaceGroteskBold": require("./assets/fonts/SpaceGroteskBold.ttf"),
-    "SpaceGroteskLight": require("./assets/fonts/SpaceGroteskLight.ttf"),
-   "SpaceGroteskRegular": require("./assets/fonts/SpaceGroteskRegular.ttf"),
-    "SpaceGroteskMedium": require("./assets/fonts/SpaceGroteskMedium.ttf"),
-    "SpaceGroteskSemiBold": require("./assets/fonts/SpaceGroteskSemiBold.ttf"),
+    SpaceGroteskBold: require("./assets/fonts/SpaceGroteskBold.ttf"),
+    SpaceGroteskLight: require("./assets/fonts/SpaceGroteskLight.ttf"),
+    SpaceGroteskRegular: require("./assets/fonts/SpaceGroteskRegular.ttf"),
+    SpaceGroteskMedium: require("./assets/fonts/SpaceGroteskMedium.ttf"),
+    SpaceGroteskSemiBold: require("./assets/fonts/SpaceGroteskSemiBold.ttf"),
   });
 
   // Make sure that all fonts has been loaded before rendering
   // const backgroundStyle = {
-    //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-   
-    // };
-    
-    useEffect(() => {
-      if (Platform.OS === "android") SplashScreen.hide();
-    }, []);
-    
-    if (!fontsLoaded && !fontsError) {
-      return null;
-    }
+  //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+
+  // };
+
+  useEffect(() => {
+    if (Platform.OS === "android") SplashScreen.hide();
+  }, []);
+
+  if (!fontsLoaded && !fontsError) {
+    return null;
+  }
   return (
     <ErrorBoundary>
       <Provider store={store}>

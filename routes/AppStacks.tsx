@@ -4,6 +4,7 @@ import {
   AssetScreen,
   ContestScreen,
   ConvertAssetScreen,
+  CreateBankScreen,
   DiscoverScreen,
   EditPhotoScreen,
   EditProfileScreen,
@@ -97,6 +98,7 @@ export type RootStackParamList = {
   Contest: undefined;
   ConnectQr: undefined;
   FaceInfo: undefined;
+  CreateBank: undefined;
   MainTabs: {
     screen: string;
     params?: {
@@ -248,12 +250,14 @@ export default function NavigationContent() {
           <Stack.Group>
             <Stack.Screen name="FaceInfo" component={FaceInfoScreen} />
             <Stack.Screen name="ScanFace" component={ScanFaceScreen} />
+            <Stack.Screen name="CreateBank" component={CreateBankScreen} />
             <Stack.Screen name="AddBank" component={AddBankScreen} />
           </Stack.Group>
         ) : (
           <Stack.Group>
             <Stack.Screen name="FaceInfo" component={FaceInfoScreen} />
             <Stack.Screen name="ScanFace" component={ScanFaceScreen} />
+            <Stack.Screen name="CreateBank" component={CreateBankScreen} />
             <Stack.Screen name="AddBank" component={AddBankScreen} />
 
             <Stack.Screen

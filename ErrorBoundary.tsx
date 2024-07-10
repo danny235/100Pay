@@ -46,7 +46,8 @@ class ErrorBoundary extends Component<Props, State> {
               Oops!
             </MediumText>
             <LightText className="px-10 text-center" style={{ fontSize: 17, color: Colors.grayText }}>
-              {this.state.errorMessage}
+              {/* {this.state.errorMessage} */}
+              Something went wrong please reload
             </LightText>
             <CloseCircle variant="Bulk" size={100} color={Colors.primary} />
           </View>

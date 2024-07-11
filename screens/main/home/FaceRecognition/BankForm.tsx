@@ -128,6 +128,8 @@ export default function BankForm({
               isFavourite: favourite,
             };
             onSubmit(bankVal);
+               onClose();
+               setActiveBank(null)
           }}
           validationSchema={bankSchema}
         >
@@ -183,8 +185,8 @@ export default function BankForm({
                   marginVertical: 10,
                 }}
                 onPress={() => {
+                 
                   formikProps.handleSubmit();
-                  onClose();
                 }}
               >
                 <AddCircle color={Colors.white} size={24} />

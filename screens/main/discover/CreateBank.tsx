@@ -258,10 +258,7 @@ export default function Payouts({ navigation }: PayoutsT) {
       <BankForm
         handleShowForm={() => setShowBankForm(!showBankForm)}
         onClose={() => setShowBankForm(false)}
-        onSubmit={(values) => {
-          setShowBankForm(false);
-          dispatch(addBankAccount(values));
-        }}
+        onSubmit={(values) => dispatch(addBankAccount(values))}
         showForm={showBankForm}
         key={"BankForm"}
       />

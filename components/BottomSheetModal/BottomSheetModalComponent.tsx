@@ -47,9 +47,9 @@ export default function BottomSheetModalComponent({
   useEffect(() => {
     if (show) {
       handlePresentModalPress();
-    } 
-
-    
+    } else {
+      handlePresentModalClose();
+    }
   }, [show]);
 
   return (
@@ -64,12 +64,11 @@ export default function BottomSheetModalComponent({
         enableHandlePanningGesture={false}
         enablePanDownToClose={false}
         enableOverDrag={false}
-        
         handleIndicatorStyle={{
           borderWidth: 3,
           borderColor: Colors.ash,
           width: "20%",
-          display: showIndicator ? "flex" :  "none"
+          display: showIndicator ? "flex" : "none",
         }}
         backdropComponent={({ animatedIndex, style }) => (
           <CustomBackdrop

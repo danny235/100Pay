@@ -1,28 +1,12 @@
 import {
-  createAsyncThunk,
-  createSelector,
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import { formatDateString } from "../../utils";
-import { GetApp } from "../../apis/getuserdata";
-import { getUserData } from "../../apis/auth/loginuser";
 
-export const fetchUserApps = createAsyncThunk(
-  "user/fetchUseApps",
-  async (token: string) => {
-    const response = await GetApp(token);
-    return response;
-  }
-);
 
-export const fetchUserData = createAsyncThunk(
-  "user/fetchUserData",
-  async (token: string) => {
-    const response = await getUserData(token);
-    return response;
-  }
-);
+
+
+
 
 export type BankAccountT = {
   account_number: string;

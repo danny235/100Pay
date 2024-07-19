@@ -68,6 +68,7 @@ import {
 } from "../../../features/user/userSlice";
 import BankForm from "../home/FaceRecognition/BankForm";
 import { addBankAccount } from "../../../features/auth/authSlice";
+import { truncateText } from "../../../utils";
 
 type PayoutsT = {
   navigation: NavigationProp<RootStackParamList>;
@@ -184,9 +185,8 @@ export default function Payouts({ navigation }: PayoutsT) {
                         paddingLeft: 10,
                       }}
                     >
-                      {account.bank_name}
+                      {truncateText(account.bank_name, 10)}
                     </LightText>
-                    {account.isFavourite && <StarIcon />}
                   </View>
                   <View style={styles.bottomAccDet}>
                     <MediumText
@@ -210,15 +210,18 @@ export default function Payouts({ navigation }: PayoutsT) {
                     </LightText>
                   </View>
                 </View>
-
-                <Pressable
-                  onPress={() => {
-                    handlePresentModalPress();
-                    // setCurrentBankId(i);
-                  }}
-                >
-                  <More color={Colors.ash} size={24} />
-                </Pressable>
+                {account.isFavourite ? (
+                  <StarIcon />
+                ) : (
+                  <Pressable
+                    onPress={() => {
+                      // handlePresentModalPress();
+                      // setCurrentBankId(i);
+                    }}
+                  >
+                    <More color={Colors.ash} size={24} />
+                  </Pressable>
+                )}
               </Pressable>
             );
           })}

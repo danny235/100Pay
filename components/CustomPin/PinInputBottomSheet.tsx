@@ -27,6 +27,7 @@ import { Button } from "../Button/Button";
 import { CustomBackdrop } from "../ChooseAccountBalance/ChooseAccountBalance";
 import { LightText, SemiBoldText } from "../styles/styledComponents";
 import { PasswordCheck } from "iconsax-react-native";
+import BottomSheetModalComponent from "../BottomSheetModal/BottomSheetModalComponent";
 
 const PinInputBottomSheet = ({
   mainTxt,
@@ -36,7 +37,7 @@ const PinInputBottomSheet = ({
   onSubmit,
 }) => {
   const { fontScale, height, width } = useWindowDimensions();
-  const [snapTo, setSnapTo] = useState(["38%", `${height <= 800 ? height :(height) / 13}%`]);
+  const [snapTo, setSnapTo] = useState(["38%", "75%"]);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [pin, setPin] = useState("");
   const snapPoints = useMemo(() => snapTo, [snapTo]);
@@ -66,13 +67,7 @@ const PinInputBottomSheet = ({
     }
   };
 
-  useEffect(() => {
-    if (isVisible) {
-      handlePresentModalPress();
-    } else {
-      handlePresentModalClose();
-    }
-  }, [isVisible]);
+ 
 
   useEffect(() => {
     if (pin.length === 6) {
@@ -82,29 +77,11 @@ const PinInputBottomSheet = ({
 
 
   return (
-    <BottomSheetModalProvider>
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={1}
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        enableContentPanningGesture={false}
-        enablePanDownToClose={false}
-        handleIndicatorStyle={{
-          borderWidth: 3,
-          borderColor: Colors.ash,
-          width: "20%",
-        }}
-        style={{zIndex: 2000}}
-        backdropComponent={({ animatedIndex, style }) => (
-          <CustomBackdrop
-            onPress={()=>onClose()}
-            animatedIndex={animatedIndex}
-            style={style}
-          />
-        )}
-        animateOnMount={true}
-      >
+    <BottomSheetModalComponent
+      show={isVisible}
+      onClose={onClose}
+      snapPoints={snapTo}>
+     
         <View style={styles.sheetContent}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginVertical: 10 }}>
             <PasswordCheck color={Colors.primary} variant="TwoTone" />
@@ -140,15 +117,14 @@ const PinInputBottomSheet = ({
             <Text style={styles.confirmButtonText}>Confirm</Text>
           </Button> */}
         </View>
-      </BottomSheetModal>
-    </BottomSheetModalProvider>
+
+    </BottomSheetModalComponent>
   );
 };
 
 const styles = StyleSheet.create({
   sheetContent: {
     flex: 1,
-    padding: 20,
     backgroundColor: "white",
   },
   title: {

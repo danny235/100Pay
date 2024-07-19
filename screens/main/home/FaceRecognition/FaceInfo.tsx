@@ -1,5 +1,5 @@
 import { View, useWindowDimensions, Image } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import FaceImg from "../../../../assets/images/face.png";
 import CustomView from "../../../../components/Views/CustomView";
 import {
@@ -12,6 +12,11 @@ import { ArrowRight } from "iconsax-react-native";
 import { Colors } from "../../../../components/Colors";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../../../routes/AppStacks";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../../app/store";
+import { fetchUserApps, fetchUserData } from "../../../../features/user/userSlice";
+import { ThunkDispatch } from "redux-thunk";
+import { fetchBeneficiaries } from "../../../../features/account/accountSlice";
 
 type FaceInfoT = {
     navigation: NativeStackNavigationProp<RootStackParamList>
@@ -19,6 +24,22 @@ type FaceInfoT = {
 
 export default function FaceInfo({navigation}: FaceInfoT) {
   const { fontScale } = useWindowDimensions();
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const {
+    userApps,
+    activeUserApp,
+    userAppsError,
+    userAppsLoading,
+    token,
+    userProfile,
+    userProfileLoading,
+    showCamera,
+  } = useSelector((state: RootState) => state.user);
+  useEffect(() => {
+    dispatch(fetchUserApps(token));
+    dispatch(fetchUserData(token));
+    dispatch(fetchBeneficiaries(token));
+  }, []);
   return (
     <CustomView>
       <View className="justify-center items-center gap-10 mt-20">

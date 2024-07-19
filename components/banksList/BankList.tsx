@@ -26,6 +26,7 @@ import { Colors } from "../Colors";
 import { CircleIcon, DotIcon } from "../SvgAssets";
 import { MediumText } from "../styles/styledComponents";
 import { banks } from "../banks.json";
+import BottomSheetModalComponent from "../BottomSheetModal/BottomSheetModalComponent";
 
 export type BankT = {
   name?: string;
@@ -73,88 +74,72 @@ export default function BankList({ isOpen, onBankPress, onClose }: BankListI) {
     setFilteredBanks(filtered); // Update filtered banks state
   };
 
-  useEffect(() => {
-    if (isOpen) {
-      handlePresentModalPress();
-    } else {
-      handlePresentModalClose();
-    }
-  }, [isOpen]);
+  const closeModal = () => {
+    setSearchQuery("");
+    setFilteredBanks(banks);
+    onClose();
+  };
 
   return (
-    <BottomSheetModalProvider>
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={1}
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        enableContentPanningGesture={false}
-        enablePanDownToClose={false}
-        handleIndicatorStyle={{
-          borderWidth: 3,
-          borderColor: Colors.ash,
-          width: "20%",
-        }}
-        backdropComponent={({ animatedIndex, style }) => (
-          <CustomBackdrop
-            onPress={handlePresentModalClose}
-            animatedIndex={animatedIndex}
-            style={style}
+    <BottomSheetModalComponent
+      show={isOpen}
+      onClose={closeModal}
+      snapPoints={["38%", "80%"]}
+    >
+      <View style={{ gap: 20, flex: 1 }}>
+        <CustomHeader
+          text={"Select Bank"}
+          icon={<Bank variant="TwoTone" color={Colors.primary} size={24} />}
+          onPress={handlePresentModalClose}
+        />
+        <View style={styles.searchBox}>
+          <TextInput
+            placeholder="Search assets here"
+            style={{
+              fontFamily: "SpaceGroteskMedium",
+              color: Colors.black,
+              width: "70%",
+              fontSize: 15 / fontScale,
+            }}
+            placeholderTextColor={Colors.grayText}
+            onChangeText={handleSearch} // Call handleSearch on text change
+            value={searchQuery} // Bind searchQuery state to the input value
           />
-        )}
-        animateOnMount={true}
-      >
-        <View style={{ paddingVertical: 20, gap: 20, paddingHorizontal: 20 }}>
-          <CustomHeader
-            text={"Select Bank"}
-            icon={<Bank variant="TwoTone" color={Colors.primary} size={24} />}
-            onPress={handlePresentModalClose}
-          />
-          <View style={styles.searchBox}>
-            <TextInput
-              placeholder="Search assets here"
-              style={{
-                fontFamily: "SpaceGroteskMedium",
-                color: Colors.black,
-                width: "70%",
-                fontSize: 15 / fontScale,
-              }}
-              placeholderTextColor={Colors.grayText}
-              onChangeText={handleSearch} // Call handleSearch on text change
-              value={searchQuery} // Bind searchQuery state to the input value
-            />
-            <CircleIcon color={Colors.grayText} />
-          </View>
-
-          <ScrollView style={{ gap: 10 }} contentContainerStyle={{ gap: 10 }}>
-            {filteredBanks.map((bank, i) => (
-              <Pressable
-                onPress={() => {
-                  onBankPress(bank);
-                  setActiveBank(bank);
-                  handlePresentModalClose();
-                }}
-                key={bank.code}
-                style={{ flexDirection: "row", gap: 10 }}
-              >
-                {/* <DotIcon /> */}
-                <MediumText
-                  style={{
-                    fontSize: 14 / fontScale,
-                    borderBottomColor: Colors.ash,
-                    borderBottomWidth: 1,
-                    paddingBottom: 20,
-                    width: "90%",
-                  }}
-                >
-                  {bank.name}
-                </MediumText>
-              </Pressable>
-            ))}
-          </ScrollView>
+          <CircleIcon color={Colors.grayText} />
         </View>
-      </BottomSheetModal>
-    </BottomSheetModalProvider>
+
+        <ScrollView
+          style={{ gap: 10, flex: 1 }}
+          contentContainerStyle={{ gap: 10, flex: 1 }}
+        >
+          {filteredBanks.map((bank, i) => (
+            <Pressable
+              onPress={() => {
+                closeModal();
+                onBankPress(bank);
+                setActiveBank(bank);
+                handlePresentModalClose();
+              }}
+              key={bank.code}
+              style={{ flexDirection: "row", gap: 10 }}
+            >
+              {/* <DotIcon /> */}
+              <MediumText
+                style={{
+                  fontSize: 14 / fontScale,
+                  borderBottomColor: Colors.ash,
+                  borderBottomWidth: 1,
+                  paddingBottom: 20,
+                  width: "90%",
+                }}
+              >
+                {bank.name}
+              </MediumText>
+            </Pressable>
+          ))}
+        </ScrollView>
+      </View>
+    </BottomSheetModalComponent>
   );
 }
 

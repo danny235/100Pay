@@ -57,6 +57,7 @@ import {
 } from "@react-navigation/native-stack";
 import { RootState } from "../../../../app/store";
 import { addCommas, formatDateString } from "../../../../utils";
+import BottomSheetModalComponent from "../../../../components/BottomSheetModal/BottomSheetModalComponent";
 
 type RecieveModalT = {
   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -126,7 +127,7 @@ export default function RecieveModal({
       subTitle: "Receive with your Pay ID",
       icon: <Profile color={Colors.primary} variant="TwoTone" />,
       cb: () => {
-        handlePresentRecieveModalClose();
+        onClose();
 
         navigation.navigate("MainTabs", {
           screen: "Discover",
@@ -137,38 +138,38 @@ export default function RecieveModal({
         });
       },
     },
-    {
-      id: 3,
-      name: "Payment Link",
-      subTitle: "Send a payment link to recieve money",
-      icon: <Link color={Colors.primary} variant="TwoTone" />,
-      cb: () => {
-        handlePresentRecieveModalClose();
-        navigation.navigate("MainTabs", {
-          screen: "Discover",
-          params: {
-            screen: "GenerateLink",
-            initial: true,
-          },
-        });
-      },
-    },
-    {
-      id: 4,
-      name: "Pay Checkout",
-      subTitle: "Recieve money from any digital asset",
-      icon: <Wallet3 variant="TwoTone" color={Colors.primary} />,
-      cb: () => {
-        handlePresentRecieveModalClose();
-        setShowInstantRecieve(true);
-      },
-    },
+    // {
+    //   id: 3,
+    //   name: "Payment Link",
+    //   subTitle: "Send a payment link to recieve money",
+    //   icon: <Link color={Colors.primary} variant="TwoTone" />,
+    //   cb: () => {
+    //     onClose()
+    //     navigation.navigate("MainTabs", {
+    //       screen: "Discover",
+    //       params: {
+    //         screen: "GenerateLink",
+    //         initial: true,
+    //       },
+    //     });
+    //   },
+    // },
+    // {
+    //   id: 4,
+    //   name: "Pay Checkout",
+    //   subTitle: "Recieve money from any digital asset",
+    //   icon: <Wallet3 variant="TwoTone" color={Colors.primary} />,
+    //   cb: () => {
+    //     onClose()
+    //     setShowInstantRecieve(true);
+    //   },
+    // },
     // {
     //   id: 2,
     //   name: "Asset Deposit",
     //   icon: <CoinIcon />,
     //   cb: () => {
-    //     handlePresentRecieveModalClose();
+    //     onClose()
     //     navigation.replace("MainTabs", {
     //       screen: "Asset",
     //     });
@@ -176,32 +177,11 @@ export default function RecieveModal({
     // },
   ];
 
-  const renderBackdrop = useCallback(
-    (props) => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={1}
-        appearsOnIndex={2}
-      />
-    ),
-    []
-  );
+  
 
-  // useEffect(() => {
-  //   handlePresentModalPress();
-  //   return () => {
-  //     bottomSheetModalRef.current?.dismiss();
-  //     recieveSheetModalRef.current?.dismiss();
-  //   };
-  // }, [navigation]);
+ 
 
-  useEffect(() => {
-    if (showRecieve) {
-      handlePresentRecieveModalPress();
-    }
-
-    return () => handlePresentModalClose();
-  }, [showRecieve]);
+ 
   return (
     <>
       {/* <BottomSheetModalProvider>
@@ -388,29 +368,12 @@ export default function RecieveModal({
       </BottomSheetModalProvider> */}
 
       {/* Recieve Modal */}
-      <BottomSheetModalProvider>
-        <BottomSheetModal
-          ref={recieveSheetModalRef}
-          index={1}
-          snapPoints={recieveSnapPoints}
-          onChange={handleRecieveSheetChanges}
-          enableContentPanningGesture={true}
-          enablePanDownToClose={true}
-          handleIndicatorStyle={{
-            borderWidth: 3,
-            borderColor: Colors.ash,
-            width: "20%",
-          }}
-          backdropComponent={({ animatedIndex, style }) => (
-            <CustomBackdrop
-              onPress={handlePresentRecieveModalClose}
-              animatedIndex={animatedIndex}
-              style={style}
-            />
-          )}
-          animateOnMount={true}
-        >
-          <View style={{ paddingVertical: 20, gap: 20, paddingHorizontal: 20 }}>
+      <BottomSheetModalComponent
+      show={showRecieve}
+      onClose={onClose}
+      snapPoints={["38%", "50%"]}>
+       
+          <ScrollView contentContainerStyle={{ gap: 20,  flex: 1}}>
             <View className="flex flex-row items-center gap-3">
               <ImportSquare variant="TwoTone" color={Colors.primary} />
               <MediumText
@@ -458,9 +421,9 @@ export default function RecieveModal({
                 </Pressable>
               ))}
             </View>
-          </View>
-        </BottomSheetModal>
-      </BottomSheetModalProvider>
+          </ScrollView>
+       
+      </BottomSheetModalComponent>
 
       <InstantRecieveModal
         navigation={navigation}

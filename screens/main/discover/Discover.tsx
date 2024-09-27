@@ -105,7 +105,10 @@ export default function Discover({ navigation }: DiscoverT): React.JSX.Element {
           </View>
         </Pressable> */}
 
-        <Pressable style={styles.discoverCTA}>
+        <Pressable
+          onPress={() => navigation.navigate("ConnectQr")}
+          style={styles.discoverCTA}
+        >
           <Money4 color={Colors.primary} size={24} />
           <View style={{ gap: 10, flexShrink: 1 }}>
             <MediumText style={{ fontSize: 17 / fontScale }}>
@@ -119,6 +122,26 @@ export default function Discover({ navigation }: DiscoverT): React.JSX.Element {
               }}
             >
               Connect your payment QR Code to your 100Pay account
+            </RegularText>
+          </View>
+          <View style={{ marginLeft: "auto" }}>
+            <ArrowForwardIcon color={Colors.iconColor} />
+          </View>
+        </Pressable>
+        <Pressable onPress={()=> navigation.navigate("OrderQrCode")} style={styles.discoverCTA}>
+          <ShoppingCart color={Colors.primary} size={24} />
+          <View style={{ gap: 10, flexShrink: 1 }}>
+            <MediumText style={{ fontSize: 17 / fontScale }}>
+              Order QR Code
+            </MediumText>
+            <RegularText
+              style={{
+                fontSize: 13 / fontScale,
+                color: Colors.grayText,
+                width: "80%",
+              }}
+            >
+              Order your payment QR Code for your 100Pay account
             </RegularText>
           </View>
           <View style={{ marginLeft: "auto" }}>

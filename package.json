@@ -6,10 +6,12 @@
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "test": "jest",
     "web": "expo start --web",
     "build:web": "expo export -p web && npx workbox-cli generateSW workbox-config.js"
   },
   "dependencies": {
+    "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
     "@expo/metro-runtime": "^3.2.1",
     "@gorhom/bottom-sheet": "^4",
     "@react-native-async-storage/async-storage": "^1.21.0",

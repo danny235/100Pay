@@ -65,6 +65,7 @@ function Input({
           onChangeText ? onChangeText : formikProps.handleChange(formikKey)
         }
         // onFocus={handleInputFocus}
+        placeholderTextColor={Colors.grayText}
         onBlur={formikProps.handleBlur(formikKey)}
         error={formikProps.touched[formikKey] && formikProps.errors[formikKey]}
         {...rest}

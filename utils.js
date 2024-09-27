@@ -1,6 +1,4 @@
 
-
-
 export function addCommas(number) {
   if (number === null || number === undefined) return;
 

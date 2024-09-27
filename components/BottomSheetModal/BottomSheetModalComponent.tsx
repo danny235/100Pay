@@ -14,18 +14,20 @@ import { CustomBackdrop } from "../ChooseAccountBalance/ChooseAccountBalance";
 import { Colors } from "../Colors";
 
 type BottomSheetModalComponentProps = {
-  show: boolean;
+  show?: boolean;
   onClose: () => void;
   snapPoints?: string[];
   showIndicator?: boolean;
   children: React.ReactNode;
+  enableHandlePanningGesture?: boolean;
 };
 
 export default function BottomSheetModalComponent({
   show,
   onClose,
-  snapPoints = ["50%", "100%"],
+  snapPoints = ["38%", "40%"],
   showIndicator = true,
+  enableHandlePanningGesture = false,
   children,
 }: BottomSheetModalComponentProps) {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -35,14 +37,11 @@ export default function BottomSheetModalComponent({
   }, []);
 
   const handlePresentModalClose = useCallback(() => {
-    console.log("i've left the party baby");
     onClose();
     bottomSheetModalRef.current?.dismiss();
   }, []);
 
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
-  }, []);
+  const handleSheetChanges = useCallback((index: number) => {}, []);
 
   useEffect(() => {
     if (show) {
@@ -61,13 +60,13 @@ export default function BottomSheetModalComponent({
         onChange={handleSheetChanges}
         enableContentPanningGesture={true}
         onDismiss={handlePresentModalClose}
-        enableHandlePanningGesture={false}
+        enableHandlePanningGesture={enableHandlePanningGesture}
         enablePanDownToClose={false}
         enableOverDrag={false}
         handleIndicatorStyle={{
           borderWidth: 3,
           borderColor: Colors.ash,
-          width: "20%",
+          width: "8%",
           display: showIndicator ? "flex" : "none",
         }}
         backdropComponent={({ animatedIndex, style }) => (
@@ -79,9 +78,7 @@ export default function BottomSheetModalComponent({
         )}
         animateOnMount={true}
       >
-        <View style={{ paddingVertical: 20, paddingHorizontal: 20, gap: 10 }}>
-          {children}
-        </View>
+        <View style={{ flex: 1 }}>{children}</View>
       </BottomSheetModal>
     </BottomSheetModalProvider>
   );

@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   AddBankScreen,
   AssetScreen,
+  ConnectQRCodeScreen,
   ContestScreen,
   ConvertAssetScreen,
   CreateBankScreen,
@@ -15,6 +16,7 @@ import {
   HomeScreen,
   NotificationScreen,
   OnboardingScreen,
+  OrderQrCodeScreen,
   PaymentCompleteScreen,
   PayoutScreen,
   RecieveModalScreen,
@@ -99,6 +101,7 @@ export type RootStackParamList = {
   ConnectQr: undefined;
   FaceInfo: undefined;
   CreateBank: undefined;
+  OrderQrCode: undefined;
   MainTabs: {
     screen: string;
     params?: {
@@ -174,6 +177,10 @@ export function DiscoverStackScreen(): React.JSX.Element {
         component={GenerateRequestLinkScreen}
       />
       <DiscoverStack.Screen
+        name="ConnectQr"
+        component={ConnectQRCodeScreen}
+      />
+      <DiscoverStack.Screen
         name="GeneratedLink"
         component={GeneratedLinkScreen}
       />
@@ -184,6 +191,7 @@ export function DiscoverStackScreen(): React.JSX.Element {
       <DiscoverStack.Screen name="Payouts" component={PayoutScreen} />
 
       <DiscoverStack.Screen name="Contest" component={ContestScreen} />
+      <DiscoverStack.Screen name="OrderQrCode" component={OrderQrCodeScreen} />
     </DiscoverStack.Navigator>
   );
 }
@@ -255,10 +263,10 @@ export default function NavigationContent() {
           </Stack.Group>
         ) : (
           <Stack.Group>
-            <Stack.Screen name="FaceInfo" component={FaceInfoScreen} />
+            {/* <Stack.Screen name="FaceInfo" component={FaceInfoScreen} />
             <Stack.Screen name="ScanFace" component={ScanFaceScreen} />
             <Stack.Screen name="CreateBank" component={CreateBankScreen} />
-            <Stack.Screen name="AddBank" component={AddBankScreen} />
+            <Stack.Screen name="AddBank" component={AddBankScreen} /> */}
 
             <Stack.Screen
               name="MainTabs"

@@ -68,7 +68,7 @@ const Memojis = ({ navigation }: MemojiT) => {
         </View>
       ) : (
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {beneficiaries?.map((user, i) => (
+          {[...beneficiaries]?.reverse().map((user, i) => (
             <Pressable
               onPress={() =>
                 navigation.navigate("SendPayment", {

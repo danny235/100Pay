@@ -52,6 +52,7 @@ export default function SetPassword({
   const { password, confirmPassword } = useSelector(
     (state: RootState) => state.auth
   );
+  
 
   return (
     <CustomView>

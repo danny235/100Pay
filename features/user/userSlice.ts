@@ -7,6 +7,7 @@ import {
 import {formatDateString} from '../../utils';
 import {GetApp} from '../../apis/getuserdata';
 import {getUserData} from '../../apis/auth/loginuser';
+import { GetUserWallets, GetUserWalletTransactions } from '../../lib';
 
 export const fetchUserApps = createAsyncThunk(
   'user/fetchUseApps',
@@ -14,6 +15,23 @@ export const fetchUserApps = createAsyncThunk(
     const response = await GetApp(token);
     return response;
   },
+);
+
+
+export const fetchUserWallets = createAsyncThunk(
+  "user/fetchUserWallets",
+  async ({ token, appId }: { token: string; appId: string }) => {
+    const response = await GetUserWallets(token, appId);
+    return response;
+  }
+);
+
+export const fetchUserWalletTransactions = createAsyncThunk(
+  "user/fetchUserWalletTransactions",
+  async ({ token, symbol }: { token: string; symbol: string }) => {
+    const response = await GetUserWalletTransactions(token, symbol);
+    return response;
+  }
 );
 
 export const fetchUserData = createAsyncThunk(
@@ -41,6 +59,26 @@ interface User {
   invitedBy: string;
   __v: number;
 }
+type AccountT = {
+  address: string | null;
+};
+
+type BalanceT = {
+  available: string;
+  locked: string;
+};
+
+type UserWalletT = {
+  name: string;
+  status: string;
+  symbol: string;
+  decimals: string;
+  logo: string;
+  account: AccountT;
+  balance: BalanceT;
+  walletType: string;
+  id: string;
+};
 
 export type UserAppType = {
   address: string;
@@ -129,6 +167,7 @@ interface UserState {
   activeUserApp: UserAppType | null;
   showCamera: boolean;
   isFaceDetectionSet: boolean;
+  userWallet: UserWalletT
 }
 
 const initialState: UserState = {
@@ -146,7 +185,8 @@ const initialState: UserState = {
   userAppsError: '',
   showAccountBalance: true,
   showCamera: false,
-  isFaceDetectionSet: false
+  isFaceDetectionSet: false,
+  userWallet: null
 };
 
 export const userSlice = createSlice({

@@ -196,7 +196,7 @@ export default function OrderQrCode({ navigation }: OrderQrCodeT) {
 
       <AlertModal
         mainText="Order Placed 🎊"
-        subText="Congratulations your order has been placed"
+        subText="Congratulations your order has been placed. An agent will reach out to you shortly."
         buttonText="Complete"
         icon={<TickCircle color={Colors.primary} size={30} />}
         show={showSuccesToast}

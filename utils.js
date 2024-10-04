@@ -1,3 +1,16 @@
+// utils/clipboard.ts
+import * as Clipboard from "expo-clipboard";
+
+
+export const copyToClipboard = async (text) => {
+ 
+  try {
+    await Clipboard.setStringAsync(text);
+    
+  } catch (error) {
+   console.log(error?.message)
+  }
+};
 
 export function addCommas(number) {
   if (number === null || number === undefined) return;
@@ -37,7 +50,6 @@ export function addCommas(number) {
   }
 }
 
-
 export function roundToNearestWholeNumber(decimal) {
   return Math.round(decimal);
 }
@@ -72,8 +84,8 @@ export function formatTimeString(dateString) {
 
   // Use toLocaleTimeString to format the time in the user's local timezone
   const formattedTime = date.toLocaleTimeString(undefined, {
-    hour: '2-digit',
-    minute: '2-digit',
+    hour: "2-digit",
+    minute: "2-digit",
     hour12: true,
   });
 
@@ -86,7 +98,9 @@ export function formatDateString(dateString) {
   const month = date.getMonth();
   const day = date.getDate();
 
-  const formattedDate = `${day.toString().padStart(2, '0')}/${(month + 1).toString().padStart(2, '0')}/${year}`;
+  const formattedDate = `${day.toString().padStart(2, "0")}/${(month + 1)
+    .toString()
+    .padStart(2, "0")}/${year}`;
 
   return formattedDate;
 }
@@ -96,11 +110,11 @@ export function addTime(timeUnit, amount) {
   var currentTime = new Date();
   var newTime = new Date(currentTime);
 
-  if (timeUnit === 'minutes') {
+  if (timeUnit === "minutes") {
     newTime.setMinutes(newTime.getMinutes() + parsedAmount);
-  } else if (timeUnit === 'hours') {
+  } else if (timeUnit === "hours") {
     newTime.setHours(newTime.getHours() + parsedAmount);
-  } else if (timeUnit === 'seconds') {
+  } else if (timeUnit === "seconds") {
     newTime.setSeconds(newTime.getSeconds() + parsedAmount);
   }
 
@@ -109,9 +123,9 @@ export function addTime(timeUnit, amount) {
 
   // Format the time
   var formattedTime =
-    hours.toString().padStart(2, '0') +
-    ':' +
-    minutes.toString().padStart(2, '0');
+    hours.toString().padStart(2, "0") +
+    ":" +
+    minutes.toString().padStart(2, "0");
 
   return formattedTime;
 }
@@ -133,25 +147,25 @@ export function getRelativeTime(dateString) {
   if (days > 1) {
     return `${days} days ago`;
   } else if (days === 1) {
-    return 'yesterday';
+    return "yesterday";
   } else if (hours > 1) {
     return `${hours} hours ago`;
   } else if (hours === 1) {
-    return 'an hour ago';
+    return "an hour ago";
   } else if (minutes > 1) {
     return `${minutes} minutes ago`;
   } else if (minutes === 1) {
-    return 'a minute ago';
+    return "a minute ago";
   } else {
-    return 'just now';
+    return "just now";
   }
 }
 
 // Function to generate a random ID
 function generateRandomId(length) {
   const characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let id = '';
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let id = "";
 
   for (let i = 0; i < length; i++) {
     const randomIndex = Math.floor(Math.random() * characters.length);
@@ -180,12 +194,12 @@ export function truncateText(text, maxLength) {
   if (text.length <= maxLength) {
     return text;
   } else {
-    return text.substring(0, maxLength) + '...';
+    return text.substring(0, maxLength) + "...";
   }
 }
 
-export function GenerateArray (length, step) {
+export function GenerateArray(length, step) {
   return Array.from({ length }, (_, index) => {
     return { start: index * step, end: (index + 1) * step - 1 };
   });
-};
+}

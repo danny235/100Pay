@@ -59,6 +59,10 @@ import PinInputBottomSheet from "../../../../components/CustomPin/PinInputBottom
 import Loader from "../../../../components/Loader/LogoLoader";
 import { useToast } from "../../../../components/CustomToast/ToastContext";
 import { bankTransfer } from "../../../../apis/pay";
+import { UserWalletsQuery } from "../../../../apis/lib/queries";
+import useGraphQL from "../../../../components/hooks/useGraphQL";
+import { LocalWalletI } from "../Balance";
+import useAxios from "../../../../components/hooks/useAxios";
 
 type SendPaymentT = {
   navigation: NavigationProp<RootStackParamList>;
@@ -105,6 +109,7 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
     token,
     userProfile,
     userProfileLoading,
+    showAccountBalance,
   } = useSelector((state: RootState) => state.user);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredCoins, setFilteredCoins] = useState(coins);
@@ -120,6 +125,95 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
   const [pin, setPin] = useState("");
   const [showPinSheet, setShowPinSheet] = useState(false);
   const [paying, setPaying] = useState(false);
+  const { post, state: payIdState } = useAxios();
+  const handlePayPayment = async (pin) => {
+    setPin(pin);
+    setPaying(true);
+    post(
+      "payIdPayment",
+      "/user/transfer-asset",
+      {
+        amount: Number(inputValue),
+        appId: activeUserApp._id,
+        note: "",
+        symbol: "NGN",
+        to: pay?.referralCode,
+        transactionPin: pin,
+        transferType: "internal",
+      },
+      {
+        headers: {
+          "auth-token": token,
+        },
+      }
+    );
+
+    // try {
+    //   const data = {
+    //     amount: Number(inputValue),
+    //     app_id: activeUserApp?._id,
+    //     destination_wallet: "bank_account",
+    //     pin,
+    //     description: "payment",
+    //     account: {
+    //       account_number: bankDetails.account_number,
+    //       account_name: bankDetails.account_name,
+    //       bankCode: bank.code,
+    //       bank_name: bank.name,
+    //     },
+    //   };
+    //   const res = await bankTransfer(data, token);
+    //   if (res.data) {
+    //     showToast(res.message, "success");
+    //     navigation.reset({
+    //       index: 0,
+    //       routes: [{ name: "Home" }],
+    //     });
+    //   }
+    // } catch (err) {
+    //   setPaying(false);
+    //   showToast(err.message, "error");
+    // }
+  };
+
+  useEffect(() => {
+    if (!payIdState?.payIdPayment?.loading) {
+      setPaying(false);
+      if (payIdState?.payIdPayment?.data) {
+        showToast("Payment successful", "success");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        });
+      }
+      if (payIdState?.payIdPayment?.error?.message) {
+        const errorResponse = payIdState?.payIdPayment?.error?.response?.data;
+        console.log(errorResponse);
+        if (errorResponse) {
+          showToast(`${errorResponse}`, "error");
+          // Display field-specific errors (email, username, etc.)
+          if (errorResponse.message) {
+            showToast(`${errorResponse.message}`, "error");
+          }
+          const errorData = errorResponse.data;
+          if (errorData) {
+            // Iterate over error fields to display each message
+            Object.keys(errorData).forEach((field) => {
+              const fieldErrors = errorData[field];
+              if (Array.isArray(fieldErrors)) {
+                fieldErrors.forEach((error) => {
+                  showToast(`${error}`, "error");
+                });
+              }
+            });
+          }
+        } else {
+          // Fallback to the generic error message if no specific response data
+          showToast(`${payIdState?.payIdPayment?.error?.message}`, "error");
+        }
+      }
+    }
+  }, [payIdState?.payIdPayment?.loading]);
   /*-------------------------------------*/
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -156,6 +250,22 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
     setFilteredCoins(filtered); // Update filtered banks state
   };
 
+  const { query, state } = useGraphQL();
+  const userWalletState = state?.userWallets;
+  const localWallet: LocalWalletI | undefined =
+    userWalletState?.data?.userWallet?.find(
+      (wallet: LocalWalletI) => wallet.walletType === "local"
+    );
+
+  useEffect(() => {
+    query(
+      "userWallets",
+      UserWalletsQuery,
+      { appId: activeUserApp?._id },
+      { "auth-token": token }
+    );
+  }, []);
+
   const handleBankPayment = async (pin) => {
     setPin(pin);
     setPaying(true);
@@ -173,9 +283,9 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
           bank_name: bank.name,
         },
       };
-      const res = await bankTransfer(data, token)
-      if(res.data) {
-        showToast(res.message, "success")
+      const res = await bankTransfer(data, token);
+      if (res.data) {
+        showToast(res.message, "success");
         navigation.reset({
           index: 0,
           routes: [{ name: "Home" }],
@@ -203,7 +313,7 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
   };
 
   const makePayment = () => {
-    if (Number(activeUserApp?.fiat_balance) < Number(inputValue)) {
+    if (Number(localWallet?.balance?.available) < Number(inputValue)) {
       setShowError(true);
     } else {
       setShowPinSheet(true);
@@ -243,14 +353,19 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
               <Image style={styles.avatarImg} source={UserAvatar} />
             </View>
             <View style={styles.userTextWrapper}>
-              <LightText style={{ fontSize: 15 / fontScale, textAlign: "center" }}>
+              <LightText
+                style={{ fontSize: 15 / fontScale, textAlign: "center" }}
+              >
                 Send money to
               </LightText>
               <MediumText
-                style={{ fontSize: 15 / fontScale, color: Colors.iconColor, textAlign: "center" }}
+                style={{
+                  fontSize: 15 / fontScale,
+                  color: Colors.iconColor,
+                  textAlign: "center",
+                }}
               >
                 {bankDetails ? bankDetails.account_name : pay.app_name}
-             
               </MediumText>
             </View>
           </View>
@@ -267,9 +382,18 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
               Pay with
             </LightText>
             <BoldText style={{ fontSize: 15 / fontScale }}>
-              {`${activeUserApp?.currency} ${addCommas(
-                activeUserApp?.fiat_balance.toFixed(2)
-              )}`}
+              {!userWalletState?.loading &&
+              !userWalletState?.error &&
+              showAccountBalance &&
+              activeUserApp &&
+              Object.keys(activeUserApp)?.length !== 0
+                ? `${localWallet?.symbol} ${addCommas(
+                    Number(localWallet?.balance?.available)?.toFixed(2)
+                  )}`
+                : "*** *** ***"}
+              {userAppsLoading !== "loading" &&
+                userAppsLoading !== "rejected" &&
+                showAccountBalance}
             </BoldText>
           </Pressable>
 
@@ -311,7 +435,7 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
         </Pressable>
       </ScrollView>
 
-      <BottomSheetModalProvider>
+      {/* <BottomSheetModalProvider>
         <BottomSheetModal
           ref={bottomSheetModalRef}
           index={1}
@@ -451,10 +575,10 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
             </Button>
           </View>
         </BottomSheetModal>
-      </BottomSheetModalProvider>
+      </BottomSheetModalProvider> */}
 
       {/* Confirm conversion */}
-      <BottomSheetModalProvider>
+      {/* <BottomSheetModalProvider>
         <BottomSheetModal
           ref={convertSheetModalRef}
           index={1}
@@ -579,7 +703,7 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
             </View>
           </ScrollView>
         </BottomSheetModal>
-      </BottomSheetModalProvider>
+      </BottomSheetModalProvider> */}
 
       <CustomNumberKeypad
         isVisible={showKeypad}
@@ -599,7 +723,7 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
         buttonText="Go Back"
         onClose={() => {
           setShowError(false);
-          navigation.navigate("Home")
+          navigation.navigate("Home");
         }}
       />
 
@@ -618,7 +742,7 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
         subTxt="Enter your transaction pin to continue payment"
         isVisible={showPinSheet}
         onClose={setShowPinSheet}
-        onSubmit={handleBankPayment}
+        onSubmit={bankDetails ? handleBankPayment : handlePayPayment}
       />
 
       <Loader visible={paying} />
@@ -646,7 +770,7 @@ const styles = StyleSheet.create({
   userTextWrapper: {
     gap: 3,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   payWithToggle: {
     flexDirection: "row",

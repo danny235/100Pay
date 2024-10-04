@@ -76,6 +76,7 @@ import CustomCameraImage from "../../../components/Camera/CustomCameraImage";
 import RecognizedBookAccount from "../../../components/SelectBank/RecognizedBookAccount";
 import RecognizedFaceAccounts from "../../../components/SelectBank/RecognizedFaceAccounts";
 import Avatar from "../../../assets/images/DashboardEmojis/Avatar-a.png";
+import KYCPrompt from "../../../components/BottomSheetModal/KYCPrompt";
 
 interface CustomBackdropProps {
   animatedIndex: SharedValue<number>;
@@ -86,7 +87,6 @@ interface CustomBackdropProps {
 interface HomeProps {
   navigation: NativeStackNavigationProp<RootStackParamList>;
 }
-
 
 export default function Home({ navigation }: HomeProps): React.JSX.Element {
   const { fontScale } = useWindowDimensions();
@@ -105,9 +105,8 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     userProfileLoading,
     showCamera,
   } = useSelector((state: RootState) => state.user);
-  const { charges, beneficiaries, showBookAccounts, showFaceAccounts } = useSelector(
-    (state: RootState) => state.account
-  );
+  const { charges, beneficiaries, showBookAccounts, showFaceAccounts } =
+    useSelector((state: RootState) => state.account);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -244,13 +243,14 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
   }, [activeUserApp?.keys?.pub_keys[0].value, userAppsLoading]);
 
   useEffect(() => {
+    if (userProfile === null) return;
     if (userProfileLoading === "loading") return;
     if (userProfile?.hasSetPin) return;
     setIsPinSheetVisible(true);
   }, [isPinSheetVisible, userProfile?.hasSetPin, userProfileLoading]);
   // console.log(activeUserApp?.keys.pub_keys[0].value)
 
-  // THIS IS THE CAMERA CHILDREN PROPS 
+  // THIS IS THE CAMERA CHILDREN PROPS
 
   const CameraChildren = () => {
     return (
@@ -271,7 +271,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
               style={{ borderRadius: 40, height: 40, width: 40 }}
               source={
                 userProfile?.avatar && userProfile?.avatar !== "user.png"
-                  ? { uri: userProfile.avatar }
+                  ? { uri: userProfile?.avatar }
                   : Avatar
               }
             />
@@ -329,7 +329,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
         </View>
       </>
     );
-  }
+  };
   return (
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
       <ScrollView
@@ -345,23 +345,15 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
         }
       >
         {showCamera ? (
-          <CustomCamera isVisible={showCamera}>
-            {CameraChildren()}
-          </CustomCamera>
+          <CustomCamera isVisible={showCamera}>{CameraChildren()}</CustomCamera>
         ) : (
-          <CustomCameraImage isVisible={showCamera} >
+          <CustomCameraImage isVisible={showCamera}>
             {CameraChildren()}
           </CustomCameraImage>
         )}
 
-
-
         <View style={{ paddingHorizontal: 10, flex: 1, gap: 20 }}>
-          {beneficiaries?.length !== 0 && (
-
-            <Memojis navigation={navigation} />
-
-          )}
+          {beneficiaries?.length !== 0 && <Memojis navigation={navigation} />}
           <View
             style={{
               backgroundColor: Colors.memojiBackground,
@@ -415,11 +407,6 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
         showRecieve={showRecieveModal}
         onClose={() => setShowRecieveModal(false)}
       />
-      {/* Send naira modal */}
-      {/* 
-      {showSwitchBalanceModal && (
-        <ChooseAccountBalance onHide={() => setShowSwithBalanceModal(false)} />
-      )} */}
 
       <PinInputBottomSheet
         key={1}
@@ -437,7 +424,11 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
         onClose={setIsConfirmPinSheetVisible}
         onSubmit={handleConfirmPinSubmit}
       />
-      <RecognizedBookAccount showSelectAccount={showBookAccounts} navigation={navigation} onClose={()=> null} />
+      <RecognizedBookAccount
+        showSelectAccount={showBookAccounts}
+        navigation={navigation}
+        onClose={() => null}
+      />
       {/* <RecognizedFaceAccounts showSelectAccount={showFaceAccounts} navigation={navigation} onClose={()=> null} /> */}
 
       <Loader
@@ -447,6 +438,8 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
           creatingPin
         }
       />
+
+      <KYCPrompt showPrompt={userProfile?.verificationLevel === 0} />
     </View>
   );
 }

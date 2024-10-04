@@ -3,46 +3,31 @@ import {
   createSelector,
   createSlice,
   PayloadAction,
-} from '@reduxjs/toolkit';
-import {formatDateString} from '../../utils';
-import {GetApp} from '../../apis/getuserdata';
-import {getUserData} from '../../apis/auth/loginuser';
-import { GetUserWallets, GetUserWalletTransactions } from '../../lib';
+} from "@reduxjs/toolkit";
+import { formatDateString } from "../../utils";
+import { GetApp } from "../../apis/getuserdata";
+import { getUserData } from "../../apis/auth/loginuser";
+
 
 export const fetchUserApps = createAsyncThunk(
-  'user/fetchUseApps',
+  "user/fetchUseApps",
   async (token: string) => {
     const response = await GetApp(token);
     return response;
-  },
-);
-
-
-export const fetchUserWallets = createAsyncThunk(
-  "user/fetchUserWallets",
-  async ({ token, appId }: { token: string; appId: string }) => {
-    const response = await GetUserWallets(token, appId);
-    return response;
   }
 );
 
-export const fetchUserWalletTransactions = createAsyncThunk(
-  "user/fetchUserWalletTransactions",
-  async ({ token, symbol }: { token: string; symbol: string }) => {
-    const response = await GetUserWalletTransactions(token, symbol);
-    return response;
-  }
-);
+
 
 export const fetchUserData = createAsyncThunk(
-  'user/fetchUserData',
+  "user/fetchUserData",
   async (token: string) => {
     const response = await getUserData(token);
     return response;
-  },
+  }
 );
 
-type AccountBalanceType = 'naira' | 'pay-token' | "";
+type AccountBalanceType = "naira" | "pay-token" | "";
 
 interface User {
   avatar: string;
@@ -57,6 +42,7 @@ interface User {
   username: string;
   createdAt: string;
   invitedBy: string;
+  verificationLevel: number;
   __v: number;
 }
 type AccountT = {
@@ -167,30 +153,30 @@ interface UserState {
   activeUserApp: UserAppType | null;
   showCamera: boolean;
   isFaceDetectionSet: boolean;
-  userWallet: UserWalletT
+  userWallet: UserWalletT;
 }
 
 const initialState: UserState = {
   accountBalance: 0,
-  token: '',
+  token: "",
   isLoggedIn: false,
   userOnboarded: false,
-  accountBalanceType: '',
+  accountBalanceType: "",
   userProfile: null,
-  userProfileLoading: 'idle',
-  userProfileError: '',
+  userProfileLoading: "idle",
+  userProfileError: "",
   userApps: null,
   activeUserApp: null,
-  userAppsLoading: 'idle',
-  userAppsError: '',
+  userAppsLoading: "idle",
+  userAppsError: "",
   showAccountBalance: true,
   showCamera: false,
   isFaceDetectionSet: false,
-  userWallet: null
+  userWallet: null,
 };
 
 export const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     addToken: (state, action: PayloadAction<string>) => {
@@ -202,16 +188,16 @@ export const userSlice = createSlice({
     updateUserProfile: (state, action: PayloadAction<any>) => {
       state.userProfile = action.payload;
     },
-    updateUserOnboarded: state => {
+    updateUserOnboarded: (state) => {
       state.userOnboarded = true;
     },
-    updateIsFaceDetectionSet: state => {
-      state.isFaceDetectionSet = true
+    updateIsFaceDetectionSet: (state) => {
+      state.isFaceDetectionSet = true;
     },
-    logOut: state => {
-      state.token = '';
-      state.userProfile = null
-      state.userApps = null
+    logOut: (state) => {
+      state.token = "";
+      state.userProfile = null;
+      state.userApps = null;
       state.activeUserApp = null;
       state.isLoggedIn = false;
       state.showCamera = false;
@@ -219,7 +205,7 @@ export const userSlice = createSlice({
     updateAccountBalanceType: (state, action) => {
       state.accountBalanceType = action.payload;
     },
-    updateShowAccountBalance: state => {
+    updateShowAccountBalance: (state) => {
       state.showAccountBalance = !state.showAccountBalance;
     },
     updateAccountBalance: (state, action) => {
@@ -230,25 +216,25 @@ export const userSlice = createSlice({
       state.activeUserApp = action.payload;
     },
     toggleShowCamera: (state, action) => {
-      state.showCamera = action.payload
-    }
+      state.showCamera = action.payload;
+    },
   },
 
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     /*----- Get user app ---------*/
     builder.addCase(fetchUserApps.pending, (state, action) => {
-      state.userAppsLoading = 'loading';
+      state.userAppsLoading = "loading";
     });
 
     builder.addCase(fetchUserApps.fulfilled, (state, action) => {
-      state.userAppsLoading = 'success';
+      state.userAppsLoading = "success";
       state.userApps = action.payload;
       state.activeUserApp = action.payload[0];
       // console.log(action.payload[0]);
     });
 
     builder.addCase(fetchUserApps.rejected, (state, action) => {
-      state.userAppsLoading = 'rejected';
+      state.userAppsLoading = "rejected";
       state.userAppsError = action.error.message;
     });
 
@@ -256,18 +242,18 @@ export const userSlice = createSlice({
 
     /*----- Get user data ---------*/
     builder.addCase(fetchUserData.pending, (state, action) => {
-      state.userProfileLoading = 'loading';
+      state.userProfileLoading = "loading";
     });
 
     builder.addCase(fetchUserData.fulfilled, (state, action) => {
-      state.userProfileLoading = 'success';
+      state.userProfileLoading = "success";
       state.userProfile = action.payload;
 
       // console.log(action.payload[0]);
     });
 
     builder.addCase(fetchUserData.rejected, (state, action) => {
-      state.userProfileLoading = 'rejected';
+      state.userProfileLoading = "rejected";
       // state.userProfileError = action.error.message
     });
 
@@ -283,9 +269,9 @@ export const {
   updateAccountBalanceType,
   updateShowAccountBalance,
   updateAccountBalance,
-  updateActiveApps, 
+  updateActiveApps,
   toggleShowCamera,
-  updateIsFaceDetectionSet
+  updateIsFaceDetectionSet,
 } = userSlice.actions;
 
 export default userSlice.reducer;

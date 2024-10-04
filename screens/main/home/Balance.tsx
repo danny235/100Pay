@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Colors } from "../../../components/Colors";
@@ -21,9 +21,29 @@ import { BlurView } from "@react-native-community/blur";
 import { updateShowAccountBalance } from "../../../features/user/userSlice";
 import { addCommas } from "../../../utils";
 import { Scan } from "iconsax-react-native";
+import useGraphQL from "../../../components/hooks/useGraphQL";
+import { UserWalletsQuery } from "../../../apis/lib/queries";
 type Props = {
   onBalanceClick?: () => void;
 };
+
+export interface LocalWalletI {
+  name: string;
+  status: string;
+  symbol: string;
+  decimals: string;
+  logo: string;
+  account: {
+    address: string | null; // Address can be a string or null
+  };
+  balance: {
+    available: string; // Available balance as a string
+    locked: string; // Locked balance as a string
+  };
+  walletType: "local"; // walletType is a specific string "local"
+  accountType: string; // accountType can be any string
+  id: string; // Unique identifier
+}
 
 function formatRealNumber(num: number): string {
   // Convert the number to a string
@@ -55,6 +75,24 @@ export default function Balance({ onBalanceClick }: Props): React.JSX.Element {
     showCamera,
   } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
+
+  const { query, state } = useGraphQL();
+  const userWalletState = state?.userWallets;
+  const localWallet: LocalWalletI | undefined =
+    userWalletState?.data?.userWallet?.find(
+      (wallet: LocalWalletI) => wallet.walletType === "local"
+    );
+
+  useEffect(() => {
+    query(
+      "userWallets",
+      UserWalletsQuery,
+      { appId: activeUserApp?._id },
+      { "auth-token": token }
+    );
+  }, [userWalletState?.loading]);
+
+  
 
   return (
     <View
@@ -107,13 +145,13 @@ export default function Balance({ onBalanceClick }: Props): React.JSX.Element {
           }}
         >
           {/* {accountBalanceType === 'naira' ? '₦ 60,000.00' : '100,000$PAY'} */}
-          {userAppsLoading !== "loading" &&
-          userAppsLoading !== "rejected" &&
+          {!userWalletState?.loading &&
+          !userWalletState?.error &&
           showAccountBalance &&
           activeUserApp &&
-          Object.keys(activeUserApp).length !== 0
-            ? `${activeUserApp?.currency} ${addCommas(
-                activeUserApp?.fiat_balance.toFixed(2)
+          Object.keys(activeUserApp)?.length !== 0
+            ? `${localWallet?.symbol} ${addCommas(
+                Number(localWallet?.balance?.available)?.toFixed(2)
               )}`
             : "*** *** ***"}
           {userAppsLoading !== "loading" &&

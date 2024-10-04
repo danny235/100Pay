@@ -8,6 +8,7 @@
       content="width=device-width, initial-scale=1.0, shrink-to-fit=no, maximum-scale=1,
       user-scalable=0"
     />
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>100Pay App</title>
     <link rel="manifest" href="/manifest.json" />
     <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
@@ -39,8 +40,8 @@
         transform: translate(-50%, -50%);
         width: 100px;
         height: 100px;
-        background-color: tomato;
-        border-radius: 50%;
+        background-color: #F20732;
+        border-radius: 20px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -50,7 +51,7 @@
         z-index: 1000;
         cursor: pointer;
         text-align: center;
-        animation: rotate 2s linear infinite;
+        padding: 10px;
       }
 
       @keyframes rotate {
@@ -74,11 +75,11 @@
     </style>
   </head>
 
-  <body>
+  <body class="w-full flex justify-center">
     <!-- Use static rendering with Expo Router to support running without JavaScript. -->
     <noscript> You need to enable JavaScript to run this app. </noscript>
     <!-- The root element for your Expo app. -->
-    <div id="root"></div>
+    <div class="max-w-md" id="root"></div>
 
     <script>
       async function register(config) {
@@ -146,11 +147,11 @@
         onUpdate: (registration) => {
           // Handle update callback
           console.log("New content available:", registration);
-
+          window.location.reload();
           // Display the tomato loader
           const loader = document.createElement("div");
           loader.className = "tomato-loader";
-          loader.innerText = "New Content\nAvailable!";
+          loader.innerText = "New Content\nAvailable!\nClick to update";
           loader.onclick = () => {
             window.location.reload();
           };

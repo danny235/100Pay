@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
   sheetContent: {
     flex: 1,
     backgroundColor: "white",
+    padding: 20
   },
   title: {
     fontSize: 18,

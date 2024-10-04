@@ -86,7 +86,7 @@ export default function BankList({ isOpen, onBankPress, onClose }: BankListI) {
       onClose={closeModal}
       snapPoints={["38%", "80%"]}
     >
-      <View style={{ gap: 20, flex: 1 }}>
+      <View style={{ gap: 20, flex: 1, paddingHorizontal: 20 }}>
         <CustomHeader
           text={"Select Bank"}
           icon={<Bank variant="TwoTone" color={Colors.primary} size={24} />}

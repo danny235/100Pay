@@ -16,6 +16,7 @@ import AvatarE from "../../../assets/images/DashboardEmojis/Avatar-e.png";
 import AvatarF from "../../../assets/images/DashboardEmojis/Avatar-f.png";
 import {
   BoldText,
+  MediumText,
   SemiBoldText,
 } from "../../../components/styles/styledComponents";
 import { Colors } from "../../../components/Colors";
@@ -68,8 +69,9 @@ const Memojis = ({ navigation }: MemojiT) => {
         </View>
       ) : (
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {[...beneficiaries]?.reverse().map((user, i) => (
+          {beneficiaries && [...beneficiaries]?.reverse().map((user, i) => (
             <Pressable
+              className=" space-y-3"
               onPress={() =>
                 navigation.navigate("SendPayment", {
                   bankDetails: {
@@ -93,11 +95,11 @@ const Memojis = ({ navigation }: MemojiT) => {
                   {truncateText(user?.bank_name, 4)}
                 </SemiBoldText>
               </View>
-              <SemiBoldText
+              <MediumText
                 style={[styles.username, { color: Colors.grayText }]}
               >
                 {truncateText(user?.account_name, 9)}
-              </SemiBoldText>
+              </MediumText>
             </Pressable>
           ))}
         </ScrollView>

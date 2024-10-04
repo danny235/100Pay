@@ -3,7 +3,7 @@ import React, {useEffect} from 'react';
 import {RootState} from '../../app/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {ThunkDispatch} from 'redux-thunk';
-import TransactionItem from '../../screens/main/home/TransactionItem';
+import TransactionItem, { TransactionItemT } from '../../screens/main/home/TransactionItem';
 import {fetchCharge, fetchPayments} from '../../features/account/accountSlice';
 import {NavigationProp} from '@react-navigation/native';
 import {RootStackParamList} from '../../routes/AppStacks';
@@ -11,6 +11,8 @@ import TransactionItemLoader from '../SkeletonLoaders/TransactionItemLoader';
 import {Colors} from '../Colors';
 import {MediumText} from '../styles/styledComponents';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import useGraphQL from '../hooks/useGraphQL';
+import { UserWalletTransactionQuery } from '../../apis/lib/queries';
 
 type TransactionsT = {
   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -29,10 +31,20 @@ export default function TransactionsList({
     (state: RootState) => state.account,
   );
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
-
+  const { query, state } = useGraphQL();
+  const transactions =
+    state?.userWalletTransactions?.data?.userWalletTransactions;
   useEffect(() => {
-    if (userAppsLoading === "loading") return;
+    if (state?.userWalletTransactions?.loading) return;
     if (!activeUserApp?.keys?.pub_keys[0]?.value) return;
+    query(
+      "userWalletTransactions",
+      UserWalletTransactionQuery,
+      { symbol: "NGN", appId: activeUserApp?._id },
+      {
+        "auth-token": token,
+      }
+    );
     dispatch(
       fetchPayments({
         token,
@@ -46,30 +58,35 @@ export default function TransactionsList({
   }, [activeUserApp?.keys?.pub_keys[0].value, userAppsLoading]);
   return (
     <View style={{ flex: 1, gap: 20, paddingVertical: 4 }}>
-      {payOutsLoading === "loading" && (
+      {state?.userWalletTransactions?.loading && (
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
           <ActivityIndicator color={Colors.primary} size={30} />
         </View>
       )}
-      {payOuts?.length === 0 && (
+      {state?.userWalletTransactions?.data?.userWalletTransactions?.length ===
+        0 && (
         <MediumText style={{ textAlign: "center" }}>
           No transactions here
         </MediumText>
       )}
-      {payOuts?.length !== 0 &&
-        payOuts?.slice(sliceFrom, sliceTo).map((item, i) => (
-          <TransactionItem
-            key={`${item.date}${item._id}`}
-            onPress={() =>
-              navigation.navigate("TransactionDetail", {
-                detail: item,
-              })
-            }
-            item={item}
-          />
-        ))}
+      {transactions &&
+        transactions.length > 0 &&
+        transactions
+          .slice(sliceFrom, sliceTo)
+          .reverse()
+          .map((item: TransactionItemT) => (
+            <TransactionItem
+              key={item.transactionHash}
+              onPress={() =>
+                navigation.navigate("TransactionDetail", {
+                  detail: item,
+                })
+              }
+              item={item}
+            />
+          ))}
     </View>
   );
 }

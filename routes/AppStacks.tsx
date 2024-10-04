@@ -48,6 +48,7 @@ import { RootState } from "../app/store";
 import { ChargeType, PayoutsI } from "../features/account/accountSlice";
 import PersonalInfo from "../screens/authentication/PersonalInfo";
 import { UserAppType } from "../features/user/userSlice";
+import { TransactionItemT } from "../screens/main/home/TransactionItem";
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -91,7 +92,7 @@ export type RootStackParamList = {
   Transactions: undefined;
   TransactionDetail: {
     screen?: string;
-    detail?: PayoutsI;
+    detail?: TransactionItemT;
     initial?: boolean;
   };
   ScanFace: undefined;

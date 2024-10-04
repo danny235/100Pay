@@ -42,7 +42,7 @@ const UserPayList: React.FC<UserPayListProps> = ({
 
   return (
     <View style={styles.container}>
-      {beneficiaries.map((user) => (
+      {[...beneficiaries]?.reverse().map((user) => (
         <Pressable
           onPress={() =>
             navigation.navigate("SendPayment", {
@@ -67,11 +67,11 @@ const UserPayList: React.FC<UserPayListProps> = ({
               {truncateText(user?.bank_name, 4)}
             </SemiBoldText>
           </View>
-          <SemiBoldText style={[styles.username, {fontSize: 14 / fontScale}]}>
+          <SemiBoldText style={[styles.username, { fontSize: 14 / fontScale }]}>
             {truncateText(user?.account_name, 10)}
           </SemiBoldText>
           <View style={[styles.userInfo]}>
-            <LightText style={[styles.userId, {fontSize: 12 / fontScale}]}>
+            <LightText style={[styles.userId, { fontSize: 12 / fontScale }]}>
               Account: {user?.account_number}
             </LightText>
           </View>

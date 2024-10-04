@@ -110,20 +110,23 @@ export default function PayHome({ navigation }: PayHomeT) {
   } = useSelector((state: RootState) => state.user);
 
   const validateId = async (payId) => {
-    // setFetching(true);
+    setFetching(true);
     try {
       const res = await validatePayId(payId, token);
       console.log(typeof res.data, "from line 116")
 
       if (res.data !== "") {
-     
+        setFetching(false)
         setShowPayIdDetails(true)
         setPayIdDetails(res.data);
+        setShowActiveBank(false)
+        setShowBankDetails(false)
       } else {
         showToast("Error getting lens id 😢", "error");
+        setFetching(false)
       }
     } catch (err) {
-
+      setFetching(false)
       showToast(err?.message, "error");
     }
   };
@@ -222,10 +225,10 @@ export default function PayHome({ navigation }: PayHomeT) {
               <ScanIcon width={15} height={15} color="#fff" />
             </Pressable>
           </View>
+          {fetching && <MediumText>....</MediumText>}
           <View style={{ marginTop: 12, gap: 24 }}>
             {showPayIdDetails && (
               <Pressable
-                disabled={true}
                 onPress={() =>
                   navigation.navigate("SendPayment", {
                     pay: payIdDetails,

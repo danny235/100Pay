@@ -16,6 +16,7 @@ import { ChargeType, PayoutsI } from '../../../../features/account/accountSlice'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../app/store';
+import { TransactionItemT } from '../../home/TransactionItem';
 
 type TransactionsT = {
   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -27,7 +28,7 @@ export default function TransactionDetail({navigation, route}: TransactionsT) {
   const {
     detail,
     screen,
-  }: {detail?: PayoutsI | undefined; screen?: string | undefined} =
+  }: {detail?: TransactionItemT | undefined; screen?: string | undefined} =
     route.params ?? {};
 
   const {
@@ -36,6 +37,26 @@ export default function TransactionDetail({navigation, route}: TransactionsT) {
   
     
   } = useSelector((state: RootState) => state.user);
+
+    const transactionTypeLabel = () => {
+      const hash = detail.transactionHash?.toLowerCase();
+      if (!hash) return "Unknown";
+
+      if (detail.type === "credit" && !hash.startsWith("convert")) {
+        return "Received";
+      } else if (detail.type === "debit" && !hash.startsWith("convert")) {
+        return "Sent";
+      } else if (hash.startsWith("convert")) {
+        return "Conversion";
+      } else if (hash.startsWith("payout")) {
+        return "Payout";
+      } else if (hash.startsWith("withdraw")) {
+        return "Withdraw";
+      }
+
+      // Add remaining conditions here
+      return "Transfer";
+    };
 
   
   return (
@@ -57,7 +78,8 @@ export default function TransactionDetail({navigation, route}: TransactionsT) {
             Total Amount
           </LightText>
           <BoldText style={{ fontSize: 36 / fontScale }}>
-            {addCommas(detail?.amount)}
+            {detail?.symbol}
+            {addCommas(Number(detail?.amount).toFixed(2))}
           </BoldText>
         </View>
 
@@ -88,15 +110,15 @@ export default function TransactionDetail({navigation, route}: TransactionsT) {
                 borderRightWidth: 1,
                 borderRightColor: Colors.modernBlack,
                 paddingRight: 5,
-                textTransform: "capitalize"
+                textTransform: "capitalize",
               }}
             >
-              {detail?.destination_wallet?.replace(/_/g, " ")}
+              {detail?.to}
             </MediumText>
             <LightText
               style={{ fontSize: 13 / fontScale, color: Colors.grayText }}
             >
-              Description: {truncateText(detail?.description, 9)}
+              Description: {transactionTypeLabel()}
             </LightText>
           </View>
         </View>
@@ -127,7 +149,7 @@ export default function TransactionDetail({navigation, route}: TransactionsT) {
               style={{ flexDirection: "row", gap: 5, alignItems: "center" }}
             >
               <BoldText style={[{ fontSize: 13 / fontScale }]}>
-                {truncateText(detail?._id, 14)}
+                {truncateText(detail?.transactionHash)}
               </BoldText>
 
               <CopyIcon />

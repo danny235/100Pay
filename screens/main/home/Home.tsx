@@ -49,6 +49,7 @@ import {
   fetchUserApps,
   fetchUserData,
   toggleShowCamera,
+  updateVBAS,
 } from "../../../features/user/userSlice";
 import {
   fetchBanks,
@@ -77,6 +78,7 @@ import RecognizedBookAccount from "../../../components/SelectBank/RecognizedBook
 import RecognizedFaceAccounts from "../../../components/SelectBank/RecognizedFaceAccounts";
 import Avatar from "../../../assets/images/DashboardEmojis/Avatar-a.png";
 import KYCPrompt from "../../../components/BottomSheetModal/KYCPrompt";
+import useAxios from "../../../components/hooks/useAxios";
 
 interface CustomBackdropProps {
   animatedIndex: SharedValue<number>;
@@ -116,6 +118,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
   const [tPin, setTPin] = useState("");
   const [confirmTPin, setConfirmTPin] = useState("");
   const [creatingPin, setCreatingPin] = useState(false);
+  const { post, state } = useAxios();
 
   const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity value for camera is 1
 
@@ -218,6 +221,18 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
   useEffect(() => {
     if (userAppsLoading === "loading") return;
     if (!activeUserApp?.keys?.pub_keys[0]?.value) return;
+    post(
+      "vbas",
+      "/user/vbas",
+      {
+        appId: activeUserApp?._id,
+      },
+      {
+        headers: {
+          "auth-token": token,
+        },
+      }
+    );
     dispatch(
       fetchPaymentsLinks({
         token,
@@ -227,18 +242,17 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     dispatch(
       fetchBanks({ token, apiKey: activeUserApp?.keys?.pub_keys[0]?.value })
     );
-    dispatch(
-      fetchPayments({
-        token,
-        apiKey: activeUserApp?.keys?.pub_keys[0]?.value,
+    post(
+      "vbas",
+      "/user/vbas",
+      {
         appId: activeUserApp?._id,
-      })
-    );
-    dispatch(
-      fetchPayouts({
-        token,
-        appId: activeUserApp?._id,
-      })
+      },
+      {
+        headers: {
+          "auth-token": token,
+        },
+      }
     );
   }, [activeUserApp?.keys?.pub_keys[0].value, userAppsLoading]);
 
@@ -247,7 +261,18 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     if (userProfileLoading === "loading") return;
     if (userProfile?.hasSetPin) return;
     setIsPinSheetVisible(true);
+    
   }, [isPinSheetVisible, userProfile?.hasSetPin, userProfileLoading]);
+
+  useEffect(() => {
+    if (!state?.vbas?.loading) {
+
+      if (state?.vbas?.data) {
+        
+        dispatch(updateVBAS(state?.vbas?.data));
+      }
+    }
+  }, [state?.vbas?.loading]);
   // console.log(activeUserApp?.keys.pub_keys[0].value)
 
   // THIS IS THE CAMERA CHILDREN PROPS

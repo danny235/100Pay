@@ -66,6 +66,29 @@ type UserWalletT = {
   id: string;
 };
 
+export type VBAT = {
+  bank: {
+    id: number;
+    name: string;
+    slug: string;
+  };
+  bvnVerified: boolean;
+  assigned: boolean;
+  _id: string;
+  appId: string;
+  userId: string;
+  __v: number;
+  accountName: string;
+  accountNumber: string;
+  accountType: string;
+  active: boolean;
+  bankAccountId: number;
+  currency: string;
+  customerCode: string;
+  customerId: string;
+};
+
+
 export type UserAppType = {
   address: string;
   admins: any[]; // Assuming this can be an array of any type
@@ -154,6 +177,7 @@ interface UserState {
   showCamera: boolean;
   isFaceDetectionSet: boolean;
   userWallet: UserWalletT;
+  vbas: VBAT[]
 }
 
 const initialState: UserState = {
@@ -173,6 +197,7 @@ const initialState: UserState = {
   showCamera: false,
   isFaceDetectionSet: false,
   userWallet: null,
+  vbas: null
 };
 
 export const userSlice = createSlice({
@@ -194,6 +219,9 @@ export const userSlice = createSlice({
     updateIsFaceDetectionSet: (state) => {
       state.isFaceDetectionSet = true;
     },
+    updateVBAS: (state, action) => {
+      state.vbas = action.payload
+    },
     logOut: (state) => {
       state.token = "";
       state.userProfile = null;
@@ -201,6 +229,7 @@ export const userSlice = createSlice({
       state.activeUserApp = null;
       state.isLoggedIn = false;
       state.showCamera = false;
+      state.vbas = null
     },
     updateAccountBalanceType: (state, action) => {
       state.accountBalanceType = action.payload;
@@ -272,6 +301,7 @@ export const {
   updateActiveApps,
   toggleShowCamera,
   updateIsFaceDetectionSet,
+  updateVBAS
 } = userSlice.actions;
 
 export default userSlice.reducer;

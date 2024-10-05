@@ -41,6 +41,7 @@ import {
 } from "../../../../components/styles/styledComponents";
 import { RootStackParamList } from "../../../../routes/AppStacks";
 import {
+  ArrowDown2,
   Bank,
   Copy,
   Flash,
@@ -61,6 +62,7 @@ import {
   addCommas,
   copyToClipboard,
   formatDateString,
+  getLastName,
 } from "../../../../utils";
 import BottomSheetModalComponent from "../../../../components/BottomSheetModal/BottomSheetModalComponent";
 import Input from "../../../../components/Input";
@@ -68,9 +70,16 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { useToast } from "../../../../components/CustomToast/ToastContext";
+import useAxios from "../../../../components/hooks/useAxios";
+import BankList from "../../../../components/banksList/BankList";
+import { BankDetailsT, BankT } from "../PayFlow/Pay";
+import { validateBankAccount } from "../../../../apis/pay";
+import { updateVBAS, VBAT } from "../../../../features/user/userSlice";
 
 const bvnSchema = yup.object().shape({
   bvn: yup.string().required().label("BVN"),
+  accountNumber: yup.string().required().label("Account Number"),
+  bankName: yup.string().required().label("Bank Name"),
 });
 
 type RecieveModalT = {
@@ -97,19 +106,41 @@ export default function RecieveModal({
     userAppsLoading,
     token,
     userProfile,
+    vbas,
   } = useSelector((state: RootState) => state.user);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [snapTo, setSnapTo] = useState(["38%", "80%"]);
   const [showInstantRecieve, setShowInstantRecieve] = useState(false);
   const [showBVNForm, setShowBVNForm] = useState(false);
   const [showBankAccountDetails, setShowBankAccountDetails] = useState(false);
+  const [bankOpen, setBankOpen] = useState(false);
+  const [activeBank, setActiveBank] = useState<BankT>(null);
+  const [bankDetails, setBankDetails] = useState<BankDetailsT>(null);
+  const [fetching, setFetching] = useState(false);
+  const { post, state } = useAxios();
   const formikProps = useFormik({
     initialValues: {
       bvn: "",
+      accountNumber: "",
+      bankName: "",
     },
     onSubmit: (values) => {
-      setShowBVNForm(false);
-      setShowBankAccountDetails(true);
+      post(
+        "createVBA",
+        "/user/create-bank",
+        {
+          appId: activeUserApp?._id,
+          accountNumber: values?.accountNumber,
+          bankCode: activeBank?.code,
+          bvn: values?.bvn,
+          middleName: getLastName(bankDetails?.account_name),
+        },
+        {
+          headers: {
+            "auth-token": token,
+          },
+        }
+      );
     },
     validationSchema: bvnSchema,
   });
@@ -125,7 +156,13 @@ export default function RecieveModal({
       icon: <Bank variant="TwoTone" color={Colors.primary} />,
       cb: () => {
         onClose();
-        setShowBVNForm(true);
+
+        // setShowBVNForm(true);
+        if (vbas === null || vbas?.length === 0) {
+          setShowBVNForm(true);
+        } else {
+          setShowBankAccountDetails(true);
+        }
 
         // handlePresentRecieveModalClose();
       },
@@ -185,6 +222,100 @@ export default function RecieveModal({
     //   },
     // },
   ];
+
+  const validateBank = async (accountNumber, bank, token) => {
+    setActiveBank(bank);
+
+    const data = {
+      accountNumber,
+      bankCode: bank?.code,
+    };
+    setFetching(true);
+    try {
+      const res = await validateBankAccount(data, token);
+
+      if (res.data?.status) {
+        setBankDetails(res.data?.data);
+        setFetching(false);
+      } else {
+        setFetching(false);
+        showToast(res.data?.message, "error");
+      }
+    } catch (err) {
+      setFetching(false);
+      showToast(err?.message, "error");
+    }
+  };
+
+  useEffect(() => {
+    if (!state?.createVBA?.loading) {
+      if (state?.createVBA?.data) {
+        setShowBVNForm(false);
+        showToast("Account information is being processed", "success");
+
+        post(
+          "vbas",
+          "/user/vbas",
+          {
+            appId: activeUserApp?._id,
+          },
+          {
+            headers: {
+              "auth-token": token,
+            },
+          }
+        );
+      }
+
+      if (state?.createVBA?.error) {
+        const errorResponse = state?.createVBA?.error?.response?.data;
+        const genericErrorMessage = state?.createVBA?.error?.message;
+
+        console.log(errorResponse, "line 271");
+
+        // Display generic error message if available
+        if (genericErrorMessage) {
+          showToast(`${genericErrorMessage}`, "error");
+        }
+
+        if (errorResponse) {
+          // Display main response error message
+          if (errorResponse.message) {
+            showToast(`${errorResponse.message}`, "error");
+          }
+
+          const errorData = errorResponse.data;
+          if (errorData) {
+            // Iterate over error fields and display each message
+            Object.keys(errorData).forEach((field) => {
+              const fieldErrors = errorData[field];
+              if (Array.isArray(fieldErrors)) {
+                fieldErrors.forEach((error) => {
+                  showToast(`${error}`, "error");
+                });
+              }
+            });
+          }
+        }
+      }
+    }
+  }, [state?.createVBA?.loading]);
+
+  useEffect(() => {
+    if (formikProps?.values?.accountNumber?.length < 10) {
+      setBankDetails(null);
+    }
+  }, [formikProps.values?.accountNumber]);
+
+
+   useEffect(() => {
+     if (!state?.vbas?.loading) {
+       if (state?.vbas?.data) {
+         dispatch(updateVBAS(state?.vbas?.data));
+         showToast("Fetch virtual bank account success", "success");
+       }
+     }
+   }, [state?.vbas?.loading]);
 
   return (
     <>
@@ -429,40 +560,87 @@ export default function RecieveModal({
       </BottomSheetModalComponent>
 
       {/* BVN form for users that haven't added their bvn and created a bank account */}
+
       <BottomSheetModalComponent
         show={showBVNForm}
         onClose={() => setShowBVNForm(false)}
+        snapPoints={["40%", "65%"]}
       >
         <View className=" flex-1 p-5">
-          <View className=" mb-auto">
+          <View className=" mb-auto space-y-2">
             <View>
               <MediumText
                 style={{ color: Colors.black, fontSize: 18 / fontScale }}
               >
-                Enter your BVN
+                Enter your details
               </MediumText>
               <RegularText
                 style={{ color: Colors.grayText, fontSize: 15 / fontScale }}
               >
-                Please enter your BVN so we can create an account for you
+                Please enter your BVN and an account linked to the bvn so we can
+                create an account for you
               </RegularText>
             </View>
             <Input
               formikKey="bvn"
               formikProps={formikProps}
               value={formikProps.values.bvn}
-              label=""
+              label="BVN"
               placeholder="2345xxxxxx"
               placeholderTextColor={Colors.grayText}
             />
+            <Input
+              formikKey="accountNumber"
+              formikProps={formikProps}
+              value={formikProps.values.accountNumber}
+              label="Account Number"
+              placeholder="2345xxxxxx"
+              placeholderTextColor={Colors.grayText}
+            />
+            <View style={styles.banksWrapper}>
+              <RegularText style={{ fontSize: 15 / fontScale }}>
+                Bank Name
+              </RegularText>
+              <Pressable
+                onPress={() => setBankOpen(true)}
+                style={styles.bankSelect}
+              >
+                <RegularText style={{ fontSize: 15 / fontScale }}>
+                  {activeBank?.name ? activeBank?.name : "Select your bank"}
+                </RegularText>
+                <ArrowDown2 variant="Bold" color={Colors.grayText} size={24} />
+              </Pressable>
+            </View>
+            {fetching && (
+              <MediumText
+                style={{ fontSize: 15 / fontScale, color: Colors.primary }}
+              >
+                ....
+              </MediumText>
+            )}
+            {bankDetails && (
+              <MediumText
+                className="mb-3"
+                style={{ fontSize: 15 / fontScale, color: Colors.primary }}
+              >
+                {bankDetails?.account_name}
+              </MediumText>
+            )}
           </View>
           <View className="pb-10">
-            <Button onPress={formikProps.handleSubmit as any} variant="primary">
+            <Button
+              isLoading={state?.createVBA?.loading}
+              onPress={formikProps.handleSubmit as any}
+              variant="primary"
+            >
               <MediumText
                 style={{ color: Colors.white, fontSize: 15 / fontScale }}
               >
                 Submit
               </MediumText>
+              {state?.createVBA?.loading && (
+                <ActivityIndicator color={Colors.white} size={24} />
+              )}
             </Button>
           </View>
         </View>
@@ -488,85 +666,161 @@ export default function RecieveModal({
               account below
             </RegularText>
           </View>
-          <View className=" space-y-4">
-            <View className=" flex-row justify-between items-center">
-              <View className=" space-y-2">
-                <RegularText
-                  style={{ color: Colors.grayText, fontSize: 13 / fontScale }}
-                >
-                  Account Holder
-                </RegularText>
-                <RegularText
-                  className=" capitalize"
-                  style={{ color: Colors.black, fontSize: 15 / fontScale }}
-                >
-                  {`${userProfile?.first_name} ${userProfile?.last_name}`}
-                </RegularText>
-              </View>
-              <Pressable
-                onPress={() => {
-                  copyToClipboard(
-                    `${userProfile?.first_name} ${userProfile?.last_name}`
-                  );
-                  showToast("Copied successfully", "success");
-                }}
+          {vbas?.some((vba: VBAT) => vba.assigned) ? (
+            // Show account details if any assigned vba is found
+            <ScrollView>
+              {vbas
+                ?.filter((vba: VBAT) => vba.assigned)
+                ?.map((vba) => (
+                  <View className="space-y-4" key={vba.accountNumber}>
+                    <View className="flex-row justify-between items-center">
+                      <View className="space-y-2">
+                        <RegularText
+                          style={{
+                            color: Colors.grayText,
+                            fontSize: 13 / fontScale,
+                          }}
+                        >
+                          Account Holder
+                        </RegularText>
+                        <RegularText
+                          className="capitalize"
+                          style={{
+                            color: Colors.black,
+                            fontSize: 15 / fontScale,
+                          }}
+                        >
+                          {vba?.accountName}
+                        </RegularText>
+                      </View>
+                      <Pressable
+                        onPress={() => {
+                          copyToClipboard(vba?.accountName);
+                          showToast("Copied successfully", "success");
+                        }}
+                      >
+                        <Copy color={Colors.primary} variant="TwoTone" />
+                      </Pressable>
+                    </View>
+
+                    <View className="flex-row justify-between items-center">
+                      <View className="space-y-2">
+                        <RegularText
+                          style={{
+                            color: Colors.grayText,
+                            fontSize: 13 / fontScale,
+                          }}
+                        >
+                          Account number
+                        </RegularText>
+                        <RegularText
+                          className="capitalize"
+                          style={{
+                            color: Colors.black,
+                            fontSize: 15 / fontScale,
+                          }}
+                        >
+                          {vba?.accountNumber}
+                        </RegularText>
+                      </View>
+                      <Pressable
+                        disabled={!vba?.accountNumber}
+                        onPress={() => {
+                          copyToClipboard(vba?.accountNumber);
+                          showToast("Copied successfully", "success");
+                        }}
+                      >
+                        <Copy color={Colors.primary} variant="TwoTone" />
+                      </Pressable>
+                    </View>
+
+                    <View className="flex-row justify-between items-center">
+                      <View className="space-y-2">
+                        <RegularText
+                          style={{
+                            color: Colors.grayText,
+                            fontSize: 13 / fontScale,
+                          }}
+                        >
+                          Bank name
+                        </RegularText>
+                        <RegularText
+                          className="capitalize"
+                          style={{
+                            color: Colors.black,
+                            fontSize: 15 / fontScale,
+                          }}
+                        >
+                          {vba?.bank?.name}
+                        </RegularText>
+                      </View>
+                      <Pressable
+                        onPress={() => {
+                          copyToClipboard(vba?.bank?.name);
+                          showToast("Copied successfully", "success");
+                        }}
+                      >
+                        <Copy color={Colors.primary} variant="TwoTone" />
+                      </Pressable>
+                    </View>
+                  </View>
+                ))}
+            </ScrollView>
+          ) : (
+            // Show a message if no assigned vba is found
+            <View className=" space-y-4 flex-1" style={{ marginTop: 20 }}>
+              <RegularText
+                className=" text-center mb-auto mt-3"
+                style={{ color: Colors.grayText, fontSize: 15 / fontScale }}
               >
-                <Copy color={Colors.primary} variant="TwoTone" />
-              </Pressable>
-            </View>
-            <View className=" flex-row justify-between items-center">
-              <View className=" space-y-2">
-                <RegularText
-                  style={{ color: Colors.grayText, fontSize: 13 / fontScale }}
+                Account creation is in process. Please wait...
+              </RegularText>
+              <View className="pb-10">
+                <Button
+                  isLoading={state?.vbas?.loading}
+                  onPress={() =>
+                    post(
+                      "vbas",
+                      "/user/vbas",
+                      {
+                        appId: activeUserApp?._id,
+                      },
+                      {
+                        headers: {
+                          "auth-token": token,
+                        },
+                      }
+                    )
+                  }
+                  variant="primary"
                 >
-                  Account number
-                </RegularText>
-                <RegularText
-                  className=" capitalize"
-                  style={{ color: Colors.black, fontSize: 15 / fontScale }}
-                >
-                  {`1238743990`}
-                </RegularText>
+                  <MediumText
+                    style={{ color: Colors.white, fontSize: 15 / fontScale }}
+                  >
+                    Refresh
+                  </MediumText>
+                  {state?.vbas?.loading && (
+                    <ActivityIndicator color={Colors.white} size={24} />
+                  )}
+                </Button>
               </View>
-              <Pressable
-                onPress={() => {
-                  copyToClipboard(`1238743990`);
-                  showToast("Copied successfully", "success");
-                }}
-              >
-                <Copy color={Colors.primary} variant="TwoTone" />
-              </Pressable>
             </View>
-            <View className=" flex-row justify-between items-center">
-              <View className=" space-y-2">
-                <RegularText
-                  style={{ color: Colors.grayText, fontSize: 13 / fontScale }}
-                >
-                  Bank name
-                </RegularText>
-                <RegularText
-                  className=" capitalize"
-                  style={{ color: Colors.black, fontSize: 15 / fontScale }}
-                >
-                  {`Kuda Microfinance Bank`}
-                </RegularText>
-              </View>
-              <Pressable
-                onPress={() => {
-                  copyToClipboard(`Kuda Microfinance Bank`);
-                  showToast("Copied successfully", "success");
-                }}
-              >
-                <Copy color={Colors.primary} variant="TwoTone" />
-              </Pressable>
-            </View>
-          </View>
+          )}
         </View>
       </BottomSheetModalComponent>
       <InstantRecieveModal
         navigation={navigation}
         show={showInstantRecieve}
         onClose={() => setShowInstantRecieve(false)}
+      />
+
+      <BankList
+        isOpen={bankOpen}
+        onBankPress={(bank) => {
+          validateBank(formikProps?.values?.accountNumber, bank, token);
+          formikProps.setFieldValue("bankName", bank?.name);
+        }}
+        onClose={() => setBankOpen(false)}
       />
     </>
   );
@@ -614,5 +868,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
     alignItems: "center",
+  },
+  banksWrapper: {
+    gap: 10,
+  },
+  bankSelect: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderWidth: 1,
+    borderColor: Colors.ash,
+    padding: 12,
+    alignItems: "center",
+    borderRadius: 10,
   },
 });

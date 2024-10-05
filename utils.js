@@ -203,3 +203,11 @@ export function GenerateArray(length, step) {
     return { start: index * step, end: (index + 1) * step - 1 };
   });
 }
+
+export function getFirstName(fullName) {
+  return fullName?.split(" ")[0];
+}
+
+export function getLastName(fullName) {
+  return fullName?.split(" ")[1];
+}

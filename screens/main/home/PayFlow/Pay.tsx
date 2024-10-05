@@ -144,7 +144,7 @@ export default function PayHome({ navigation }: PayHomeT) {
       const res = await validateBankAccount(data, token);
 
       if (res.data?.status) {
-        console.log(res.data?.data, "from line 140")
+
         setBankDetails(res.data?.data);
         setShowActiveBank(false);
         setFetching(false);
@@ -171,6 +171,7 @@ export default function PayHome({ navigation }: PayHomeT) {
       setShowPayIdDetails(false);
     } else if (accountNum.length < 10) {
       setShowBankForm(false);
+      setShowBankDetails(false)
     } 
 
     return () => {

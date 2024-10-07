@@ -79,6 +79,7 @@ import RecognizedFaceAccounts from "../../../components/SelectBank/RecognizedFac
 import Avatar from "../../../assets/images/DashboardEmojis/Avatar-a.png";
 import KYCPrompt from "../../../components/BottomSheetModal/KYCPrompt";
 import useAxios from "../../../components/hooks/useAxios";
+import { RefreshCircle } from "iconsax-react-native";
 
 interface CustomBackdropProps {
   animatedIndex: SharedValue<number>;
@@ -201,7 +202,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
           apiKey: activeUserApp?.keys.pub_keys[0].value,
         })
       );
-    }, 3000);
+    }, 1000);
   }, []);
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(`${activeUserApp?.referralCode}`);
@@ -335,9 +336,9 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
           </Pressable>
 
           <View style={{ flexDirection: "row", gap: 20 }}>
-            {/* <Pressable onPress={() => navigation.navigate("Scan")}>
-              <ScanIcon />
-            </Pressable> */}
+            <Pressable onPress={() => onRefresh()}>
+              <RefreshCircle color={Colors.white} />
+            </Pressable>
             <Pressable onPress={() => navigation.navigate("Notification")}>
               <NotifictionIcon color={Colors.white} />
             </Pressable>

@@ -77,14 +77,17 @@ export default function GeneratedLink({ navigation, route }: GenerateCodeT) {
     }
   };
 
-  console.log(detail, "params")
+
 
   return (
     <CustomView>
       <CustomHeader
         text="Payment Link Details"
         icon={<QRIcon />}
-        onPress={() => navigation.goBack()}
+        onPress={() => navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        })}
       />
 
       <View

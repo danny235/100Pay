@@ -70,7 +70,7 @@ export default function Discover({ navigation }: DiscoverT): React.JSX.Element {
           <LinkIcon color={Colors.primary} />
           <View style={{ gap: 10, flexShrink: 1 }}>
             <MediumText style={{ fontSize: 17 / fontScale }}>
-              Generate Request Link
+              Create Pay Link
             </MediumText>
             <RegularText
               style={{
@@ -79,7 +79,28 @@ export default function Discover({ navigation }: DiscoverT): React.JSX.Element {
                 width: "80%",
               }}
             >
-              Generate a link you can send to your client to make payments.
+              Create pay link you can send to anyone to make payments.
+            </RegularText>
+          </View>
+          <ArrowForwardIcon color={Colors.iconColor} />
+        </Pressable>
+        <Pressable
+          style={styles.discoverCTA}
+          onPress={() => navigation.navigate("ManagePayLinks")}
+        >
+          <LinkIcon color={Colors.primary} />
+          <View style={{ gap: 10, flexShrink: 1 }}>
+            <MediumText style={{ fontSize: 17 / fontScale }}>
+              Manage Pay Links
+            </MediumText>
+            <RegularText
+              style={{
+                fontSize: 13 / fontScale,
+                color: Colors.grayText,
+                width: "80%",
+              }}
+            >
+              Manage your pay links here, you can send to anyone to make payments.
             </RegularText>
           </View>
           <ArrowForwardIcon color={Colors.iconColor} />

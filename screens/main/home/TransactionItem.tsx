@@ -69,6 +69,8 @@ export default function TransactionItem({
       return "Payout";
     } else if (hash.startsWith("withdraw")) {
       return "Withdraw";
+    } else if (hash.startsWith("transfer-fee")) {
+      return "Transfer Fee";
     }
 
     // Add remaining conditions here

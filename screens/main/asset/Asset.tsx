@@ -1,68 +1,186 @@
-import React from 'react';
-import {Image, Platform, Pressable, ScrollView, StyleSheet, TextInput, View, useWindowDimensions} from 'react-native';
-import Bitcoin from '../../../assets/images/bitcoin.png';
-import {Colors} from '../../../components/Colors';
-import {ArrowDownIcon, AssetFilledIcon, CircleIcon, FilterIcon} from '../../../components/SvgAssets';
-import CustomView from '../../../components/Views/CustomView';
+import React, { useEffect, useState } from "react";
+import {
+  Image,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+  useWindowDimensions,
+} from "react-native";
+import Bitcoin from "../../../assets/images/bitcoin.png";
+import { Colors } from "../../../components/Colors";
+import {
+  ArrowDownIcon,
+  AssetFilledIcon,
+  CircleIcon,
+  FilterIcon,
+} from "../../../components/SvgAssets";
+import CustomView from "../../../components/Views/CustomView";
 import {
   BoldText,
   LightText,
   MediumText,
-} from '../../../components/styles/styledComponents';
-import { NavigationAction, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../../routes/AppStacks';
+} from "../../../components/styles/styledComponents";
+import { NavigationAction, NavigationProp } from "@react-navigation/native";
+import { RootStackParamList } from "../../../routes/AppStacks";
+import useGraphQL from "../../../components/hooks/useGraphQL";
+import { RootState } from "../../../app/store";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  SupportedWalletsQuery,
+  UserWalletsQuery,
+} from "../../../apis/lib/queries";
+import Loader from "../../../components/Loader/LogoLoader";
+import { addCommas } from "../../../utils";
+import AlertModal from "../../../components/Alert/AlertModal";
+import { Refresh, Warning2 } from "iconsax-react-native";
+import { CreateUserWalletMutation } from "../../../apis/lib/mutations";
+import { useToast } from "../../../components/CustomToast/ToastContext";
 
 type AssetT = {
-  navigation: NavigationProp<RootStackParamList>
-}
+  navigation: NavigationProp<RootStackParamList>;
+};
 
-const boxesList = [
-  {
-    id: 1,
-    title: 'Bitcoin',
-    symbol: 'BTC',
-    image: Bitcoin,
-    balance: '0.002',
-    payEquivalent: '500,000',
-  },
-  {
-    id: 2,
-    title: 'Bitcoin',
-    symbol: 'BTC',
-    image: Bitcoin,
-    balance: '0.002',
-    payEquivalent: '500,000',
-  },
-  {
-    id: 3,
-    title: 'Bitcoin',
-    symbol: 'BTC',
-    image: Bitcoin,
-    balance: '0.002',
-    payEquivalent: '500,000',
-  },
-  {
-    id: 4,
-    title: 'Bitcoin',
-    symbol: 'BTC',
-    image: Bitcoin,
-    balance: '0.002',
-    payEquivalent: '500,000',
-  },
-];
+type SupportedWalletT = {
+  name: string;
+  symbol: string;
+  logo: string;
+  decimals: string | null;
+  contractAddress: string | null;
+  fee: {
+    transfer: string;
+    convert: string;
+  };
+};
 
-export default function Assets({navigation}: AssetT) {
-  const {fontScale} = useWindowDimensions();
+// Type for userWallets
+export type UserWalletT = {
+  name: string;
+  symbol: string;
+  logo: string;
+  balance: {
+    available: string;
+    locked: string;
+  };
+  decimals: string;
+  account: {
+    address: string | null;
+  };
+  status: string;
+  walletType: string;
+  id: string;
+};
+
+export default function Assets({ navigation }: AssetT) {
+  const { fontScale } = useWindowDimensions();
+  const { activeUserApp, userAppsError, userAppsLoading, token } = useSelector(
+    (state: RootState) => state.user
+  );
+  const [activeSupportedWallet, setActiveSupportedWallet] =
+    useState<SupportedWalletT>(null);
+  const [showError, setShowError] = useState(false);
+  const { mutate, query, state } = useGraphQL();
+  const userWallets = state?.userWallets;
+  const supportedWallets = state?.supportedWallets;
+  const { showToast } = useToast();
+
+  // Filter out non-crypto wallets (those without an account address)
+  const cryptoUserWallets = userWallets?.data?.userWallet?.filter(
+    (wallet: UserWalletT) => wallet?.walletType === "crypto"
+  );
+
+  // Compare supportedWallets and userWallets
+  const filteredSupportedWallets =
+    supportedWallets?.data?.supportedWallets?.filter(
+      (supportedWallet: SupportedWalletT) =>
+        !cryptoUserWallets?.some(
+          (userWallet: UserWalletT) =>
+            userWallet?.symbol === supportedWallet?.symbol
+        )
+    );
+
+  const fetchWallets = () => {
+    if (userAppsLoading === "loading") return;
+    if (!activeUserApp?._id) return;
+    query(
+      "userWallets",
+      UserWalletsQuery,
+      { appId: activeUserApp?._id },
+      { "auth-token": token }
+    );
+    query(
+      "supportedWallets",
+      SupportedWalletsQuery,
+      { appId: activeUserApp?._id },
+      { "auth-token": token }
+    );
+  };
+
+  useEffect(() => {
+    fetchWallets();
+  }, [activeUserApp?._id]);
+
+  useEffect(() => {
+    if (!userWallets?.loading) {
+      console.log(cryptoUserWallets, "line 152");
+    }
+    if (!supportedWallets?.loading) {
+      console.log(filteredSupportedWallets, "line 155");
+    }
+  }, [
+    userWallets?.loading,
+    supportedWallets?.loading,
+    state?.createWallet?.loading,
+  ]);
+
+  useEffect(() => {
+    if (!state?.createWallet?.loading) {
+      if (state?.createWallet?.data) {
+        fetchWallets();
+        showToast("Wallet Created", "success");
+        setShowError(false);
+      }
+      if (state?.createWallet?.error?.message) {
+        const errorResponse = state?.createWallet?.error?.response?.data;
+        console.log(errorResponse);
+        if (errorResponse) {
+          showToast(`${errorResponse}`, "error");
+          // Display field-specific errors (email, username, etc.)
+          if (errorResponse.message) {
+            showToast(`${errorResponse.message}`, "error");
+          }
+          const errorData = errorResponse.data;
+          if (errorData) {
+            // Iterate over error fields to display each message
+            Object.keys(errorData).forEach((field) => {
+              const fieldErrors = errorData[field];
+              if (Array.isArray(fieldErrors)) {
+                fieldErrors.forEach((error) => {
+                  showToast(`${error}`, "error");
+                });
+              }
+            });
+          }
+        } else {
+          // Fallback to the generic error message if no specific response data
+          showToast(`${state?.createWallet?.error?.message}`, "error");
+        }
+      }
+    }
+  }, [state?.createWallet?.loading]);
 
   return (
     <CustomView>
       <View
         style={{
           marginVertical: 20,
-          flexDirection: 'row',
+          flexDirection: "row",
           gap: 10,
-          alignItems: 'center',
-        }}>
+          alignItems: "center",
+        }}
+      >
         <AssetFilledIcon color={Colors.primary} />
         <BoldText
           style={{
@@ -70,56 +188,69 @@ export default function Assets({navigation}: AssetT) {
             borderLeftColor: Colors.ash,
             borderLeftWidth: 1,
             paddingHorizontal: 10,
-          }}>
+          }}
+        >
           Assets
         </BoldText>
       </View>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View
           style={{
             marginVertical: 20,
-            flexDirection: 'row',
+            flexDirection: "row",
             gap: 10,
-            flexWrap: 'wrap',
-          }}>
-          {boxesList.map((box, i) => {
-            return (
-              <View style={styles.coinView} key={box.id}>
-                <View
-                  style={{flexDirection: 'row', gap: 10, alignItems: 'center'}}>
-                  <Image
-                    source={box.image}
-                    style={{width: 17, height: 17, borderRadius: 17}}
-                  />
-                  <MediumText style={{fontSize: 15 / fontScale}}>
-                    {box.symbol}
-                  </MediumText>
+            flexWrap: "wrap",
+          }}
+        >
+          {cryptoUserWallets &&
+            cryptoUserWallets?.slice(0, 4).map((crypto: UserWalletT, i) => {
+              return (
+                <View style={styles.coinView} key={crypto.id}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      gap: 10,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      source={{ uri: crypto.logo }}
+                      style={{ width: 17, height: 17, borderRadius: 17 }}
+                    />
+                    <MediumText style={{ fontSize: 15 / fontScale }}>
+                      {crypto.symbol}
+                    </MediumText>
+                  </View>
+                  <BoldText
+                    style={{
+                      fontSize: 26 / fontScale,
+                      color: Colors.balanceBlack,
+                    }}
+                  >
+                    {addCommas(Number(crypto.balance.available).toFixed(2))}
+                  </BoldText>
+                  <LightText
+                    style={{ fontSize: 12 / fontScale, color: Colors.grayText }}
+                  >
+                    ≈ ${0}.00
+                  </LightText>
                 </View>
-                <BoldText
-                  style={{
-                    fontSize: 26 / fontScale,
-                    color: Colors.balanceBlack,
-                  }}>
-                  {box.balance}
-                </BoldText>
-                <LightText
-                  style={{fontSize: 12 / fontScale, color: Colors.grayText}}>
-                  ≈ ${box.payEquivalent}.00
-                </LightText>
-              </View>
-            );
-          })}
+              );
+            })}
         </View>
 
         <View
           style={{
             marginVertical: 20,
-            flexDirection: 'row',
+            flexDirection: "row",
             gap: 10,
-            alignItems: 'center',
-          }}>
+            alignItems: "center",
+            flexWrap: "wrap",
+          }}
+        >
           <Pressable
-            style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+            style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
+          >
             <FilterIcon color={Colors.primary} />
 
             <LightText
@@ -128,7 +259,8 @@ export default function Assets({navigation}: AssetT) {
                 borderLeftColor: Colors.grayText,
                 borderLeftWidth: 1,
                 paddingLeft: 10,
-              }}>
+              }}
+            >
               All
             </LightText>
             <ArrowDownIcon />
@@ -137,54 +269,152 @@ export default function Assets({navigation}: AssetT) {
           <View style={styles.searchBox}>
             <TextInput
               placeholder="Search assets here"
-              style={{fontFamily: 'SpaceGrotesk-SemiBold', color: Colors.black, width: "70%", fontSize: 15 / fontScale}}
+              style={{
+                fontFamily: "SpaceGroteskMedium",
+                color: Colors.black,
+                width: "70%",
+                fontSize: 15 / fontScale,
+              }}
               placeholderTextColor={Colors.grayText}
             />
             <CircleIcon color={Colors.grayText} />
           </View>
+          <Pressable
+            onPress={fetchWallets}
+            className=" items-center justify-center"
+            style={{
+              backgroundColor: Colors?.primary,
+              width: 40,
+              height: 40,
+              borderRadius: 40,
+            }}
+          >
+            <Refresh color={Colors.white} size={24} />
+          </Pressable>
         </View>
 
         <View
           style={{
-            marginVertical: 20,
+            marginTop: 20,
             gap: 10,
-          }}>
-          {boxesList.map((box, i) => {
-            return (
-              <Pressable onPress={()=>navigation.navigate("SingleCoin")} style={styles.singleCoin} key={box.id}>
-                <View
-                  style={{flexDirection: 'row', gap: 10, alignItems: 'center'}}>
-                  <Image
-                    source={box.image}
-                    style={{width: 27, height: 27, borderRadius: 27}}
-                  />
-                  <MediumText style={{fontSize: 15 / fontScale}}>
-                    {box.symbol}
-                  </MediumText>
-                </View>
-                <View style={{marginLeft: 'auto'}}>
-                  <BoldText
+          }}
+        >
+          {cryptoUserWallets &&
+            cryptoUserWallets.map((crypto: UserWalletT, i) => {
+              return (
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate("SingleCoin", {
+                      userWallet: crypto,
+                    })
+                  }
+                  style={styles.singleCoin}
+                  key={crypto.id}
+                >
+                  <View
                     style={{
-                      fontSize: 16 / fontScale,
-                      color: Colors.balanceBlack,
-                      textAlign: 'right',
-                    }}>
-                    {box.balance}
-                  </BoldText>
-                  <LightText
+                      flexDirection: "row",
+                      gap: 10,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      source={{ uri: crypto.logo }}
+                      style={{ width: 27, height: 27, borderRadius: 27 }}
+                    />
+                    <MediumText style={{ fontSize: 15 / fontScale }}>
+                      {crypto.symbol}
+                    </MediumText>
+                  </View>
+                  <View style={{ marginLeft: "auto" }}>
+                    <BoldText
+                      style={{
+                        fontSize: 16 / fontScale,
+                        color: Colors.balanceBlack,
+                        textAlign: "right",
+                      }}
+                    >
+                      {addCommas(Number(crypto.balance.available).toFixed(2))}
+                    </BoldText>
+                    <LightText
+                      style={{
+                        fontSize: 12 / fontScale,
+                        textAlign: "right",
+                        color: Colors.grayText,
+                      }}
+                    >
+                      ≈ ${0}.00
+                    </LightText>
+                  </View>
+                </Pressable>
+              );
+            })}
+        </View>
+        <View
+          style={{
+            gap: 10,
+          }}
+        >
+          {filteredSupportedWallets &&
+            filteredSupportedWallets.map((crypto: UserWalletT, i) => {
+              return (
+                <Pressable
+                  onPress={() => {
+                    setActiveSupportedWallet(crypto as any);
+                    setShowError(true);
+                  }}
+                  style={styles.singleCoin}
+                  key={crypto.id}
+                >
+                  <View
                     style={{
-                      fontSize: 12 / fontScale,
-                      textAlign: 'right',
-                      color: Colors.grayText,
-                    }}>
-                    ≈ ${box.payEquivalent}.00
-                  </LightText>
-                </View>
-              </Pressable>
-            );
-          })}
+                      flexDirection: "row",
+                      gap: 10,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      source={{ uri: crypto.logo }}
+                      style={{ width: 27, height: 27, borderRadius: 27 }}
+                    />
+                    <MediumText style={{ fontSize: 15 / fontScale }}>
+                      {crypto.symbol}
+                    </MediumText>
+                  </View>
+                </Pressable>
+              );
+            })}
         </View>
       </ScrollView>
+
+      <AlertModal
+        show={showError}
+        icon={<Warning2 color={Colors.primary} variant="TwoTone" size={48} />}
+        mainText="No wallet found"
+        subText="Click the button below to generate wallet"
+        buttonText="Generate Wallet"
+        onClose={() => {
+          mutate(
+            "createWallet",
+            CreateUserWalletMutation,
+            {
+              symbol: activeSupportedWallet?.symbol,
+              appId: activeUserApp?._id,
+            },
+            {
+              "auth-token": token,
+            }
+          );
+          setShowError(false);
+        }}
+      />
+      <Loader
+        visible={
+          userWallets?.loading ||
+          supportedWallets?.loading ||
+          state?.createWallet?.loading === true
+        }
+      />
     </CustomView>
   );
 }
@@ -197,24 +427,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 10,
     flexGrow: 1,
-    flexBasis: '40%',
+    flexBasis: "40%",
   },
   singleCoin: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderBottomColor: Colors.memojiBackground,
     borderBottomWidth: 1,
     paddingVertical: 10,
   },
   searchBox: {
-    paddingVertical: Platform.OS === 'android' ? 2 : 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    paddingVertical: Platform.OS === "android" ? 2 : 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
     borderWidth: 1,
     borderColor: Colors.ash,
     borderRadius: 50,
-    alignItems: 'center',
+    alignItems: "center",
     paddingHorizontal: 20,
-    width: "70%",
-    flexGrow: 1
+    width: "50%",
+    flexGrow: 1,
   },
 });

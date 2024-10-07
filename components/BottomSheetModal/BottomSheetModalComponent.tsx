@@ -60,9 +60,11 @@ export default function BottomSheetModalComponent({
         onChange={handleSheetChanges}
         enableContentPanningGesture={true}
         onDismiss={handlePresentModalClose}
+        detached={true}
         enableHandlePanningGesture={enableHandlePanningGesture}
         enablePanDownToClose={false}
         enableOverDrag={false}
+        
         handleIndicatorStyle={{
           borderWidth: 3,
           borderColor: Colors.ash,

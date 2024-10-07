@@ -27,15 +27,31 @@ export const UserWalletsQuery = `
             logo
             balance {
             available
-            locked
+                locked
             }
             decimals
             account {
-            address
+                address
             }
             walletType
             accountType
             id
+        }
+    }
+`;
+
+export const SupportedWalletsQuery = `
+    query SupportedWallets {
+        supportedWallets {
+            name
+            symbol
+            logo
+            decimals
+            contractAddress
+            fee {
+                transfer
+                convert
+            }
         }
     }
 `;

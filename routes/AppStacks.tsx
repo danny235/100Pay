@@ -14,6 +14,7 @@ import {
   GeneratedCodeScreen,
   GeneratedLinkScreen,
   HomeScreen,
+  ManagePayLinksScreen,
   NotificationScreen,
   OnboardingScreen,
   OrderQrCodeScreen,
@@ -49,6 +50,7 @@ import { ChargeType, PayoutsI } from "../features/account/accountSlice";
 import PersonalInfo from "../screens/authentication/PersonalInfo";
 import { UserAppType } from "../features/user/userSlice";
 import { TransactionItemT } from "../screens/main/home/TransactionItem";
+import { UserWalletT } from "../screens/main/asset/Asset";
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -82,12 +84,18 @@ export type RootStackParamList = {
   GenerateLink: undefined;
   Notification: undefined;
   Recieve: undefined;
-  GeneratedLink: undefined;
-  GeneratedCode: undefined;
+  GeneratedLink: {
+    detail: string;
+  };
+  GeneratedCode: {
+    detail?: string;
+  };
   Assets: undefined;
   EditProfile: undefined;
   EditPhoto: undefined;
-  SingleCoin: undefined;
+  SingleCoin: {
+    userWallet?: UserWalletT;
+  };
   ConvertAsset: undefined;
   Transactions: undefined;
   TransactionDetail: {
@@ -103,6 +111,7 @@ export type RootStackParamList = {
   FaceInfo: undefined;
   CreateBank: undefined;
   OrderQrCode: undefined;
+  ManagePayLinks: undefined;
   MainTabs: {
     screen: string;
     params?: {
@@ -177,10 +186,7 @@ export function DiscoverStackScreen(): React.JSX.Element {
         name="GenerateLink"
         component={GenerateRequestLinkScreen}
       />
-      <DiscoverStack.Screen
-        name="ConnectQr"
-        component={ConnectQRCodeScreen}
-      />
+      <DiscoverStack.Screen name="ConnectQr" component={ConnectQRCodeScreen} />
       <DiscoverStack.Screen
         name="GeneratedLink"
         component={GeneratedLinkScreen}
@@ -193,6 +199,10 @@ export function DiscoverStackScreen(): React.JSX.Element {
 
       <DiscoverStack.Screen name="Contest" component={ContestScreen} />
       <DiscoverStack.Screen name="OrderQrCode" component={OrderQrCodeScreen} />
+      <DiscoverStack.Screen
+        name="ManagePayLinks"
+        component={ManagePayLinksScreen}
+      />
     </DiscoverStack.Navigator>
   );
 }

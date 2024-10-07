@@ -175,13 +175,17 @@ export default function RecieveModal({
       cb: () => {
         onClose();
 
-        navigation.navigate("MainTabs", {
-          screen: "Discover",
-          params: {
-            screen: "GeneratedCode",
-            initial: true,
-          },
-        });
+        setTimeout(
+          () =>
+            navigation.navigate("MainTabs", {
+              screen: "Discover",
+              params: {
+                screen: "GeneratedCode",
+                initial: false,
+              },
+            }),
+          300
+        );
       },
     },
     // {
@@ -307,15 +311,19 @@ export default function RecieveModal({
     }
   }, [formikProps.values?.accountNumber]);
 
-
-   useEffect(() => {
-     if (!state?.vbas?.loading) {
-       if (state?.vbas?.data) {
-         dispatch(updateVBAS(state?.vbas?.data));
-         showToast("Fetch virtual bank account success", "success");
-       }
-     }
-   }, [state?.vbas?.loading]);
+  useEffect(() => {
+    if (!state?.vbas?.loading) {
+      if (state?.vbas?.data) {
+        dispatch(updateVBAS(state?.vbas?.data));
+        formikProps?.resetForm()
+        showToast("Fetch virtual bank account success", "success");
+        if(state?.vbas?.data?.length === 0) {
+          setShowBVNForm(true);
+          setShowBankAccountDetails(false)
+        }
+      }
+    }
+  }, [state?.vbas?.loading]);
 
   return (
     <>
@@ -564,7 +572,7 @@ export default function RecieveModal({
       <BottomSheetModalComponent
         show={showBVNForm}
         onClose={() => setShowBVNForm(false)}
-        snapPoints={["40%", "65%"]}
+        snapPoints={["40%", "75%"]}
       >
         <View className=" flex-1 p-5">
           <View className=" mb-auto space-y-2">
@@ -627,7 +635,7 @@ export default function RecieveModal({
               </MediumText>
             )}
           </View>
-          <View className="pb-10">
+          <View className="pb-14">
             <Button
               isLoading={state?.createVBA?.loading}
               onPress={formikProps.handleSubmit as any}

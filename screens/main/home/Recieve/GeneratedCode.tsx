@@ -79,7 +79,12 @@ export default function GeneratedCode({ navigation }: GenerateCodeT) {
       <CustomHeader
         text="Payment ID Details"
         icon={<QRIcon />}
-        onPress={() => navigation.goBack()}
+        onPress={() =>
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Home" }],
+          })
+        }
       />
 
       <View

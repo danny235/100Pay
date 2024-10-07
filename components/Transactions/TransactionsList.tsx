@@ -27,9 +27,6 @@ export default function TransactionsList({
 }: TransactionsT) {
   const {userApps, activeUserApp, userAppsError, userAppsLoading, token} =
     useSelector((state: RootState) => state.user);
-  const {charges, chargesLoading, payOuts, payOutsLoading} = useSelector(
-    (state: RootState) => state.account,
-  );
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const { query, state } = useGraphQL();
   const transactions =

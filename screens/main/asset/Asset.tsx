@@ -9,7 +9,6 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import Bitcoin from "../../../assets/images/bitcoin.png";
 import { Colors } from "../../../components/Colors";
 import {
   ArrowDownIcon,
@@ -123,12 +122,7 @@ export default function Assets({ navigation }: AssetT) {
   }, [activeUserApp?._id]);
 
   useEffect(() => {
-    if (!userWallets?.loading) {
-      console.log(cryptoUserWallets, "line 152");
-    }
-    if (!supportedWallets?.loading) {
-      console.log(filteredSupportedWallets, "line 155");
-    }
+    if (!userWallets?.loading) return
   }, [
     userWallets?.loading,
     supportedWallets?.loading,
@@ -205,7 +199,12 @@ export default function Assets({ navigation }: AssetT) {
           {cryptoUserWallets &&
             cryptoUserWallets?.slice(0, 4).map((crypto: UserWalletT, i) => {
               return (
-                <View style={styles.coinView} key={crypto.id}>
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate("SingleCoin", {
+                      userWallet: crypto,
+                    })
+                  } style={styles.coinView} key={crypto.id}>
                   <View
                     style={{
                       flexDirection: "row",
@@ -234,7 +233,7 @@ export default function Assets({ navigation }: AssetT) {
                   >
                     ≈ ${0}.00
                   </LightText>
-                </View>
+                </Pressable>
               );
             })}
         </View>

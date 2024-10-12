@@ -72,7 +72,11 @@ export default function EditPhoto({ navigation }: EditProfileT) {
     }
   }
 
-  const handleUpdatePhoto = async (avatar, code, excludedFields = ["role", "invitedBy"]) => {
+  const handleUpdatePhoto = async (
+    avatar,
+    code,
+    excludedFields = ["role", "invitedBy", "verificationLevel", "__v", "updatedAt", "createdAt"]
+  ) => {
     setUpdating(true);
     // Filter out excluded fields
     const filteredUserProfile = Object.keys(userProfile)

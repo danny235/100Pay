@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { BlurView } from "expo-blur";
-import BgImage from "../../assets/images/bg.png";
+import BgImage from "../../assets/images/bg.jpg";
 
 // Enable LayoutAnimation on Android
 if (
@@ -22,10 +22,9 @@ if (
 
 export default function CustomCameraImage({ isVisible, children }) {
   const opacity = useRef(new Animated.Value(isVisible ? 1 : 0)).current;
-  const { height } = useWindowDimensions()
+  const { height } = useWindowDimensions();
 
   useEffect(() => {
-
     Animated.timing(opacity, {
       toValue: isVisible ? 0 : 1,
       duration: 500,
@@ -33,16 +32,15 @@ export default function CustomCameraImage({ isVisible, children }) {
     }).start();
   }, [isVisible]);
 
-
   return (
     <Animated.View
       style={{
         // position: "absolute",
-        height: 444,
+        height: Platform.OS === "android" ? 444 : 466,
         width: "100%",
         top: 0,
         opacity,
-        marginBottom: 30
+        marginBottom: 30,
       }}
     >
       <>
@@ -66,13 +64,55 @@ export default function CustomCameraImage({ isVisible, children }) {
             borderBottomRightRadius: 10,
             overflow: "hidden",
           }}
-          tint="systemThickMaterialDark"
+          tint="systemMaterialDark"
           intensity={80}
         />
+        {Platform.OS === "android" && (
+          <>
+            <BlurView
+              style={{
+                position: "absolute",
+                height: "100%",
+                width: "100%",
+                top: 0,
+                borderBottomLeftRadius: 10,
+                borderBottomRightRadius: 10,
+                overflow: "hidden",
+              }}
+              tint="systemMaterialDark"
+              intensity={80}
+            />
+            <BlurView
+              style={{
+                position: "absolute",
+                height: "100%",
+                width: "100%",
+                top: 0,
+                borderBottomLeftRadius: 10,
+                borderBottomRightRadius: 10,
+                overflow: "hidden",
+              }}
+              tint="systemMaterialDark"
+              intensity={80}
+            />
+            <BlurView
+              style={{
+                position: "absolute",
+                height: "100%",
+                width: "100%",
+                top: 0,
+                borderBottomLeftRadius: 10,
+                borderBottomRightRadius: 10,
+                overflow: "hidden",
+              }}
+              tint="systemMaterialDark"
+              intensity={80}
+            />
+          </>
+        )}
       </>
 
-
-      <View style={{ position: 'absolute', left: 0, right: 0 }}>
+      <View style={{ position: "absolute", left: 0, right: 0 }}>
         {children}
       </View>
     </Animated.View>

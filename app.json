@@ -25,23 +25,38 @@
           "recordAudioAndroid": true
         }
       ],
-
       "expo-router",
       [
         "expo-image-picker",
         {
           "photosPermission": "Paylens needs access to your camera to allow you update your profile photo.",
           "cameraPermission": "Allow $(PRODUCT_NAME) to open the camera",
-
           "//": "Disables the microphone permission",
           "microphonePermission": false
         }
       ]
-      
     ],
     "web": {
       "bundler": "metro",
       "output": "single"
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "e1392a56-b725-4bfa-92c7-e79eec525d9f"
+      }
+    },
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/e1392a56-b725-4bfa-92c7-e79eec525d9f"
+    },
+    "android": {
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
+    },
+    "ios": {}
   }
 }

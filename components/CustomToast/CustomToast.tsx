@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Animated, Easing} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {Colors} from '../Colors';
-import { RegularText } from '../styles/styledComponents';
-import { CloseCircle, TickCircle, Warning2 } from 'iconsax-react-native';
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, Animated, Easing } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Colors } from "../Colors";
+import { RegularText } from "../styles/styledComponents";
+import { CloseCircle, TickCircle, Warning2 } from "iconsax-react-native";
 type ToastType = "success" | "error" | "info" | "string";
 interface CustomToastProps {
   message: string;
@@ -11,7 +11,11 @@ interface CustomToastProps {
   onClose: () => void;
 }
 
-const CustomToast: React.FC<CustomToastProps> = ({message, type, onClose}) => {
+const CustomToast: React.FC<CustomToastProps> = ({
+  message,
+  type,
+  onClose,
+}) => {
   const [isVisible, setIsVisible] = useState(true);
   const insets = useSafeAreaInsets();
 
@@ -37,7 +41,7 @@ const CustomToast: React.FC<CustomToastProps> = ({message, type, onClose}) => {
       showAnimation.start(() => {
         setTimeout(() => {
           hideAnimation.start(() => {
-            onClose()
+            onClose();
             setIsVisible(false);
           });
         }, 3000); // Hide after 3 seconds
@@ -45,7 +49,7 @@ const CustomToast: React.FC<CustomToastProps> = ({message, type, onClose}) => {
     } else {
       hideAnimation.start(() => {
         setIsVisible(false);
-        onClose()
+        onClose();
       });
     }
   }, [message]);
@@ -54,24 +58,26 @@ const CustomToast: React.FC<CustomToastProps> = ({message, type, onClose}) => {
     return null; // Hide component when there is no message
   }
 
-  let iconComponent; // Define a variable to hold the icon component based on type
+  let IconComponent; // Define a variable to hold the icon component based on type
   switch (type) {
     case "success":
-      iconComponent = <TickCircle color={Colors.success700} variant="TwoTone" />;
+      IconComponent = (
+        <TickCircle color={Colors.success700} variant="TwoTone" />
+      );
       break;
     case "error":
-      iconComponent = <CloseCircle color={Colors.error5} variant="TwoTone" />;
+      IconComponent = <CloseCircle color={Colors.error5} variant="TwoTone" />;
       break;
     case "info":
-      iconComponent = <Warning2 size="32" color="#FF8A65" variant="TwoTone" />;
+      IconComponent = <Warning2 size="32" color="#FF8A65" variant="TwoTone" />;
       break;
     default:
-      iconComponent = null; // Handle the default case if needed
+      IconComponent = null; // Handle the default case if needed
       break;
   }
 
   return (
-    <View style={styles.outerContainer}>
+    <View style={[styles.outerContainer, {paddingTop: insets.top} ]}>
       <Animated.View
         className="shadow-md"
         style={[
@@ -81,7 +87,7 @@ const CustomToast: React.FC<CustomToastProps> = ({message, type, onClose}) => {
           },
         ]}
       >
-        {iconComponent}
+        {IconComponent}
         <RegularText style={styles.message}>{message}</RegularText>
       </Animated.View>
     </View>
@@ -106,7 +112,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-    gap: 10
+    gap: 10,
   },
   message: {
     color: "black",

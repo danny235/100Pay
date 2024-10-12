@@ -6,13 +6,12 @@
  */
 
 import { NavigationContainer } from "@react-navigation/native";
-import type { PropsWithChildren } from "react";
 import React, { useEffect, useRef, useState } from "react";
 import { Platform, useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import SplashScreen from "react-native-splash-screen";
-import { Colors } from "./components/Colors";
+// import SplashScreen from "react-native-splash-screen";
+// import { Colors } from "./components/Colors";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from "./app/store";
@@ -23,9 +22,7 @@ import ErrorBoundary from "./ErrorBoundary";
 
 import "./styles.css";
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === "dark";
@@ -45,9 +42,9 @@ function App(): React.JSX.Element {
 
   // };
 
-  useEffect(() => {
-    if (Platform.OS === "android") SplashScreen.hide();
-  }, []);
+  // useEffect(() => {
+  //   if (Platform.OS === "android") SplashScreen.hide();
+  // }, []);
 
   if (!fontsLoaded && !fontsError) {
     return null;

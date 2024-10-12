@@ -28,8 +28,11 @@ import { NavigationProp, RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../../routes/AppStacks";
 import {
   Clock,
+  Convertshape,
   ExportCurve,
+  ExportSquare,
   ImportCurve,
+  ImportSquare,
   RecoveryConvert,
   WalletMoney,
 } from "iconsax-react-native";
@@ -56,6 +59,7 @@ import { RootState } from "../../../app/store";
 import { UserWalletTransactionQuery } from "../../../apis/lib/queries";
 import useGraphQL from "../../../components/hooks/useGraphQL";
 import { TransactionItemT } from "../home/TransactionItem";
+import ActionButton from "../../../components/Button/ActionButton";
 
 type SingleCoinViewT = {
   navigation: NavigationProp<RootStackParamList>;
@@ -188,6 +192,28 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
     return null;
   };
 
+   const quickAction = [
+     {
+       id: 1,
+       title: "Deposit",
+       icon: <ImportSquare color={Colors.primary} size={20} />,
+       onPress: () => setShowRecieveModal(true),
+     },
+     {
+       id: 2,
+       title: "Withdraw",
+       icon: <ExportSquare color={Colors.primary} size={20} />,
+       onPress: () => null,
+     },
+
+     {
+       id: 3,
+       title: "Convert",
+       icon: <Convertshape color={Colors.primary} size={20} />,
+       onPress: () => navigation.navigate("ConvertAsset"),
+     },
+   ];
+
   useEffect(() => {
     if (state?.userWalletTransactions?.loading) return;
     if (!activeUserApp?.keys?.pub_keys[0]?.value) return;
@@ -301,7 +327,11 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
           /> */}
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flex: 1 }}>
+      <ScrollView
+        style={{ paddingBottom: transactions?.length }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flex: 1 }}
+      >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
           <Clock size={25} color={Colors.primary} />
           <SemiBoldText
@@ -323,8 +353,13 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
             )}
           </View>
           <View className=" items-center justify-center">
-            {state?.userWalletTransactions?.data?.userWalletTransactions?.length === 0 && (
-              <MediumText style={{ fontSize: 15 / fontScale, color: Colors.grayText }}>No transactions here!</MediumText>
+            {state?.userWalletTransactions?.data?.userWalletTransactions
+              ?.length === 0 && (
+              <MediumText
+                style={{ fontSize: 15 / fontScale, color: Colors.grayText }}
+              >
+                No transactions here!
+              </MediumText>
             )}
           </View>
           {transactions &&
@@ -388,7 +423,17 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
         </View>
       </ScrollView>
 
-      <View style={styles.buttonGroup}>
+        <View className=" flex-row flex-wrap space-x-5 justify-between px-2 pb-10">
+          {quickAction.map((action) => (
+            <ActionButton
+              title={action.title}
+              icon={action.icon}
+              key={action.id}
+              onPress={action.onPress}
+            />
+          ))}
+        </View>
+      {/* <View style={styles.buttonGroup}>
         <Pressable
           onPress={() => setShowRecieveModal(true)}
           style={styles.grayButton}
@@ -403,7 +448,7 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
           <RecoveryConvert variant="TwoTone" size={23} color={Colors.primary} />
           <MediumText style={{ fontSize: 15 / fontScale }}>Convert</MediumText>
         </Pressable>
-      </View>
+      </View> */}
 
       <BottomSheetModalComponent
         onClose={() => setShowRecieveModal(false)}

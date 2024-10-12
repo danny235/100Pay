@@ -23,6 +23,7 @@ import { NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../../routes/AppStacks";
 import { Money4, ShoppingCart } from "iconsax-react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ScrollView } from "react-native-gesture-handler";
 
 type DiscoverT = {
   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -32,6 +33,7 @@ export default function Discover({ navigation }: DiscoverT): React.JSX.Element {
   const { fontScale } = useWindowDimensions();
   return (
     <CustomView>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 20, paddingBottom: 20 }}>
       <View style={{ gap: 20, alignItems: "center", marginVertical: 50 }}>
         <DiscoverIcon color={Colors.primary} width={80} height={80} />
         <BoldText style={{ fontSize: 20 / fontScale }}>
@@ -39,7 +41,6 @@ export default function Discover({ navigation }: DiscoverT): React.JSX.Element {
         </BoldText>
       </View>
 
-      <View style={{ gap: 20 }}>
         {/* <Pressable onPress={()=> navigation.navigate("Contest")} style={styles.discoverCTA}>
           <ShoppingCart color={Colors.primary} size={24} />
           <View style={{ gap: 10, flexShrink: 1 }}>
@@ -169,7 +170,7 @@ export default function Discover({ navigation }: DiscoverT): React.JSX.Element {
             <ArrowForwardIcon color={Colors.iconColor} />
           </View>
         </Pressable>
-      </View>
+      </ScrollView>
     </CustomView>
   );
 }

@@ -44,7 +44,7 @@ export default function TransactionItem({
 }: TransactionItemProps): React.JSX.Element {
   const { fontScale } = useWindowDimensions();
 
-  const getStatusColor = (status: string) => {
+  const GetStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case "failed":
         return Colors.error07;
@@ -55,7 +55,7 @@ export default function TransactionItem({
     }
   };
 
-  const transactionTypeLabel = () => {
+  const TransactionTypeLabel = () => {
     const hash = item.transactionHash?.toLowerCase();
     if (!hash) return "Unknown";
 
@@ -108,7 +108,7 @@ export default function TransactionItem({
   //   return null;
   // };
 
-  const renderIcon = () => {
+  const RenderIcon = () => {
     if (
       item.type === "credit" &&
       !item.transactionHash.toLowerCase().startsWith("convert")
@@ -141,7 +141,7 @@ export default function TransactionItem({
     >
       <View style={{ gap: 4 }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          {renderIcon()}
+          {RenderIcon()}
           <MediumText
             style={{
               fontSize: 14 / fontScale,
@@ -149,7 +149,7 @@ export default function TransactionItem({
               color: Colors.balanceBlack,
             }}
           >
-            {transactionTypeLabel()}
+            {TransactionTypeLabel()}
           </MediumText>
         </View>
         <View style={{ flexDirection: "row", gap: 10 }}>
@@ -177,7 +177,7 @@ export default function TransactionItem({
           style={{
             textAlign: "right",
             fontSize: 14 / fontScale,
-            textTransform: "capitalize",
+            textTransform: "uppercase",
             color: Colors.balanceBlack,
           }}
         >
@@ -189,7 +189,7 @@ export default function TransactionItem({
             textAlign: "right",
             fontSize: 11 / fontScale,
             textTransform: "capitalize",
-            color: getStatusColor(item.status),
+            color: GetStatusColor(item.status),
           }}
         >
           {item.status}

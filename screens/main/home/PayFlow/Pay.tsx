@@ -100,13 +100,13 @@ export default function PayHome({ navigation }: PayHomeT) {
   const resetTimeoutRef = useRef(null);
   const { showToast } = useToast();
   const {
-    userApps,
-    activeUserApp,
-    userAppsError,
-    userAppsLoading,
+    // userApps,
+    // activeUserApp,
+    // userAppsError,
+    // userAppsLoading,
     token,
-    userProfile,
-    userProfileLoading,
+    // userProfile,
+    // userProfileLoading,
   } = useSelector((state: RootState) => state.user);
 
   const validateId = async (payId) => {

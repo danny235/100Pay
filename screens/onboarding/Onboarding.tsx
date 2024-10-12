@@ -45,7 +45,7 @@ export default function Onboarding({
   ).current;
   const viewConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
   const scrollTo = () => {
-    if (currentIndex > slides.length - 1) {
+    if (currentIndex < slides.length - 1) {
       slidesRef.current?.scrollToIndex({ index: currentIndex + 1 });
       console.log(currentIndex, "From currentIndex");
     } else {

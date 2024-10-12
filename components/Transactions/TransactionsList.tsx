@@ -1,18 +1,23 @@
-import {View, Text, ActivityIndicator} from 'react-native';
-import React, {useEffect} from 'react';
-import {RootState} from '../../app/store';
-import {useDispatch, useSelector} from 'react-redux';
-import {ThunkDispatch} from 'redux-thunk';
-import TransactionItem, { TransactionItemT } from '../../screens/main/home/TransactionItem';
-import {fetchCharge, fetchPayments} from '../../features/account/accountSlice';
-import {NavigationProp} from '@react-navigation/native';
-import {RootStackParamList} from '../../routes/AppStacks';
-import TransactionItemLoader from '../SkeletonLoaders/TransactionItemLoader';
-import {Colors} from '../Colors';
-import {MediumText} from '../styles/styledComponents';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import useGraphQL from '../hooks/useGraphQL';
-import { UserWalletTransactionQuery } from '../../apis/lib/queries';
+import { View, Text, ActivityIndicator } from "react-native";
+import React, { useEffect } from "react";
+import { RootState } from "../../app/store";
+import { useDispatch, useSelector } from "react-redux";
+import { ThunkDispatch } from "redux-thunk";
+import TransactionItem, {
+  TransactionItemT,
+} from "../../screens/main/home/TransactionItem";
+import {
+  fetchCharge,
+  fetchPayments,
+} from "../../features/account/accountSlice";
+import { NavigationProp } from "@react-navigation/native";
+import { RootStackParamList } from "../../routes/AppStacks";
+import TransactionItemLoader from "../SkeletonLoaders/TransactionItemLoader";
+import { Colors } from "../Colors";
+import { MediumText } from "../styles/styledComponents";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import useGraphQL from "../hooks/useGraphQL";
+import { UserWalletTransactionQuery } from "../../apis/lib/queries";
 
 type TransactionsT = {
   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -25,14 +30,14 @@ export default function TransactionsList({
   sliceFrom = 0,
   sliceTo,
 }: TransactionsT) {
-  const {userApps, activeUserApp, userAppsError, userAppsLoading, token} =
+  const { userApps, activeUserApp, userAppsError, userAppsLoading, token } =
     useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const { query, state } = useGraphQL();
   const transactions =
     state?.userWalletTransactions?.data?.userWalletTransactions;
   useEffect(() => {
-    if (state?.userWalletTransactions?.loading) return;
+    // if (state?.userWalletTransactions?.loading) return;
     if (!activeUserApp?.keys?.pub_keys[0]?.value) return;
     query(
       "userWalletTransactions",
@@ -42,17 +47,22 @@ export default function TransactionsList({
         "auth-token": token,
       }
     );
-    dispatch(
-      fetchPayments({
-        token,
-        apiKey: activeUserApp?.keys.pub_keys[0].value,
-        appId: activeUserApp?._id,
-      })
-    );
-    dispatch(
-      fetchCharge({ token, apiKey: activeUserApp?.keys.pub_keys[0].value })
-    );
-  }, [activeUserApp?.keys?.pub_keys[0].value, userAppsLoading]);
+    // dispatch(
+    //   fetchPayments({
+    //     token,
+    //     apiKey: activeUserApp?.keys.pub_keys[0].value,
+    //     appId: activeUserApp?._id,
+    //   })
+    // );
+    // dispatch(
+    //   fetchCharge({ token, apiKey: activeUserApp?.keys.pub_keys[0].value })
+    // );
+  }, [
+    activeUserApp?.keys?.pub_keys[0].value,
+    userAppsLoading,
+    activeUserApp?._id,
+    
+  ]);
   return (
     <View style={{ flex: 1, gap: 20, paddingVertical: 4 }}>
       {state?.userWalletTransactions?.loading && (
@@ -71,8 +81,8 @@ export default function TransactionsList({
       {transactions &&
         transactions.length > 0 &&
         transactions
-          .slice(sliceFrom, sliceTo)
           .reverse()
+          .slice(sliceFrom, sliceTo)
           .map((item: TransactionItemT) => (
             <TransactionItem
               key={item.transactionHash}

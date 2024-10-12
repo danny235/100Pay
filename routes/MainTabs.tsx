@@ -1,4 +1,4 @@
-import {createBottomTabNavigator, useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import {Colors} from '../components/Colors';

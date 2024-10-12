@@ -75,6 +75,7 @@ import BankList from "../../../../components/banksList/BankList";
 import { BankDetailsT, BankT } from "../PayFlow/Pay";
 import { validateBankAccount } from "../../../../apis/pay";
 import { updateVBAS, VBAT } from "../../../../features/user/userSlice";
+import Select from "../../../../components/Select/";
 
 const bvnSchema = yup.object().shape({
   bvn: yup.string().required().label("BVN"),
@@ -86,6 +87,11 @@ type RecieveModalT = {
   navigation: NativeStackNavigationProp<RootStackParamList>;
   showRecieve: boolean;
   onClose: () => void;
+};
+
+type OptionT = {
+  label: string;
+  value: string;
 };
 
 export default function RecieveModal({
@@ -117,7 +123,22 @@ export default function RecieveModal({
   const [activeBank, setActiveBank] = useState<BankT>(null);
   const [bankDetails, setBankDetails] = useState<BankDetailsT>(null);
   const [fetching, setFetching] = useState(false);
+  const [activeOption, setActiveOption] = useState<OptionT | null>(null);
+  const bankOptions = [
+    {
+      label: "Wema Bank",
+      value: "wema-bank",
+    },
+    {
+      label: "Titan Bank (recommended)",
+      value: "titan-paystack",
+    },
+  ];
   const { post, state } = useAxios();
+  const handleSelect = (option: OptionT) => {
+    console.log("Selected:", option);
+    setActiveOption(option);
+  };
   const formikProps = useFormik({
     initialValues: {
       bvn: "",
@@ -134,6 +155,7 @@ export default function RecieveModal({
           bankCode: activeBank?.code,
           bvn: values?.bvn,
           middleName: getLastName(bankDetails?.account_name),
+          provider: activeOption ? activeOption?.value : "wema-bank",
         },
         {
           headers: {
@@ -175,17 +197,7 @@ export default function RecieveModal({
       cb: () => {
         onClose();
 
-        setTimeout(
-          () =>
-            navigation.navigate("MainTabs", {
-              screen: "Discover",
-              params: {
-                screen: "GeneratedCode",
-                initial: false,
-              },
-            }),
-          300
-        );
+        setTimeout(() => navigation.navigate("GeneratedCode"), 300);
       },
     },
     // {
@@ -278,11 +290,9 @@ export default function RecieveModal({
         console.log(errorResponse, "line 271");
 
         // Display generic error message if available
-        if (genericErrorMessage) {
-          showToast(`${genericErrorMessage}`, "error");
-        }
 
         if (errorResponse) {
+          showToast(`${errorResponse}`, "error");
           // Display main response error message
           if (errorResponse.message) {
             showToast(`${errorResponse.message}`, "error");
@@ -301,6 +311,7 @@ export default function RecieveModal({
             });
           }
         }
+        showToast(genericErrorMessage, "error");
       }
     }
   }, [state?.createVBA?.loading]);
@@ -315,11 +326,11 @@ export default function RecieveModal({
     if (!state?.vbas?.loading) {
       if (state?.vbas?.data) {
         dispatch(updateVBAS(state?.vbas?.data));
-        formikProps?.resetForm()
+        formikProps?.resetForm();
         showToast("Fetch virtual bank account success", "success");
-        if(state?.vbas?.data?.length === 0) {
+        if (state?.vbas?.data?.length === 0) {
           setShowBVNForm(true);
-          setShowBankAccountDetails(false)
+          setShowBankAccountDetails(false);
         }
       }
     }
@@ -574,84 +585,99 @@ export default function RecieveModal({
         onClose={() => setShowBVNForm(false)}
         snapPoints={["40%", "75%"]}
       >
-        <View className=" flex-1 p-5">
-          <View className=" mb-auto space-y-2">
-            <View>
-              <MediumText
-                style={{ color: Colors.black, fontSize: 18 / fontScale }}
-              >
-                Enter your details
-              </MediumText>
-              <RegularText
-                style={{ color: Colors.grayText, fontSize: 15 / fontScale }}
-              >
-                Please enter your BVN and an account linked to the bvn so we can
-                create an account for you
-              </RegularText>
-            </View>
-            <Input
-              formikKey="bvn"
-              formikProps={formikProps}
-              value={formikProps.values.bvn}
-              label="BVN"
-              placeholder="2345xxxxxx"
-              placeholderTextColor={Colors.grayText}
-            />
-            <Input
-              formikKey="accountNumber"
-              formikProps={formikProps}
-              value={formikProps.values.accountNumber}
-              label="Account Number"
-              placeholder="2345xxxxxx"
-              placeholderTextColor={Colors.grayText}
-            />
-            <View style={styles.banksWrapper}>
-              <RegularText style={{ fontSize: 15 / fontScale }}>
-                Bank Name
-              </RegularText>
-              <Pressable
-                onPress={() => setBankOpen(true)}
-                style={styles.bankSelect}
-              >
-                <RegularText style={{ fontSize: 15 / fontScale }}>
-                  {activeBank?.name ? activeBank?.name : "Select your bank"}
+        <ScrollView>
+          <View className=" flex-1 p-5 space-y-4">
+            <View className=" mb-auto space-y-2">
+              <View>
+                <MediumText
+                  style={{ color: Colors.black, fontSize: 18 / fontScale }}
+                >
+                  Enter your details
+                </MediumText>
+                <RegularText
+                  style={{ color: Colors.grayText, fontSize: 15 / fontScale }}
+                >
+                  Please enter your BVN and an account linked to the bvn so we
+                  can create an account for you
                 </RegularText>
-                <ArrowDown2 variant="Bold" color={Colors.grayText} size={24} />
-              </Pressable>
-            </View>
-            {fetching && (
-              <MediumText
-                style={{ fontSize: 15 / fontScale, color: Colors.primary }}
-              >
-                ....
-              </MediumText>
-            )}
-            {bankDetails && (
-              <MediumText
-                className="mb-3"
-                style={{ fontSize: 15 / fontScale, color: Colors.primary }}
-              >
-                {bankDetails?.account_name}
-              </MediumText>
-            )}
-          </View>
-          <View className="pb-14">
-            <Button
-              isLoading={state?.createVBA?.loading}
-              onPress={formikProps.handleSubmit as any}
-              variant="primary"
-            >
-              <MediumText
-                style={{ color: Colors.white, fontSize: 15 / fontScale }}
-              >
-                Submit
-              </MediumText>
-              {state?.createVBA?.loading && (
-                <ActivityIndicator color={Colors.white} size={24} />
+              </View>
+
+              <View className=" mb-4 z-50">
+                <Select
+                  options={bankOptions}
+                  onSelect={handleSelect}
+                  placeholder="Click to select"
+                  heading="Select Your Preferred Bank"
+                />
+              </View>
+              <Input
+                formikKey="bvn"
+                formikProps={formikProps}
+                value={formikProps.values.bvn}
+                label="BVN"
+                placeholder="2345xxxxxx"
+                placeholderTextColor={Colors.grayText}
+              />
+              <Input
+                formikKey="accountNumber"
+                formikProps={formikProps}
+                value={formikProps.values.accountNumber}
+                label="Account Number"
+                placeholder="2345xxxxxx"
+                placeholderTextColor={Colors.grayText}
+              />
+              <View style={styles.banksWrapper}>
+                <RegularText style={{ fontSize: 15 / fontScale }}>
+                  Bank Name
+                </RegularText>
+                <Pressable
+                  onPress={() => setBankOpen(true)}
+                  style={styles.bankSelect}
+                >
+                  <RegularText style={{ fontSize: 15 / fontScale }}>
+                    {activeBank?.name ? activeBank?.name : "Select your bank"}
+                  </RegularText>
+                  <ArrowDown2
+                    variant="Bold"
+                    color={Colors.grayText}
+                    size={24}
+                  />
+                </Pressable>
+              </View>
+              {fetching && (
+                <MediumText
+                  style={{ fontSize: 15 / fontScale, color: Colors.primary }}
+                >
+                  ....
+                </MediumText>
               )}
-            </Button>
+              {bankDetails && (
+                <MediumText
+                  className="mb-3"
+                  style={{ fontSize: 15 / fontScale, color: Colors.primary }}
+                >
+                  {bankDetails?.account_name}
+                </MediumText>
+              )}
+            </View>
+            <View className="pb-14">
+              <Button
+                isLoading={state?.createVBA?.loading}
+                onPress={formikProps.handleSubmit as any}
+                variant="primary"
+              >
+                <MediumText
+                  style={{ color: Colors.white, fontSize: 15 / fontScale }}
+                >
+                  Submit
+                </MediumText>
+                {state?.createVBA?.loading && (
+                  <ActivityIndicator color={Colors.white} size={24} />
+                )}
+              </Button>
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </BottomSheetModalComponent>
 
       {/* Account details form */}

@@ -29,8 +29,8 @@ import { CameraView, Camera, useCameraPermissions, CameraNativeProps } from "exp
 import { Button } from "../../../../components/Button/Button";
 import { I3DRotate } from "iconsax-react-native";
 
-import Webcam from "react-webcam";
-import * as ml5 from "ml5";
+// import Webcam from "react-webcam";
+// import * as ml5 from "ml5";
 
 type Props = {
   navigation: NavigationProp<RootStackParamList>;
@@ -78,61 +78,61 @@ function Scan({ navigation }: Props) {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
 
-  useEffect(() => {
-    let detectionInterval;
+  // useEffect(() => {
+  //   let detectionInterval;
 
-    const modelLoaded = () => {
-      webcamRef.current.video.width = width;
-      webcamRef.current.video.height = height;
-      canvasRef.current.width = width;
-      canvasRef.current.height = height;
+  //   const modelLoaded = () => {
+  //     webcamRef.current.video.width = width;
+  //     webcamRef.current.video.height = height;
+  //     canvasRef.current.width = width;
+  //     canvasRef.current.height = height;
 
 
-      detectionInterval = setInterval(() => {
-        detect();
-      }, 200);
-    };
+  //     detectionInterval = setInterval(() => {
+  //       detect();
+  //     }, 200);
+  //   };
 
-    const objectDetector = ml5.objectDetector('cocossd', modelLoaded);
+  //   const objectDetector = ml5.objectDetector('cocossd', modelLoaded);
 
-    const detect = () => {
-      if (webcamRef.current.video.readyState !== 4) {
-        console.warn('Video not ready yet');
-        return;
-      }
+  //   const detect = () => {
+  //     if (webcamRef.current.video.readyState !== 4) {
+  //       console.warn('Video not ready yet');
+  //       return;
+  //     }
 
-      try {
-        objectDetector.detect(webcamRef.current.video, (err, results) => {
-          const ctx = canvasRef.current.getContext('2d');
-          ctx.clearRect(0, 0, width, height);
-          if (results && results.length) {
-            console.log(results)
-            if (results.length > 1) {
-              setIsUnfocused(true)
-            }
-            else {
-              setIsUnfocused(false)
-              for (let all of results) {
-                if (allowedObjects.includes(all.label)) {
-                  ctx.drawImage(webcamRef.current.video, 0, 0, width, height);
-                  // canvasRef.current.toBlob(handleCapturedImage);
-                }
-              }
-            }
-          }
-        });
-      } catch (e) {
-        console.log(e);
-      }
-    };
+  //     try {
+  //       objectDetector.detect(webcamRef.current.video, (err, results) => {
+  //         const ctx = canvasRef.current.getContext('2d');
+  //         ctx.clearRect(0, 0, width, height);
+  //         if (results && results.length) {
+  //           console.log(results)
+  //           if (results.length > 1) {
+  //             setIsUnfocused(true)
+  //           }
+  //           else {
+  //             setIsUnfocused(false)
+  //             for (let all of results) {
+  //               if (allowedObjects.includes(all.label)) {
+  //                 ctx.drawImage(webcamRef.current.video, 0, 0, width, height);
+  //                 // canvasRef.current.toBlob(handleCapturedImage);
+  //               }
+  //             }
+  //           }
+  //         }
+  //       });
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   };
 
-    return () => {
-      if (detectionInterval) {
-        clearInterval(detectionInterval);
-      }
-    }
+  //   return () => {
+  //     if (detectionInterval) {
+  //       clearInterval(detectionInterval);
+  //     }
+  //   }
 
-  }, [width, height]);
+  // }, [width, height]);
 
 
   useEffect(() => {
@@ -207,8 +207,8 @@ function Scan({ navigation }: Props) {
       {
         Platform.OS === "web"
           ? <>
-            <Webcam ref={webcamRef} className="webcam" />
-            <canvas ref={canvasRef} className="canvas" />
+            {/* <Webcam ref={webcamRef} className="webcam" />
+            <canvas ref={canvasRef} className="canvas" /> */}
           </>
           : <CameraView ref={cameraRef} style={StyleSheet.absoluteFillObject} />
       }

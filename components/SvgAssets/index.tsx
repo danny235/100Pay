@@ -6,7 +6,7 @@ import {
   StyledPath3,
   StyledPath5,
 } from "../styles/styledComponents";
-import { Animated, Easing } from "react-native";
+import { Animated, Easing, View } from "react-native";
 import { Colors } from "../Colors";
 
 interface Props {
@@ -1905,12 +1905,12 @@ export const PaylenseText: React.FC<LogoProps> = ({ className }) => {
 
 export const Logo: React.FC<LogoProps> = ({ className }) => {
   return (
-    <div className="flex gap-3 items-center">
-      <div className="relative flex items-center">
+    <View className="flex gap-3 items-center">
+      <View className="relative flex items-center">
         <RedSquare />
         <RedGear />
-      </div>
+      </View>
       <PaylenseText />
-    </div>
+    </View>
   );
 };

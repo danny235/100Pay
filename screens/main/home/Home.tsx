@@ -80,6 +80,7 @@ import Avatar from "../../../assets/images/DashboardEmojis/Avatar-a.png";
 import KYCPrompt from "../../../components/BottomSheetModal/KYCPrompt";
 import useAxios from "../../../components/hooks/useAxios";
 import { RefreshCircle } from "iconsax-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface CustomBackdropProps {
   animatedIndex: SharedValue<number>;
@@ -120,6 +121,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
   const [confirmTPin, setConfirmTPin] = useState("");
   const [creatingPin, setCreatingPin] = useState(false);
   const { post, state } = useAxios();
+  const insets = useSafeAreaInsets()
 
   const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity value for camera is 1
 
@@ -243,19 +245,8 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     dispatch(
       fetchBanks({ token, apiKey: activeUserApp?.keys?.pub_keys[0]?.value })
     );
-    post(
-      "vbas",
-      "/user/vbas",
-      {
-        appId: activeUserApp?._id,
-      },
-      {
-        headers: {
-          "auth-token": token,
-        },
-      }
-    );
-  }, [activeUserApp?.keys?.pub_keys[0].value, userAppsLoading]);
+    
+  }, [activeUserApp?.keys?.pub_keys[0].value, userAppsLoading, userProfileLoading]);
 
   useEffect(() => {
     if (userProfile === null) return;
@@ -287,6 +278,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
             justifyContent: "space-between",
             alignItems: "center",
             paddingHorizontal: 10,
+            paddingTop: insets.top
           }}
         >
           <Pressable
@@ -370,13 +362,12 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
           />
         }
       >
-        {showCamera ? (
-          <CustomCamera isVisible={showCamera}>{CameraChildren()}</CustomCamera>
-        ) : (
+        
+        
           <CustomCameraImage isVisible={showCamera}>
             {CameraChildren()}
           </CustomCameraImage>
-        )}
+       
 
         <View style={{ paddingHorizontal: 10, flex: 1, gap: 20 }}>
           {beneficiaries?.length !== 0 && <Memojis navigation={navigation} />}

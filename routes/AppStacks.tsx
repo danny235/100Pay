@@ -169,6 +169,10 @@ export function HomeStackScreen(): React.JSX.Element {
         name="TransactionDetail"
         component={TransactionDetailScreen}
       />
+      <HomeStack.Screen
+        name="GeneratedCode"
+        component={GeneratedCodeScreen}
+      />
     </HomeStack.Navigator>
   );
 }

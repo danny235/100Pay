@@ -12,8 +12,8 @@ import { Camera, CameraView, useCameraPermissions } from "expo-camera";
 import * as ImageManipulator from "expo-image-manipulator";
 import { Colors } from "../Colors";
 import { BlurView } from "expo-blur";
-import Webcam, { WebcamProps } from "react-webcam";
-import * as ml5 from "ml5";
+// import Webcam, { WebcamProps } from "react-webcam";
+// import * as ml5 from "ml5";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
@@ -154,7 +154,7 @@ const CustomCamera = ({ onPictureTaken, isVisible, children }: CameraT) => {
       }, 200);
     };
 
-    const objectDetector = ml5.objectDetector("cocossd", modelLoaded);
+    // const objectDetector = ml5.objectDetector("cocossd", modelLoaded);
 
     const detect = () => {
       if (webcamRef.current.video.readyState !== 4) {
@@ -162,28 +162,28 @@ const CustomCamera = ({ onPictureTaken, isVisible, children }: CameraT) => {
         return;
       }
 
-      try {
-        objectDetector.detect(webcamRef.current.video, (err, results) => {
-          if (results && results.length) {
-            console.log(results);
-            for (let all of results) {
-              if (allowedObjects.includes(all.label)) {
-                const ctx = canvasRef.current.getContext("2d");
-                // ctx.clearRect(0, 0, width, height);
-                // ctx.drawImage(webcamRef.current.video, 0, 0, width, height);
-                if(canvasRef.current) {
-                  canvasRef.current.toBlob(handleCapturedImage);
-                  clearInterval(detectionInterval);
+      // try {
+      //   objectDetector.detect(webcamRef.current.video, (err, results) => {
+      //     if (results && results.length) {
+      //       console.log(results);
+      //       for (let all of results) {
+      //         if (allowedObjects.includes(all.label)) {
+      //           const ctx = canvasRef.current.getContext("2d");
+      //           // ctx.clearRect(0, 0, width, height);
+      //           // ctx.drawImage(webcamRef.current.video, 0, 0, width, height);
+      //           if(canvasRef.current) {
+      //             canvasRef.current.toBlob(handleCapturedImage);
+      //             clearInterval(detectionInterval);
 
-                }
-              }
-            }
-          }
-        });
-      } catch (e) {
-        console.log(e);
-        clearInterval(detectionInterval);
-      }
+      //           }
+      //         }
+      //       }
+      //     }
+      //   });
+      // } catch (e) {
+      //   console.log(e);
+      //   clearInterval(detectionInterval);
+      // }
     };
 
     return () => {
@@ -217,12 +217,12 @@ const CustomCamera = ({ onPictureTaken, isVisible, children }: CameraT) => {
       <View style={styles.cameraWrapper}>
         {Platform.OS === "web" ? (
           <>
-            <Webcam
+            {/* <Webcam
               ref={webcamRef}
               style={styles.camera}
               videoConstraints={videoConstraints}
               height={300}
-            />
+            /> */}
             <canvas ref={canvasRef} />
           </>
         ) : (

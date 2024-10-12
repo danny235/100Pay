@@ -23,7 +23,7 @@ export default function Action({
 
   return (
     <View
-      style={{ gap: 20, flexDirection: "row", justifyContent: "space-around" }}
+      style={{ gap: 20, flexDirection: "row", justifyContent: "space-between" }}
     >
       <Pressable onPress={onPayPress} style={styles.btn}>
         <ExportSquare variant="TwoTone" color={Colors.white} />
@@ -34,10 +34,10 @@ export default function Action({
       <Pressable onPress={onRecievePress} style={styles.btn}>
         <ImportSquare variant="TwoTone" color={Colors.white} />
         <MediumText style={{ fontSize: 15 / fontScale, color: Colors.white }}>
-          Recieve
+          Add Money
         </MediumText>
       </Pressable>
-      <Pressable
+      {/* <Pressable
         onPress={()=>onScanPress()}
         style={[
           styles.btn,
@@ -53,7 +53,7 @@ export default function Action({
           variant="TwoTone"
           color={showCamera ? "rgba(75, 85, 99, 1)" : Colors.white}
         />
-      </Pressable>
+      </Pressable> */}
     </View>
   );
 }
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 20,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    flexBasis: "35%",
+    flexBasis: "46%",
     paddingVertical: 14,
     gap: 10,
   },

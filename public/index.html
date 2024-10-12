@@ -147,14 +147,10 @@
         onUpdate: (registration) => {
           // Handle update callback
           console.log("New content available:", registration);
+          
           window.location.reload();
           // Display the tomato loader
-          const loader = document.createElement("div");
-          loader.className = "tomato-loader";
-          loader.innerText = "New Content\nAvailable!\nClick to update";
-          loader.onclick = () => {
-            window.location.reload();
-          };
+          
 
           document.body.appendChild(loader);
         },

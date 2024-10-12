@@ -8,7 +8,6 @@ import { formatDateString } from "../../utils";
 import { GetApp } from "../../apis/getuserdata";
 import { getUserData } from "../../apis/auth/loginuser";
 
-
 export const fetchUserApps = createAsyncThunk(
   "user/fetchUseApps",
   async (token: string) => {
@@ -16,8 +15,6 @@ export const fetchUserApps = createAsyncThunk(
     return response;
   }
 );
-
-
 
 export const fetchUserData = createAsyncThunk(
   "user/fetchUserData",
@@ -87,7 +84,6 @@ export type VBAT = {
   customerCode: string;
   customerId: string;
 };
-
 
 export type UserAppType = {
   address: string;
@@ -177,7 +173,7 @@ interface UserState {
   showCamera: boolean;
   isFaceDetectionSet: boolean;
   userWallet: UserWalletT;
-  vbas: VBAT[]
+  vbas: VBAT[];
 }
 
 const initialState: UserState = {
@@ -197,7 +193,7 @@ const initialState: UserState = {
   showCamera: false,
   isFaceDetectionSet: false,
   userWallet: null,
-  vbas: null
+  vbas: null,
 };
 
 export const userSlice = createSlice({
@@ -220,7 +216,7 @@ export const userSlice = createSlice({
       state.isFaceDetectionSet = true;
     },
     updateVBAS: (state, action) => {
-      state.vbas = action.payload
+      state.vbas = action.payload;
     },
     logOut: (state) => {
       state.token = "";
@@ -229,7 +225,7 @@ export const userSlice = createSlice({
       state.activeUserApp = null;
       state.isLoggedIn = false;
       state.showCamera = false;
-      state.vbas = null
+      state.vbas = null;
     },
     updateAccountBalanceType: (state, action) => {
       state.accountBalanceType = action.payload;
@@ -258,7 +254,13 @@ export const userSlice = createSlice({
     builder.addCase(fetchUserApps.fulfilled, (state, action) => {
       state.userAppsLoading = "success";
       state.userApps = action.payload;
-      state.activeUserApp = action.payload[0];
+      if (state.activeUserApp) {
+        state.activeUserApp = action.payload?.find(
+          (app: UserAppType) => app._id === state.activeUserApp?._id
+        );
+      } else {
+        state.activeUserApp = action.payload[0];
+      }
       // console.log(action.payload[0]);
     });
 
@@ -301,7 +303,7 @@ export const {
   updateActiveApps,
   toggleShowCamera,
   updateIsFaceDetectionSet,
-  updateVBAS
+  updateVBAS,
 } = userSlice.actions;
 
 export default userSlice.reducer;

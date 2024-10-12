@@ -84,15 +84,15 @@ export default function Balance({ onBalanceClick }: Props): React.JSX.Element {
     );
 
   useEffect(() => {
-      if (userAppsLoading === "loading") return;
-      if (!activeUserApp?._id) return;
+    if (userAppsLoading === "loading") return;
+    if (!activeUserApp?._id) return;
     query(
       "userWallets",
       UserWalletsQuery,
       { appId: activeUserApp?._id },
       { "auth-token": token }
     );
-  }, [activeUserApp?._id]);
+  }, [activeUserApp?._id, userAppsLoading]);
 
   
 

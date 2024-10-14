@@ -423,16 +423,16 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
         </View>
       </ScrollView>
 
-        <View className=" flex-row flex-wrap space-x-5 justify-between px-2 pb-10">
-          {quickAction.map((action) => (
-            <ActionButton
-              title={action.title}
-              icon={action.icon}
-              key={action.id}
-              onPress={action.onPress}
-            />
-          ))}
-        </View>
+      <View className=" flex-row flex-wrap space-x-5 justify-between px-2 pb-10">
+        {quickAction.map((action) => (
+          <ActionButton
+            title={action.title}
+            icon={action.icon}
+            key={action.id}
+            onPress={action.onPress}
+          />
+        ))}
+      </View>
       {/* <View style={styles.buttonGroup}>
         <Pressable
           onPress={() => setShowRecieveModal(true)}
@@ -457,6 +457,8 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
         enableHandlePanningGesture={false}
       >
         <ScrollView
+          style={{ flex: 1 }}
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingHorizontal: 20,
             paddingVertical: 10,

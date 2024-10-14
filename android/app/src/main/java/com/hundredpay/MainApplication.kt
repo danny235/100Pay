@@ -1,4 +1,4 @@
-package com.hundredpay
+package app.pay
 
 import android.app.Application
 import android.content.res.Configuration

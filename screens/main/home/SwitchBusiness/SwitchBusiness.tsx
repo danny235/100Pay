@@ -127,6 +127,7 @@ export default function SwitchBusiness({
           </LightText>
         </View>
         <ScrollView
+          showsVerticalScrollIndicator={false}
           style={{
             paddingHorizontal: 20,
 
@@ -141,8 +142,8 @@ export default function SwitchBusiness({
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  borderBottomWidth: 1,
-                  borderBottomColor: Colors.ash,
+                  // borderBottomWidth: 1,
+                  // borderBottomColor: Colors.ash,
                   paddingVertical: 20,
                   gap: 20,
                 }}
@@ -158,7 +159,7 @@ export default function SwitchBusiness({
               </Pressable>
             ))}
      
-          <Button
+          {/* <Button
             variant="primary"
             isLarge={false}
             isWide={true}
@@ -173,7 +174,7 @@ export default function SwitchBusiness({
             >
               Create Business
             </MediumText>
-          </Button>
+          </Button> */}
      
         </ScrollView>
       </BottomSheetModal>

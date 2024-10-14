@@ -246,7 +246,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
       fetchBanks({ token, apiKey: activeUserApp?.keys?.pub_keys[0]?.value })
     );
     
-  }, [activeUserApp?.keys?.pub_keys[0].value, userAppsLoading, userProfileLoading]);
+  }, [activeUserApp?.keys?.pub_keys[0].value, userAppsLoading, userProfileLoading, activeUserApp]);
 
   useEffect(() => {
     if (userProfile === null) return;

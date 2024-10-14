@@ -14,40 +14,7 @@ import { useSelector } from 'react-redux'
 import TransactionsList from '../../../../components/Transactions/TransactionsList'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
-const trx = [
-  {
-    id: 1,
-    title: 'From: Oscar',
-    from: '984340',
-    date: '2:45pm',
-    amount: '10,000',
-    status: 'successful',
-  },
-  {
-    id: 2,
-    title: 'Paid: Market Square',
-    from: '984340',
-    date: '2:45pm',
-    amount: '10,000',
-    status: 'successful',
-  },
-  {
-    id: 3,
-    title: 'From: Brainy',
-    from: '984340',
-    date: '2:45pm',
-    amount: '10,000',
-    status: 'successful',
-  },
-  {
-    id: 4,
-    title: 'Paid: Amazon',
-    from: '984340',
-    date: '2:45pm',
-    amount: '10,000',
-    status: 'failed',
-  },
-];
+
 
 type NotificationT = {
     navigation: NativeStackNavigationProp<RootStackParamList>
@@ -63,7 +30,7 @@ export default function Notification({navigation}: NotificationT) {
         icon={<NotifictionIcon color={Colors.primary} />}
       />
 
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <TransactionsList navigation={navigation}  />
       </ScrollView>
     </CustomView>

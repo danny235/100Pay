@@ -1,4 +1,4 @@
-package com.hundredpay
+package app.pay
 
 import android.os.Build
 import android.os.Bundle

@@ -457,12 +457,13 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
         enableHandlePanningGesture={false}
       >
         <ScrollView
-          style={{ flex: 1 }}
+         
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingHorizontal: 20,
             paddingVertical: 10,
             gap: 20,
+            flex: 1,
           }}
         >
           <View style={{ flexDirection: "row", gap: 10 }}>

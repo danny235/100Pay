@@ -1,13 +1,18 @@
 import React from "react";
-import { Modal, View, StyleSheet } from "react-native";
-import { Logo } from "../SvgAssets";
+import { Modal, View, StyleSheet, Image } from "react-native";
+import { Logo, LogoLod } from "../SvgAssets";
+import LogoImg from "../../assets/images/100PayLogo.png";
 
 const Loader = ({ visible }) => {
   return (
     <Modal visible={visible} transparent={true} animationType="fade">
       <View style={styles.modalBackground}>
-        <View style={styles.loaderContainer}>
-          <Logo />
+        <View className=" animate-pulse" style={styles.loaderContainer}>
+          <Image
+            className=" animate-pulse"
+            source={LogoImg}
+            style={{ width: "80%", height: 45 }}
+          />
         </View>
       </View>
     </Modal>

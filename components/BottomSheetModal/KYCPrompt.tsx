@@ -5,6 +5,8 @@ import { BoldText, MediumText, RegularText } from "../styles/styledComponents";
 import { Colors } from "../Colors";
 import { Personalcard, ProfileTick } from "iconsax-react-native";
 import { Button } from "../Button/Button";
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
 
 type KYCPromptT = {
   showPrompt: boolean;
@@ -12,13 +14,15 @@ type KYCPromptT = {
 
 export default function KYCPrompt({ showPrompt }: KYCPromptT) {
   const { fontScale } = useWindowDimensions();
+  const {token} = useSelector((state: RootState)=> state.user)
+
   return (
     <BottomSheetModalComponent
       show={showPrompt}
-      snapPoints={["30%", "50%"]}
+      snapPoints={["30%", "80%"]}
       onClose={() => null}
     >
-      <View className=" p-10 space-y-4 justify-between flex-1">
+      <View className=" p-10 space-y-4 justify-between flex-1 ">
         <View className=" justify-between items-center mb-auto space-y-4">
           <View
             className=" items-center justify-center"
@@ -52,7 +56,7 @@ export default function KYCPrompt({ showPrompt }: KYCPromptT) {
             isLarge={true}
             onPress={() =>
               Linking.openURL(
-                "https://dashboard.100pay.co/settings?tab=verification"
+                `https://dashboard.100pay.co/settings?tab=verification&token=${token}&startVerification=true`
               )
             }
           >

@@ -41,6 +41,7 @@ import { ArrowUpIcon, CopyIcon } from "../../../components/SvgAssets";
 import {
   BottomSheetModal,
   BottomSheetModalProvider,
+  BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import { CustomBackdrop } from "../../../components/ChooseAccountBalance/ChooseAccountBalance";
 import QRCode from "react-native-qrcode-svg";
@@ -328,7 +329,7 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
         </View>
       </View>
       <ScrollView
-        style={{ paddingBottom: transactions?.length }}
+        style={{  flex: 1 }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ flex: 1 }}
       >
@@ -421,8 +422,8 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
               );
             })}
         </View>
-      </ScrollView>
 
+      </ScrollView>
       <View className=" flex-row flex-wrap space-x-5 justify-between px-2 pb-10">
         {quickAction.map((action) => (
           <ActionButton
@@ -456,7 +457,7 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
         snapPoints={["50%", "80%"]}
         enableHandlePanningGesture={false}
       >
-        <ScrollView
+        <BottomSheetScrollView
          
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
@@ -553,7 +554,7 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
           >
             Note: Sending via the wrong network may lead to loss of funds.{" "}
           </LightText>
-        </ScrollView>
+        </BottomSheetScrollView>
       </BottomSheetModalComponent>
     </CustomView>
   );

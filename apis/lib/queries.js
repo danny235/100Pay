@@ -25,6 +25,7 @@ export const UserWalletsQuery = `
             status
             symbol
             logo
+            accountType
             balance {
             available
                 locked

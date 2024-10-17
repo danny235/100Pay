@@ -219,7 +219,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     dispatch(fetchUserApps(token));
     dispatch(fetchUserData(token));
     dispatch(fetchBeneficiaries(token));
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     if (userAppsLoading === "loading") return;
@@ -246,7 +246,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
       fetchBanks({ token, apiKey: activeUserApp?.keys?.pub_keys[0]?.value })
     );
     
-  }, [activeUserApp?.keys?.pub_keys[0].value, userAppsLoading, userProfileLoading, activeUserApp]);
+  }, [activeUserApp, userAppsLoading, userProfileLoading, activeUserApp]);
 
   useEffect(() => {
     if (userProfile === null) return;
@@ -268,6 +268,8 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
   // console.log(activeUserApp?.keys.pub_keys[0].value)
 
   // THIS IS THE CAMERA CHILDREN PROPS
+
+
 
   const CameraChildren = () => {
     return (
@@ -363,10 +365,10 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
         }
       >
         
-        
           <CustomCameraImage isVisible={showCamera}>
             {CameraChildren()}
           </CustomCameraImage>
+        
        
 
         <View style={{ paddingHorizontal: 10, flex: 1, gap: 20 }}>

@@ -183,6 +183,7 @@ export function DiscoverStackScreen(): React.JSX.Element {
       initialRouteName="DiscoverS"
       screenOptions={{
         headerShown: false,
+        animation: "ios",
       }}
     >
       <DiscoverStack.Screen name="DiscoverS" component={DiscoverScreen} />
@@ -216,6 +217,7 @@ export function SettingsStackScreen(): React.JSX.Element {
     <SettingsStack.Navigator
       screenOptions={{
         headerShown: false,
+        animation: "ios",
       }}
     >
       <SettingsStack.Screen name="Setting" component={SettingsScreen} />
@@ -238,6 +240,7 @@ export function AssetStackScreen(): React.JSX.Element {
     <AssetStack.Navigator
       screenOptions={{
         headerShown: false,
+        animation: "ios",
       }}
     >
       <AssetStack.Screen name="Assets" component={AssetScreen} />

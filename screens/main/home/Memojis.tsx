@@ -26,7 +26,7 @@ import { RootState } from "../../../app/store";
 import { useSelector } from "react-redux";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../../routes/AppStacks";
-import { truncateText } from "../../../utils";
+import { generateUniqueRandomId, truncateText } from "../../../utils";
 
 interface User {
   id: number;
@@ -85,7 +85,7 @@ const Memojis = ({ navigation }: MemojiT) => {
                   },
                 })
               }
-              key={user?.__v}
+              key={generateUniqueRandomId()}
               style={styles.userContainer}
             >
               <View style={styles.initialAvatar}>

@@ -21,80 +21,82 @@ export default function MainTabs(): React.JSX.Element {
   },[getFocusedRouteNameFromRoute])
   return (
     <Tab.Navigator
-      
-      
       screenOptions={{
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.grayText,
         tabBarLabelStyle: {
-          fontSize: 12  / fontScale,
+          fontSize: 12 / fontScale,
           letterSpacing: 0.5,
-          fontFamily: 'SpaceGroteskBold',
+          fontFamily: "SpaceGroteskBold",
         },
         tabBarItemStyle: {
-          paddingVertical: 5, 
+          paddingVertical: 5,
         },
         tabBarAllowFontScaling: true,
-        
-        
-      }}>
+      }}
+    >
       <Tab.Screen
-        options={({route}) => ({
-          headerShown: false,
-          tabBarIcon: ({color, size}) => <HomeIcon color={color} />,
-          tabBarStyle: (route => {
-            const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-            console.log(routeName);
-            if (routeName === '') return;
-            if (routeName === 'Dashboard') return;
-            return {display: 'none', };
-          })(route),
-        })}
+        options={({ route }) => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+          const isTabVisible = ["Home", "Dashboard", ""].includes(routeName);
+
+          return {
+            headerShown: false,
+            tabBarIcon: ({ color }) => <HomeIcon color={color} />,
+            tabBarStyle: isTabVisible
+              ? {display: "flex"}
+              : { height:0, display: "none" },
+              
+          };
+        }}
         name="Home"
         component={HomeStackScreen}
       />
       <Tab.Screen
-        options={({route}) => ({
-          headerShown: false,
-          tabBarIcon: ({color, size}) => <AssetIcon color={color} />,
-          tabBarStyle: (route => {
-            const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-            // console.log(routeName);
-            if (routeName === '') return;
-            if (routeName === 'Assets') return;
-            return {display: 'none'};
-          })(route),
-        })}
+        options={({ route }) => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+          const isTabVisible = ["Assets", ""].includes(routeName);
+
+          return {
+            headerShown: false,
+            tabBarIcon: ({ color }) => <AssetIcon color={color} />,
+            tabBarStyle: isTabVisible
+              ? { display: "flex" }
+              : { height: 0, display: "none" },
+          };
+        }}
         name="Asset"
         component={AssetStackScreen}
       />
       <Tab.Screen
-        options={({route}) => ({
-          headerShown: false,
-          tabBarIcon: ({color, size}) => <DiscoverIcon color={color} />,
-          tabBarStyle: (route => {
-            const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-            // console.log(routeName);
-            if (routeName === '') return;
-            if (routeName === 'DiscoverS') return;
-            return {display: 'none'};
-          })(route),
-        })}
+        options={({ route }) => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+          const isTabVisible = ["DiscoverS", ""].includes(routeName);
+
+          return {
+            headerShown: false,
+            tabBarIcon: ({ color }) => <DiscoverIcon color={color} />,
+            tabBarStyle: isTabVisible
+              ? { display: "flex" }
+              : { height: 0, display: "none",padding: 0,  },
+          };
+        }}
         name="Discover"
         component={DiscoverStackScreen}
       />
       <Tab.Screen
-        options={({route}) => ({
-          headerShown: false,
-          tabBarIcon: ({color, size}) => <SettingsIcon color={color} />,
-          tabBarStyle: (route => {
-            const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-            // console.log(routeName);
-            if (routeName === '') return;
-            if (routeName === 'Setting') return;
-            return {display: 'none'};
-          })(route),
-        })}
+        options={({ route }) => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+          const isTabVisible = ["Setting", ""].includes(routeName);
+
+          return {
+            headerShown: false,
+            tabBarIcon: ({ color }) => <SettingsIcon color={color} />,
+            tabBarStyle: isTabVisible
+              ? { display: "flex" }
+              : { height: 0, display: "none" },
+          };
+        }}
         name="Settings"
         component={SettingsStackScreen}
       />

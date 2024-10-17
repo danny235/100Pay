@@ -18,6 +18,7 @@ import { MediumText } from "../styles/styledComponents";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import useGraphQL from "../hooks/useGraphQL";
 import { UserWalletTransactionQuery } from "../../apis/lib/queries";
+import { generateUniqueRandomId } from "../../utils";
 
 type TransactionsT = {
   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -30,7 +31,7 @@ export default function TransactionsList({
   sliceFrom = 0,
   sliceTo,
 }: TransactionsT) {
-  const { userApps, activeUserApp, userAppsError, userAppsLoading, token } =
+  const { userApps, activeUserApp, userAppsError, userAppsLoading, token, userProfileLoading } =
     useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const { query, state } = useGraphQL();
@@ -38,7 +39,7 @@ export default function TransactionsList({
     state?.userWalletTransactions?.data?.userWalletTransactions;
   useEffect(() => {
     // if (state?.userWalletTransactions?.loading) return;
-    if (!activeUserApp?.keys?.pub_keys[0]?.value) return;
+    if (!activeUserApp?._id) return;
     query(
       "userWalletTransactions",
       UserWalletTransactionQuery,
@@ -61,7 +62,8 @@ export default function TransactionsList({
     activeUserApp?.keys?.pub_keys[0].value,
     userAppsLoading,
     activeUserApp?._id,
-    
+    userProfileLoading
+
   ]);
   return (
     <View style={{ flex: 1, gap: 20, paddingVertical: 4 }}>
@@ -85,7 +87,7 @@ export default function TransactionsList({
           .slice(sliceFrom, sliceTo)
           .map((item: TransactionItemT) => (
             <TransactionItem
-              key={item.transactionHash}
+              key={generateUniqueRandomId()}
               onPress={() =>
                 navigation.navigate("TransactionDetail", {
                   detail: item,

@@ -59,6 +59,7 @@ export type UserWalletT = {
   name: string;
   symbol: string;
   logo: string;
+  accountType: string;
   balance: {
     available: string;
     locked: string;
@@ -86,9 +87,11 @@ export default function Assets({ navigation }: AssetT) {
   const { showToast } = useToast();
 
   // Filter out non-crypto wallets (those without an account address)
-  const cryptoUserWallets = userWallets?.data?.userWallet?.filter(
-    (wallet: UserWalletT) => wallet?.walletType === "crypto"
-  );
+ const cryptoUserWallets = userWallets?.data?.userWallet?.filter(
+   (wallet: UserWalletT) =>
+     wallet?.walletType === "crypto" && wallet?.accountType === "mainaccount"
+ );
+
 
   // Compare supportedWallets and userWallets
   const filteredSupportedWallets =
@@ -112,7 +115,7 @@ export default function Assets({ navigation }: AssetT) {
     query(
       "supportedWallets",
       SupportedWalletsQuery,
-      { appId: activeUserApp?._id },
+      {},
       { "auth-token": token }
     );
   };
@@ -393,18 +396,18 @@ export default function Assets({ navigation }: AssetT) {
         subText="Click the button below to generate wallet"
         buttonText="Generate Wallet"
         onClose={() => {
-          mutate(
-            "createWallet",
-            CreateUserWalletMutation,
-            {
-              symbol: activeSupportedWallet?.symbol,
-              appId: activeUserApp?._id,
-            },
-            {
-              "auth-token": token,
-            }
-          );
           setShowError(false);
+          // mutate(
+          //   "createWallet",
+          //   CreateUserWalletMutation,
+          //   {
+          //     symbol: activeSupportedWallet?.symbol,
+          //     appId: activeUserApp?._id,
+          //   },
+          //   {
+          //     "auth-token": token,
+          //   }
+          // );
         }}
       />
       <Loader

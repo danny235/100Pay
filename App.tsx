@@ -21,6 +21,7 @@ import { useFonts } from "expo-font";
 import ErrorBoundary from "./ErrorBoundary";
 
 import "./styles.css";
+import { Colors } from "./components/Colors";
 
 
 

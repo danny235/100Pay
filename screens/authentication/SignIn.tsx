@@ -55,7 +55,7 @@ export default function SignIn({navigation}: RootAuthI): React.JSX.Element {
           password: '',
         }}
         onSubmit={async (values, actions) => {
-          console.log(values);
+        
 
           setLoading(true); // Set loading to true when login process starts
           try {

@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Animated,
   useWindowDimensions,
+  Pressable,
 } from 'react-native';
 import {Colors} from '../Colors';
 import {BoldText, MediumText} from '../styles/styledComponents';
@@ -55,53 +56,60 @@ export default function AlertModal({
       animationType="fade"
       transparent={true}
       visible={show}
-      onRequestClose={onClose}>
+      onRequestClose={onClose}
+    >
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.backdrop} />
       </TouchableWithoutFeedback>
-      <View style={styles.modalContainer}>
-          <Animated.View
-            style={[
-                styles.modal,
-                {
-                    transform: [{translateY: centerPosition}],
-                    paddingTop: 20
-                },
-            ]}>
-                {/* <LinearGradient
-                    style={{width: "100%", height: 100, borderRadius: 10, position: "absolute"}}
-                  colors={['rgba(254, 238, 241, 1)', 'rgba(255, 255, 255, 1)']} /> */}
-            {icon}
-            <View style={{gap: 5}}>
-              <BoldText style={{fontSize: 18 / fontScale, textAlign: 'center'}}>
-                {mainText}
-              </BoldText>
-              <MediumText
-                style={{
-                  fontSize: 15 / fontScale,
-                  textAlign: 'center',
-                  color: Colors.grayText,
-                  paddingHorizontal: 10,
-                }}>
-                {subText}
-              </MediumText>
-            </View>
-            <View style={{width: "100%", paddingHorizontal: 20, paddingVertical: 20}}>
 
+      <View style={styles.modalContainer}>
+        <Animated.View
+          style={[
+            styles.modal,
+            {
+              transform: [{ translateY: centerPosition }],
+              paddingTop: 20,
+            },
+          ]}
+        >
+          {icon}
+          <View style={{ gap: 5 }}>
+            <BoldText style={{ fontSize: 18 / fontScale, textAlign: "center" }}>
+              {mainText}
+            </BoldText>
+            <MediumText
+              style={{
+                fontSize: 15 / fontScale,
+                textAlign: "center",
+                color: Colors.grayText,
+                paddingHorizontal: 10,
+              }}
+            >
+              {subText}
+            </MediumText>
+          </View>
+          <View
+            style={{
+              width: "100%",
+              paddingHorizontal: 20,
+              paddingVertical: 20,
+            }}
+          >
             <Button
               onPress={onClose}
               variant="primary"
               isLarge={false}
-              isWide={true} >
+              isWide={true}
+            >
               <MediumText
-                style={{color: Colors.white, fontSize: 15 / fontScale}}>
+                style={{ color: Colors.white, fontSize: 15 / fontScale }}
+              >
                 {buttonText}
               </MediumText>
               <ArrowRightIcon />
             </Button>
-            </View>
-          </Animated.View>
-      
+          </View>
+        </Animated.View>
       </View>
     </Modal>
   );

@@ -19,10 +19,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../app/store";
 import { BlurView } from "@react-native-community/blur";
 import { updateShowAccountBalance } from "../../../features/user/userSlice";
-import { addCommas } from "../../../utils";
-import { Scan } from "iconsax-react-native";
+import { addCommas, copyToClipboard } from "../../../utils";
+import { Copy, Scan } from "iconsax-react-native";
 import useGraphQL from "../../../components/hooks/useGraphQL";
 import { UserWalletsQuery } from "../../../apis/lib/queries";
+import { useToast } from "../../../components/CustomToast/ToastContext";
 type Props = {
   onBalanceClick?: () => void;
 };
@@ -73,14 +74,16 @@ export default function Balance({ onBalanceClick }: Props): React.JSX.Element {
     token,
     showAccountBalance,
     showCamera,
+    userProfile
   } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
+  const {showToast} = useToast()
 
   const { query, state } = useGraphQL();
   const userWalletState = state?.userWallets;
   const localWallet: LocalWalletI | undefined =
     userWalletState?.data?.userWallet?.find(
-      (wallet: LocalWalletI) => wallet.walletType === "local"
+      (wallet: LocalWalletI) => wallet.symbol === "PAY" && wallet?.accountType === "mainaccount"
     );
 
   useEffect(() => {
@@ -162,20 +165,23 @@ export default function Balance({ onBalanceClick }: Props): React.JSX.Element {
         </SemiBoldText>
 
         {!showCamera && (
-          <View style={styles.messageView}>
-            <Scan color={Colors.white} size={20} variant="TwoTone" />
+          <Pressable onPress={()=> {
+            copyToClipboard(activeUserApp?.referralCode)
+            showToast("Copied successfully", "success")
+            }} style={styles.messageView}>
+            <Copy color={Colors.white} size={20} variant="TwoTone" />
             <MediumText
               style={{
                 borderLeftColor: Colors.ash,
                 borderLeftWidth: 1,
                 paddingLeft: 10,
                 color: Colors.white,
-                fontSize: 10 / fontScale,
+                fontSize: 13 / fontScale,
               }}
             >
-              Click on the lens icon to pay
+              {activeUserApp?.referralCode}
             </MediumText>
-          </View>
+          </Pressable>
         )}
         {/* <LightText style={{fontSize: 11 / fontScale, color: Colors.white, textAlign: "center"}}>
           ≈ $PAY{' '}

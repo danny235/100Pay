@@ -113,7 +113,7 @@ export default function PayHome({ navigation }: PayHomeT) {
     setFetching(true);
     try {
       const res = await validatePayId(payId, token);
-      console.log(typeof res.data, "from line 116")
+      
 
       if (res.data !== "") {
         setFetching(false)
@@ -122,12 +122,13 @@ export default function PayHome({ navigation }: PayHomeT) {
         setShowActiveBank(false)
         setShowBankDetails(false)
       } else {
-        showToast("Error getting lens id 😢", "error");
+        showToast("Error getting pay id 😢", "error");
         setFetching(false)
       }
     } catch (err) {
       setFetching(false)
       showToast(err?.message, "error");
+      console.log(err)
     }
   };
 
@@ -156,6 +157,7 @@ export default function PayHome({ navigation }: PayHomeT) {
     } catch (err) {
       setFetching(false);
       showToast(err?.message, "error");
+      console.log(err)
     }
   };
 

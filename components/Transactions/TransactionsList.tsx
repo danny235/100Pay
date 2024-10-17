@@ -43,7 +43,7 @@ export default function TransactionsList({
     query(
       "userWalletTransactions",
       UserWalletTransactionQuery,
-      { symbol: "NGN", appId: activeUserApp?._id },
+      { symbol: "PAY", appId: activeUserApp?._id },
       {
         "auth-token": token,
       }

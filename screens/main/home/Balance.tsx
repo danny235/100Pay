@@ -24,6 +24,7 @@ import { Copy, Scan } from "iconsax-react-native";
 import useGraphQL from "../../../components/hooks/useGraphQL";
 import { UserWalletsQuery } from "../../../apis/lib/queries";
 import { useToast } from "../../../components/CustomToast/ToastContext";
+import { CreateUserWalletMutation } from "../../../apis/lib/mutations";
 type Props = {
   onBalanceClick?: () => void;
 };
@@ -74,30 +75,85 @@ export default function Balance({ onBalanceClick }: Props): React.JSX.Element {
     token,
     showAccountBalance,
     showCamera,
-    userProfile
+    userProfile,
   } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
-  const {showToast} = useToast()
+  const { showToast } = useToast();
 
-  const { query, state } = useGraphQL();
-  const userWalletState = state?.userWallets;
-  const localWallet: LocalWalletI | undefined =
-    userWalletState?.data?.userWallet?.find(
-      (wallet: LocalWalletI) => wallet.symbol === "PAY" && wallet?.accountType === "mainaccount"
-    );
-
-  useEffect(() => {
-    if (userAppsLoading === "loading") return;
-    if (!activeUserApp?._id) return;
+  const { query, mutate, state } = useGraphQL();
+  const fetchWallets = () => {
     query(
       "userWallets",
       UserWalletsQuery,
       { appId: activeUserApp?._id },
       { "auth-token": token }
     );
+  };
+  const userWalletState = state?.userWallets;
+  const localWallet: LocalWalletI | undefined =
+    userWalletState?.data?.userWallet?.find(
+      (wallet: LocalWalletI) =>
+        wallet.symbol === "PAY" && wallet?.accountType === "mainaccount"
+    );
+
+  useEffect(() => {
+    if (userAppsLoading === "loading") return;
+    if (!activeUserApp?._id) return;
+    fetchWallets();
   }, [activeUserApp?._id, userAppsLoading]);
 
-  
+  useEffect(() => {
+    if (state?.userWallets?.loading) return;
+
+   if (localWallet && Object.keys(localWallet).length === 0) {
+     mutate(
+       "createWallet",
+       CreateUserWalletMutation,
+       {
+         symbol: "PAY",
+         appId: activeUserApp?._id,
+       },
+       {
+         "auth-token": token,
+       }
+     );
+   }
+  }, [state?.userWallets?.loading]);
+
+  useEffect(() => {
+    if (!state?.createWallet?.loading) {
+      if (state?.createWallet?.data) {
+        fetchWallets();
+        showToast("Wallet Created", "success");
+      }
+      if (state?.createWallet?.error?.message) {
+        const errorResponse = state?.createWallet?.error?.response?.data;
+
+        if (errorResponse) {
+          showToast(`${errorResponse}`, "error");
+          // Display field-specific errors (email, username, etc.)
+          if (errorResponse.message) {
+            showToast(`${errorResponse.message}`, "error");
+          }
+          const errorData = errorResponse.data;
+          if (errorData) {
+            // Iterate over error fields to display each message
+            Object.keys(errorData).forEach((field) => {
+              const fieldErrors = errorData[field];
+              if (Array.isArray(fieldErrors)) {
+                fieldErrors.forEach((error) => {
+                  showToast(`${error}`, "error");
+                });
+              }
+            });
+          }
+        } else {
+          // Fallback to the generic error message if no specific response data
+          showToast(`${state?.createWallet?.error?.message}`, "error");
+        }
+      }
+    }
+  }, [state?.createWallet?.loading]);
 
   return (
     <View
@@ -141,7 +197,7 @@ export default function Balance({ onBalanceClick }: Props): React.JSX.Element {
           )}
         </Pressable>
       </View>
-      <View style={{ gap: 3 }}>
+      <View style={{ gap: 3, alignItems: "center" }}>
         <SemiBoldText
           style={{
             fontSize: 27 / fontScale,
@@ -155,8 +211,10 @@ export default function Balance({ onBalanceClick }: Props): React.JSX.Element {
           showAccountBalance &&
           activeUserApp &&
           Object.keys(activeUserApp)?.length !== 0
-            ? `${localWallet?.symbol} ${addCommas(
-                Number(localWallet?.balance?.available)?.toFixed(2)
+            ? `${localWallet?.symbol ? localWallet?.symbol : "***"} ${addCommas(
+                localWallet?.balance
+                  ?.available ? Number(localWallet?.balance?.available)
+                  ?.toFixed(2) : "0.00"
               )}`
             : "*** *** ***"}
           {userAppsLoading !== "loading" &&
@@ -165,22 +223,30 @@ export default function Balance({ onBalanceClick }: Props): React.JSX.Element {
         </SemiBoldText>
 
         {!showCamera && (
-          <Pressable onPress={()=> {
-            copyToClipboard(activeUserApp?.referralCode)
-            showToast("Copied successfully", "success")
-            }} style={styles.messageView}>
-            <Copy color={Colors.white} size={20} variant="TwoTone" />
+          <Pressable
+            onPress={() => {
+              copyToClipboard(activeUserApp?.referralCode);
+              showToast("Copied successfully", "success");
+            }}
+            style={styles.messageView}
+          >
             <MediumText
               style={{
-                borderLeftColor: Colors.ash,
-                borderLeftWidth: 1,
-                paddingLeft: 10,
+                color: Colors.white,
+                fontSize: 13 / fontScale,
+              }}
+            >
+              PAY ID:{" "}
+            </MediumText>
+            <MediumText
+              style={{
                 color: Colors.white,
                 fontSize: 13 / fontScale,
               }}
             >
               {activeUserApp?.referralCode}
             </MediumText>
+            <Copy color={Colors.white} size={20} variant="TwoTone" />
           </Pressable>
         )}
         {/* <LightText style={{fontSize: 11 / fontScale, color: Colors.white, textAlign: "center"}}>
@@ -210,5 +276,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
     alignItems: "center",
+    justifyContent: "center",
   },
 });

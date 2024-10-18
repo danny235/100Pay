@@ -397,17 +397,17 @@ export default function Assets({ navigation }: AssetT) {
         buttonText="Generate Wallet"
         onClose={() => {
           setShowError(false);
-          // mutate(
-          //   "createWallet",
-          //   CreateUserWalletMutation,
-          //   {
-          //     symbol: activeSupportedWallet?.symbol,
-          //     appId: activeUserApp?._id,
-          //   },
-          //   {
-          //     "auth-token": token,
-          //   }
-          // );
+          mutate(
+            "createWallet",
+            CreateUserWalletMutation,
+            {
+              symbol: activeSupportedWallet?.symbol,
+              appId: activeUserApp?._id,
+            },
+            {
+              "auth-token": token,
+            }
+          );
         }}
       />
       <Loader

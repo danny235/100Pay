@@ -47,16 +47,28 @@ const AmountInput: React.FC<AmountInputProps> = ({
   }
 
   const handleAmountChange = (text: string) => {
-    // Remove commas and other non-numeric characters
-    const cleanedText = text.replace(/[^0-9.]/g, '');
+    // Remove any character that is not a number or a dot
+    const cleanedText = text.replace(/[^0-9.]/g, "");
 
-    // Format the number with commas
-    const formattedAmount = formatNumberWithCommas(Number(cleanedText));
+    // Ensure only one dot is allowed
+    const parts = cleanedText.split(".");
+    const integerPart = parts[0];
+    const decimalPart = parts[1] || ""; // Keep everything after the first dot
 
-    // Update the Formik field value
-    formikProps.setFieldValue(formikKey, formattedAmount);
+    // Format the integer part with commas
+    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    // Combine formatted integer and decimal part (if exists)
+    const formattedText = decimalPart
+      ? `${formattedInteger}.${decimalPart}`
+      : formattedInteger;
+
+    // Update Formik field value
+    formikProps.setFieldValue(formikKey, cleanedText);
     formikProps.handleChange(formikKey);
   };
+
+
 
   return (
     <FieldWrapper label={label} formikProps={formikProps} formikKey={formikKey}>

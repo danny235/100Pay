@@ -174,7 +174,7 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
       id: 2,
       title: "Withdraw",
       icon: <ExportSquare color={Colors.primary} size={20} />,
-      onPress: () => null,
+      onPress: () => navigation.navigate("SendCrypto"),
     },
 
     {

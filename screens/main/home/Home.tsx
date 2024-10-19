@@ -12,6 +12,7 @@ import {
   Animated,
   Easing,
   StyleSheet,
+  ViewStyle,
 } from "react-native";
 import { Colors } from "../../../components/Colors";
 import {
@@ -21,13 +22,10 @@ import {
 import { RootStackParamList } from "../../../routes/AppStacks";
 import Action from "./Action";
 import Balance from "./Balance";
-import TransactionItem from "./TransactionItem";
-
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import * as Clipboard from "expo-clipboard";
-import { TouchableOpacity, ViewStyle } from "react-native";
 import {
-  Extrapolation,
+
   SharedValue,
   interpolate,
   useAnimatedStyle,
@@ -60,10 +58,7 @@ import {
   fetchPayouts,
 } from "../../../features/account/accountSlice";
 import { ThunkDispatch } from "redux-thunk";
-import { GenerateArray } from "../../../utils";
-import { object } from "yup";
 import TransactionsList from "../../../components/Transactions/TransactionsList";
-import { NavigationProp } from "@react-navigation/native";
 import SwitchBusiness from "./SwitchBusiness/SwitchBusiness";
 import RecieveModal from "./RecieveModal/RecieveModal";
 import PinInputBottomSheet from "../../../components/CustomPin/PinInputBottomSheet";
@@ -361,15 +356,13 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
             shouldRasterizeIOS={true}
             refreshing={refreshing}
             onRefresh={onRefresh}
+            colors={[Colors.primary, Colors.primaryLight]}
           />
         }
       >
-        
-          <CustomCameraImage isVisible={showCamera}>
-            {CameraChildren()}
-          </CustomCameraImage>
-        
-       
+        <CustomCameraImage isVisible={showCamera}>
+          {CameraChildren()}
+        </CustomCameraImage>
 
         <View style={{ paddingHorizontal: 10, flex: 1, gap: 20 }}>
           {beneficiaries?.length !== 0 && <Memojis navigation={navigation} />}

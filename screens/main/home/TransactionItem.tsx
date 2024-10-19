@@ -8,14 +8,8 @@ import {
   MediumText,
   RegularText,
 } from "../../../components/styles/styledComponents";
-import {
-  addCommas,
-  formatDateString,
-  truncateText,
-} from "../../../utils";
-import {
-  RecoveryConvert,
-} from "iconsax-react-native";
+import { addCommas, formatDateString, truncateText } from "../../../utils";
+import { RecoveryConvert } from "iconsax-react-native";
 
 export type TransactionItemT = {
   userId: string;
@@ -77,7 +71,6 @@ export default function TransactionItem({
     return "Transfer";
   };
 
-
   // const renderTransactionLink = () => {
   //   const hash = item.transactionHash?.toLowerCase();
   //   if (hash && !hash.startsWith("convert") && !hash.startsWith("transfer")) {
@@ -126,8 +119,6 @@ export default function TransactionItem({
     }
     return null;
   };
-
-
 
   return (
     <Pressable

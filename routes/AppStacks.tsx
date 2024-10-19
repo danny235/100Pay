@@ -51,6 +51,7 @@ import PersonalInfo from "../screens/authentication/PersonalInfo";
 import { UserAppType } from "../features/user/userSlice";
 import { TransactionItemT } from "../screens/main/home/TransactionItem";
 import { UserWalletT } from "../screens/main/asset/Asset";
+import SendCrypto from "../screens/main/asset/SendCrypto";
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -96,7 +97,12 @@ export type RootStackParamList = {
   SingleCoin: {
     userWallet?: UserWalletT;
   };
-  ConvertAsset: undefined;
+  ConvertAsset: {
+    userWallet?: UserWalletT;
+  };
+  SendCrypto: {
+    userWallet?: UserWalletT;
+  }
   Transactions: undefined;
   TransactionDetail: {
     screen?: string;
@@ -247,6 +253,7 @@ export function AssetStackScreen(): React.JSX.Element {
       <AssetStack.Screen name="SingleCoin" component={SingleCoinViewScreen} />
 
       <AssetStack.Screen name="ConvertAsset" component={ConvertAssetScreen} />
+      <AssetStack.Screen name="SendCrypto" component={SendCrypto} />
     </AssetStack.Navigator>
   );
 }

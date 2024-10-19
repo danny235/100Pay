@@ -61,46 +61,14 @@ import { UserWalletTransactionQuery } from "../../../apis/lib/queries";
 import useGraphQL from "../../../components/hooks/useGraphQL";
 import { TransactionItemT } from "../home/TransactionItem";
 import ActionButton from "../../../components/Button/ActionButton";
+import { getCoinBySymbol } from "../../../functions";
 
 type SingleCoinViewT = {
   navigation: NavigationProp<RootStackParamList>;
   route: RouteProp<RootStackParamList, "SingleCoin">;
 };
 
-const activityHistory = [
-  {
-    id: 1,
-    title: "Received",
-    date: "01 - Feb - 24",
-    time: "2:00pm",
-    amount: "+0.0043BTC",
-    dollarAmount: "$50",
-  },
-  {
-    id: 2,
-    title: "Converted",
-    date: "01 - Feb - 24",
-    time: "2:00pm",
-    amount: "+0.0043BTC",
-    dollarAmount: "$50",
-  },
-  {
-    id: 3,
-    title: "Received",
-    date: "01 - Feb - 24",
-    time: "2:00pm",
-    amount: "+0.0043BTC",
-    dollarAmount: "$50",
-  },
-  {
-    id: 4,
-    title: "Converted",
-    date: "01 - Feb - 24",
-    time: "2:00pm",
-    amount: "+0.0043BTC",
-    dollarAmount: "$50",
-  },
-];
+
 
 export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
   const { fontScale, width } = useWindowDimensions();
@@ -111,6 +79,8 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
   const [showRecieveModal, setShowRecieveModal] = useState(false);
   const { userApps, activeUserApp, userAppsError, userAppsLoading, token } =
     useSelector((state: RootState) => state.user);
+  const { coinPriceList, coinPriceListError, coinPriceListLoading } =
+    useSelector((state: RootState) => state.account);
   const { query, state } = useGraphQL();
   const transactions =
     state?.userWalletTransactions?.data?.userWalletTransactions;
@@ -193,27 +163,27 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
     return null;
   };
 
-   const quickAction = [
-     {
-       id: 1,
-       title: "Deposit",
-       icon: <ImportSquare color={Colors.primary} size={20} />,
-       onPress: () => setShowRecieveModal(true),
-     },
-     {
-       id: 2,
-       title: "Withdraw",
-       icon: <ExportSquare color={Colors.primary} size={20} />,
-       onPress: () => null,
-     },
+  const quickAction = [
+    {
+      id: 1,
+      title: "Deposit",
+      icon: <ImportSquare color={Colors.primary} size={20} />,
+      onPress: () => setShowRecieveModal(true),
+    },
+    {
+      id: 2,
+      title: "Withdraw",
+      icon: <ExportSquare color={Colors.primary} size={20} />,
+      onPress: () => null,
+    },
 
-     {
-       id: 3,
-       title: "Convert",
-       icon: <Convertshape color={Colors.primary} size={20} />,
-       onPress: () => navigation.navigate("ConvertAsset"),
-     },
-   ];
+    {
+      id: 3,
+      title: "Convert",
+      icon: <Convertshape color={Colors.primary} size={20} />,
+      onPress: () => navigation.navigate("ConvertAsset"),
+    },
+  ];
 
   useEffect(() => {
     if (state?.userWalletTransactions?.loading) return;
@@ -268,7 +238,15 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
           <LightText
             style={{ fontSize: 14 / fontScale, color: Colors.grayText }}
           >
-            ≈ $0.00
+            ≈{" "}
+            {coinPriceList
+              ? addCommas(
+                  (
+                    getCoinBySymbol(coinPriceList, userWallet?.symbol)?.price *
+                    Number(userWallet?.balance?.available)
+                  ).toFixed(2)
+                )
+              : "0.00"}
           </LightText>
         </View>
 
@@ -329,9 +307,9 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
         </View>
       </View>
       <ScrollView
-        style={{  flex: 1 }}
+        style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flex: 1 }}
+        contentContainerStyle={{  paddingBottom: 20 }}
       >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
           <Clock size={25} color={Colors.primary} />
@@ -347,7 +325,7 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
           </SemiBoldText>
         </View>
 
-        <View style={{ gap: 10, marginVertical: 20 }}>
+        <View style={{ gap: 10, marginVertical: 20, flex: 1 }}>
           <View className=" items-center justify-center">
             {state?.userWalletTransactions?.loading && (
               <ActivityIndicator size={30} color={Colors.primary} />
@@ -404,7 +382,7 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
                     <MediumText
                       style={{ fontSize: 15 / fontScale, textAlign: "right" }}
                     >
-                      {transaction.amount}
+                      {addCommas(Number(transaction.amount).toFixed(2))}
                     </MediumText>
                     <LightText
                       style={{
@@ -415,14 +393,21 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
                         textAlign: "right",
                       }}
                     >
-                      ≈ {0.0}
+                      ≈{" "}
+                      {coinPriceList
+                        ? addCommas(
+                            (
+                              getCoinBySymbol(coinPriceList, userWallet?.symbol)
+                                ?.price * Number(transaction.amount)
+                            ).toFixed(2)
+                          )
+                        : "0.00"}
                     </LightText>
                   </View>
                 </Pressable>
               );
             })}
         </View>
-
       </ScrollView>
       <View className=" flex-row flex-wrap space-x-5 justify-between px-2 pb-10">
         {quickAction.map((action) => (
@@ -458,13 +443,13 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
         enableHandlePanningGesture={false}
       >
         <BottomSheetScrollView
-         
           showsVerticalScrollIndicator={false}
+          style={{flex: 1}}
           contentContainerStyle={{
             paddingHorizontal: 20,
             paddingVertical: 10,
             gap: 20,
-            flex: 1,
+            
           }}
         >
           <View style={{ flexDirection: "row", gap: 10 }}>

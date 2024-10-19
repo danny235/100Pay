@@ -17,7 +17,7 @@ export default function CustomView({ children, style }: CustomViewProps) {
         {
           paddingTop: insets.top,
           paddingHorizontal: 20,
-          flex: 2,
+          flex: 1,
           backgroundColor: Colors.white,
           position: "relative",
         },

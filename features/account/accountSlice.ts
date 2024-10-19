@@ -8,6 +8,7 @@ import { getBankRequest, GetBankT } from "../../apis/createbank";
 import { getPaymentLinks } from "../../apis/createpaymentlink";
 import { getPayouts } from "../../apis/payout";
 import { BenefeciariesT, getBeneficiaries } from "../../apis/beneficiaries";
+import axios from "axios";
 type PayoutsT = {
   appId?: string | any;
   token: string | any;
@@ -16,6 +17,9 @@ type PayoutsT = {
 type GetBeneficiaries = {
   token?: string;
 }
+
+const API_URL = "https://cmc-rates-production.up.railway.app/api/prices";
+const API_KEY = "d5cb7751ce468fd24a592199890f148cb82c9803";
 
 export const fetchPayments = createAsyncThunk(
   "user/fetchPayments",
@@ -62,6 +66,24 @@ export const fetchBeneficiaries = createAsyncThunk(
   async (token:string) => {
     const response = await getBeneficiaries({ token });
     return response;
+  }
+);
+
+
+
+// Create the async thunk for fetching crypto prices
+export const fetchCryptoPrices = createAsyncThunk(
+  'user/fetchCryptoPrices',
+  async (_, { rejectWithValue }) => {
+   
+      const response = await axios.get(API_URL, {
+        headers: {
+          accept: "application/json",
+          "x-api-key": API_KEY,
+        },
+      });
+      return response.data; // Return the data if the request is successful
+
   }
 );
 
@@ -197,6 +219,16 @@ type PaymentLinkType = {
   _id: string;
 };
 
+export type CoinType = {
+  _id: string;
+  symbol: string;
+  __v: number;
+  last_updated: string;
+  margin: number;
+  price: number;
+  updated_price: number;
+};
+
 type AccountType = {
   charges: ChargeType[] | null;
   chargesLoading: string;
@@ -220,7 +252,10 @@ type AccountType = {
   showFaceAccounts: boolean;
   faceAccounts: [];
   showBookAccounts: boolean;
-  bookAccounts: []
+  bookAccounts: [];
+  coinPriceList: CoinType[];
+  coinPriceListLoading: string;
+  coinPriceListError: string;
 };
 
 const initialState: AccountType = {
@@ -246,7 +281,10 @@ const initialState: AccountType = {
   showBookAccounts: false,
   bookAccounts: [],
   showFaceAccounts: false,
-  faceAccounts: []
+  faceAccounts: [],
+  coinPriceList: [],
+  coinPriceListLoading: "idle",
+  coinPriceListError: ""
 };
 
 export const accountSlice = createSlice({
@@ -367,7 +405,7 @@ export const accountSlice = createSlice({
 
     builder.addCase(fetchBeneficiaries.fulfilled, (state, action) => {
       state.beneficiariesLoading = "success";
-      state.beneficiaries = action.payload.slice().reverse();
+      state.beneficiaries = action.payload.filter((ben: BenefeciariesT)=> ben.bank_name  === "100Pay");
     });
 
     builder.addCase(fetchBeneficiaries.rejected, (state, action) => {
@@ -376,6 +414,26 @@ export const accountSlice = createSlice({
     });
 
     /*-----------*/
+
+
+    /*---------- Get Coin Prices -----------*/ 
+      builder.addCase(fetchCryptoPrices.pending, (state)=> {
+        state.coinPriceListLoading = "loading"
+      })
+
+      builder.addCase(fetchCryptoPrices.fulfilled, (state, action)=> {
+        state.coinPriceListLoading = "success";
+        state.coinPriceList = action.payload;
+        state.coinPriceListError = ""
+      })
+
+      builder.addCase(fetchCryptoPrices.rejected, (state, action)=> {
+        state.coinPriceListLoading = "rejected";
+        state.coinPriceListError = action.error.message
+        console.log(action.error)
+        
+      })
+    /*-------------*/ 
   },
 });
 

@@ -3,6 +3,7 @@ import {
   Image,
   Platform,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -32,11 +33,14 @@ import {
   UserWalletsQuery,
 } from "../../../apis/lib/queries";
 import Loader from "../../../components/Loader/LogoLoader";
-import { addCommas } from "../../../utils";
+import { addCommas, generateUniqueRandomId } from "../../../utils";
 import AlertModal from "../../../components/Alert/AlertModal";
 import { Refresh, Warning2 } from "iconsax-react-native";
 import { CreateUserWalletMutation } from "../../../apis/lib/mutations";
 import { useToast } from "../../../components/CustomToast/ToastContext";
+import { ThunkDispatch } from "redux-thunk";
+import { CoinType, fetchCryptoPrices } from "../../../features/account/accountSlice";
+import { getCoinBySymbol } from "../../../functions";
 
 type AssetT = {
   navigation: NavigationProp<RootStackParamList>;
@@ -78,13 +82,18 @@ export default function Assets({ navigation }: AssetT) {
   const { activeUserApp, userAppsError, userAppsLoading, token } = useSelector(
     (state: RootState) => state.user
   );
+  const { coinPriceList, coinPriceListError, coinPriceListLoading } = useSelector(
+    (state: RootState) => state.account
+  );
   const [activeSupportedWallet, setActiveSupportedWallet] =
     useState<SupportedWalletT>(null);
   const [showError, setShowError] = useState(false);
+  const [refreshing, setRefreshing] = useState(false)
   const { mutate, query, state } = useGraphQL();
   const userWallets = state?.userWallets;
   const supportedWallets = state?.supportedWallets;
   const { showToast } = useToast();
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>()
 
   // Filter out non-crypto wallets (those without an account address)
  const cryptoUserWallets = userWallets?.data?.userWallet?.filter(
@@ -122,14 +131,18 @@ export default function Assets({ navigation }: AssetT) {
 
   useEffect(() => {
     fetchWallets();
+    dispatch(fetchCryptoPrices())
   }, [activeUserApp?._id]);
 
   useEffect(() => {
     if (!userWallets?.loading) return
+    if(coinPriceListLoading === "loading") return
+    showToast(coinPriceListError, "error")
   }, [
     userWallets?.loading,
     supportedWallets?.loading,
     state?.createWallet?.loading,
+    coinPriceListLoading
   ]);
 
   useEffect(() => {
@@ -168,6 +181,17 @@ export default function Assets({ navigation }: AssetT) {
     }
   }, [state?.createWallet?.loading]);
 
+    const onRefresh = React.useCallback(() => {
+      setTimeout(() => {
+        setRefreshing(false);
+        fetchWallets();
+        dispatch(fetchCryptoPrices());
+        
+      }, 1000);
+    }, []);
+
+  
+
   return (
     <CustomView>
       <View
@@ -190,7 +214,17 @@ export default function Assets({ navigation }: AssetT) {
           Assets
         </BoldText>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            shouldRasterizeIOS={true}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[Colors.primary, Colors.primaryLight]}
+          />
+        }
+        showsVerticalScrollIndicator={false}
+      >
         <View
           style={{
             marginVertical: 20,
@@ -207,7 +241,10 @@ export default function Assets({ navigation }: AssetT) {
                     navigation.navigate("SingleCoin", {
                       userWallet: crypto,
                     })
-                  } style={styles.coinView} key={crypto.id}>
+                  }
+                  style={styles.coinView}
+                  key={crypto.name}
+                >
                   <View
                     style={{
                       flexDirection: "row",
@@ -234,7 +271,11 @@ export default function Assets({ navigation }: AssetT) {
                   <LightText
                     style={{ fontSize: 12 / fontScale, color: Colors.grayText }}
                   >
-                    ≈ ${0}.00
+                    ≈ $
+                    {coinPriceList
+                      ? addCommas((getCoinBySymbol(coinPriceList, crypto.symbol)?.price *
+                        Number(crypto.balance.available)).toFixed(2))
+                      : "0.00"}
                   </LightText>
                 </Pressable>
               );
@@ -345,7 +386,15 @@ export default function Assets({ navigation }: AssetT) {
                         color: Colors.grayText,
                       }}
                     >
-                      ≈ ${0}.00
+                      ≈ $
+                      {coinPriceList
+                        ? addCommas(
+                            (
+                              getCoinBySymbol(coinPriceList, crypto.symbol)
+                                ?.price * Number(crypto.balance.available)
+                            ).toFixed(2)
+                          )
+                        : "0.00"}
                     </LightText>
                   </View>
                 </Pressable>
@@ -366,7 +415,7 @@ export default function Assets({ navigation }: AssetT) {
                     setShowError(true);
                   }}
                   style={styles.singleCoin}
-                  key={crypto.id}
+                  key={generateUniqueRandomId()}
                 >
                   <View
                     style={{

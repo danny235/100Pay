@@ -11,6 +11,7 @@ import styled from 'styled-components/native';
 import {Colors} from '../Colors';
 import {MediumText, RegularText} from '../styles/styledComponents';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { Platform } from 'react-native';
 
 interface AmountInputProps extends TextInputProps {
   label: string;
@@ -19,14 +20,17 @@ interface AmountInputProps extends TextInputProps {
   onChangeText?: (text: string) => void;
 }
 
-const StyledInput = styled.TextInput<{error?: boolean}>`
+const StyledInput = styled.TextInput<{ error?: boolean }>`
   border-radius: 7px;
   width: 100%;
   padding: 13px;
-  font-family: SpaceGrotesk-Medium;
+  font-family: ${Platform.OS === "ios"
+    ? "SpaceGrotesk-Medium"
+    : "SpaceGroteskMedium"};
   font-size: 15px;
-  border: 1px solid ${({error}) => (error ? 'red' : Colors.ash)};
+  border: 1px solid ${({ error }) => (error ? "red" : Colors.ash)};
   background-color: ${Colors.white};
+  color: ${Colors.balanceBlack};
 `;
 
 const formatNumberWithCommas = (number: number) => {

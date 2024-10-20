@@ -1,4 +1,4 @@
-import { View, Text, useWindowDimensions, Pressable } from "react-native";
+import { View, Text, useWindowDimensions, Pressable, Image } from "react-native";
 import React from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -7,48 +7,78 @@ import { Button } from "../../../components/Button/Button";
 import { MediumText } from "../../../components/styles/styledComponents";
 import { Colors } from "../../../components/Colors";
 import AmountInput from "../../../components/Input/AmountInput";
+import InputView from "../../../components/Input/InputView";
+import { UserWalletT } from "./Asset";
+import { PayT } from "./SendCrypto";
+import { addCommas } from "../../../utils";
+import { useToast } from "../../../components/CustomToast/ToastContext";
 
 const SendSchema = yup.object().shape({
-  coin: yup.string().required().label("Coin"),
+
   payId: yup.string().required().label("Pay ID"),
   amount: yup.string().required().label("Amount"),
 });
-export default function SendWPayID() {
+
+type SendWPayT = {
+  activeCoin: UserWalletT;
+  fee: string;
+  onSubmit: (val: PayT) => void;
+  onCoinPress?: () => void;
+  onNetworkPress?: () => void;
+};
+
+export default function SendWPayID({
+  activeCoin,
+  fee,
+  onSubmit,
+  onCoinPress,
+  onNetworkPress,
+}: SendWPayT) {
   const { fontScale } = useWindowDimensions();
+  const { showToast } = useToast();
   const formikProps = useFormik({
     initialValues: {
-      coin: "Pay",
-      payID: "",
-      network: "Bep20",
+      payId: "",
       amount: "0.00",
     },
     validationSchema: SendSchema,
     onSubmit: (values, action) => {
-      console.log(values);
+       
+      if (Number(values.amount) === 0) {
+        showToast("Amount must be greater than zero", "error");
+      } else {
+        onSubmit({
+          payId: values.payId,
+          amount: values.amount,
+        });
+      }
     },
   });
   return (
     <View className=" px-2 mt-3 flex-1">
       <View className=" flex-1 mb-auto">
-        <Pressable>
-          <Input
-            formikKey="coin"
-            formikProps={formikProps}
-            label="Coin"
-            editable={false}
-            value={formikProps.values.coin}
-          />
-        </Pressable>
+        <InputView
+          label="Coin"
+          value={activeCoin ? activeCoin?.symbol : "---"}
+          icon={
+            <Image
+              source={{ uri: activeCoin?.logo }}
+              style={{ width: 27, height: 27, borderRadius: 27 }}
+            />
+          }
+          onPress={() => null}
+        />
         <View>
           <Input
             formikKey="payId"
             formikProps={formikProps}
-            label="Address"
-            value={formikProps.values.payID}
+            label="Pay ID"
+            value={formikProps.values.payId}
             placeholder="Input or press and hold to paste the pay id"
+            maxLength={6}
           />
         </View>
-       
+
         <AmountInput
           formikKey="amount"
           formikProps={formikProps}
@@ -63,7 +93,10 @@ export default function SendWPayID() {
         <MediumText
           style={{ fontSize: 15 / fontScale, color: Colors.grayText }}
         >
-          Withdrawal Fees:
+          Withdrawal Fees:{" "}
+          {fee
+            ? `${addCommas(Number(fee).toFixed(2))} ${activeCoin?.symbol}`
+            : "0.00"}
         </MediumText>
         <Button
           onPress={formikProps.handleSubmit as any}

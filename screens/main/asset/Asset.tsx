@@ -46,7 +46,7 @@ type AssetT = {
   navigation: NavigationProp<RootStackParamList>;
 };
 
-type SupportedWalletT = {
+export type SupportedWalletT = {
   name: string;
   symbol: string;
   logo: string;
@@ -136,6 +136,7 @@ export default function Assets({ navigation }: AssetT) {
 
   useEffect(() => {
     if (!userWallets?.loading) return
+    
     if(coinPriceListLoading === "loading") return
     showToast(coinPriceListError, "error")
   }, [
@@ -144,6 +145,8 @@ export default function Assets({ navigation }: AssetT) {
     state?.createWallet?.loading,
     coinPriceListLoading
   ]);
+  
+  
 
   useEffect(() => {
     if (!state?.createWallet?.loading) {
@@ -185,7 +188,7 @@ export default function Assets({ navigation }: AssetT) {
       setTimeout(() => {
         setRefreshing(false);
         fetchWallets();
-        dispatch(fetchCryptoPrices());
+        dispatch(fetchCryptoPrices())
         
       }, 1000);
     }, []);

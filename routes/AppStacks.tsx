@@ -98,10 +98,10 @@ export type RootStackParamList = {
     userWallet?: UserWalletT;
   };
   ConvertAsset: {
-    userWallet?: UserWalletT;
+    symbol?: string;
   };
   SendCrypto: {
-    userWallet?: UserWalletT;
+    symbol?: string;
   }
   Transactions: undefined;
   TransactionDetail: {

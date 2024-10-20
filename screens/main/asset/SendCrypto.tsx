@@ -48,7 +48,7 @@ export default function SendCrypto({ navigation, route }: SendCryptoT) {
   const [selectedTab, setSelectedTab] = useState<"External" | "Internal">(
     "External"
   );
-  const {showToast}  = useToast()
+  const { showToast } = useToast();
   const { symbol } = route.params as {
     symbol: string;
   };
@@ -98,44 +98,52 @@ export default function SendCrypto({ navigation, route }: SendCryptoT) {
   };
 
   const handleExternalTransfer = (pin: string) => {
-    
-    post(
-      "externalTransfer",
-      "/user/transfer-asset",
-      {
-        amount: Number(cryptoForm.amount),
-        symbol: activeCoin?.symbol,
-        appId: activeUserApp?._id,
-        to: cryptoForm?.walletAddress,
-        transactionPin: pin,
-      },
-      {
-        headers: {
-          "auth-token": token,
+    const total = Number(cryptoForm.amount) + Number(currentFee.fee.transfer);
+    if (total > Number(activeCoin?.balance?.available)) {
+      showToast("Not enough balance please topup 😢", "error");
+    } else {
+      post(
+        "externalTransfer",
+        "/user/transfer-asset",
+        {
+          amount: total,
+          symbol: activeCoin?.symbol,
+          appId: activeUserApp?._id,
+          to: cryptoForm?.walletAddress,
+          transactionPin: pin,
         },
-      }
-    );
+        {
+          headers: {
+            "auth-token": token,
+          },
+        }
+      );
+    }
   };
 
   const handleInternalTransfer = (pin: string) => {
-    
-    post(
-      "internalTransfer",
-      "/user/transfer-asset",
-      {
-        amount: Number(payForm.amount),
-        symbol: activeCoin?.symbol,
-        appId: activeUserApp?._id,
-        to: payForm.payId,
-        transactionPin: pin,
-        transferType: "internal",
-      },
-      {
-        headers: {
-          "auth-token": token,
+    const total = Number(cryptoForm.amount);
+    if (total > Number(activeCoin?.balance?.available)) {
+      showToast("Not enough balance please topup 😢", "error");
+    } else {
+      post(
+        "internalTransfer",
+        "/user/transfer-asset",
+        {
+          amount: Number(payForm.amount),
+          symbol: activeCoin?.symbol,
+          appId: activeUserApp?._id,
+          to: payForm.payId,
+          transactionPin: pin,
+          transferType: "internal",
         },
-      }
-    );
+        {
+          headers: {
+            "auth-token": token,
+          },
+        }
+      );
+    }
   };
 
   useEffect(() => {
@@ -160,7 +168,6 @@ export default function SendCrypto({ navigation, route }: SendCryptoT) {
 
   useEffect(() => {
     if (!transferAsset?.externalTransfer?.loading) {
-    
       if (transferAsset?.externalTransfer?.data) {
         showToast("Transfer successful", "success");
         navigation.reset({
@@ -169,7 +176,8 @@ export default function SendCrypto({ navigation, route }: SendCryptoT) {
         });
       }
       if (transferAsset?.externalTransfer?.error?.message) {
-        const errorResponse = transferAsset?.externalTransfer?.error?.response?.data;
+        const errorResponse =
+          transferAsset?.externalTransfer?.error?.response?.data;
         console.log(errorResponse);
         if (errorResponse) {
           showToast(`${errorResponse}`, "error");
@@ -191,14 +199,16 @@ export default function SendCrypto({ navigation, route }: SendCryptoT) {
           }
         } else {
           // Fallback to the generic error message if no specific response data
-          showToast(`${transferAsset?.externalTransfer?.error?.message}`, "error");
+          showToast(
+            `${transferAsset?.externalTransfer?.error?.message}`,
+            "error"
+          );
         }
       }
     }
   }, [transferAsset?.externalTransfer?.loading]);
   useEffect(() => {
     if (!transferAsset?.internalTransfer?.loading) {
-    
       if (transferAsset?.internalTransfer?.data) {
         showToast("Transfer successful", "success");
         navigation.reset({
@@ -207,7 +217,8 @@ export default function SendCrypto({ navigation, route }: SendCryptoT) {
         });
       }
       if (transferAsset?.internalTransfer?.error?.message) {
-        const errorResponse = transferAsset?.internalTransfer?.error?.response?.data;
+        const errorResponse =
+          transferAsset?.internalTransfer?.error?.response?.data;
         console.log(errorResponse);
         if (errorResponse) {
           showToast(`${errorResponse}`, "error");
@@ -229,7 +240,10 @@ export default function SendCrypto({ navigation, route }: SendCryptoT) {
           }
         } else {
           // Fallback to the generic error message if no specific response data
-          showToast(`${transferAsset?.internalTransfer?.error?.message}`, "error");
+          showToast(
+            `${transferAsset?.internalTransfer?.error?.message}`,
+            "error"
+          );
         }
       }
     }

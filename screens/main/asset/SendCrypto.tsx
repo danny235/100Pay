@@ -122,7 +122,7 @@ export default function SendCrypto({ navigation, route }: SendCryptoT) {
   };
 
   const handleInternalTransfer = (pin: string) => {
-    const total = Number(cryptoForm.amount);
+    const total = Number(payForm.amount);
     if (total > Number(activeCoin?.balance?.available)) {
       showToast("Not enough balance please topup 😢", "error");
     } else {

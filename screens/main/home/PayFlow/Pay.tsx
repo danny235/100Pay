@@ -206,13 +206,13 @@ export default function PayHome({ navigation }: PayHomeT) {
           >
             <TextInput
               value={accountNum}
-              placeholder="Enter recipient bank or ID here"
+              placeholder="Enter recipient pay id here"
               autoCapitalize="none"
               keyboardType="default"
               placeholderTextColor={Colors.grayText}
               onChangeText={(text) => setAccountNum(text)}
               style={[styles.searchInputField, { fontSize: 15 / fontScale }]}
-              maxLength={10}
+              maxLength={6}
             />
 
             <Pressable
@@ -252,7 +252,7 @@ export default function PayHome({ navigation }: PayHomeT) {
                       fontSize: 17 / fontScale,
                     }}
                   >
-                    {payIdDetails.app_name}
+                    {payIdDetails?.app_name}
                   </MediumText>
                 </View>
               </Pressable>

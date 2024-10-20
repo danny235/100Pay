@@ -45,12 +45,14 @@ export const validatePayId = async (payId: string, token: any) => {
       "Content-Type": "application/json",
       "Auth-Token": token,
     },
-    
+    data: {
+      payId,
+    },
   };
 
   try {
     const res = await axios(
-      `https://api.100pay.co/api/v1/user/verifypayid?payid=${payId}`,
+      `https://api.100pay.co/api/v1/user/validate-payid`,
       config
     );
 

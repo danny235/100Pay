@@ -39,7 +39,7 @@ export default function SendWPayID({
   const formikProps = useFormik({
     initialValues: {
       payId: "",
-      amount: "0.00",
+      amount: "",
     },
     validationSchema: SendSchema,
     onSubmit: (values, action) => {
@@ -74,7 +74,7 @@ export default function SendWPayID({
             formikProps={formikProps}
             label="Pay ID"
             value={formikProps.values.payId}
-            placeholder="Input or press and hold to paste the pay id"
+            placeholder="Input or press and hold to paste id"
             maxLength={6}
           />
         </View>

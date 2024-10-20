@@ -42,7 +42,7 @@ export interface LocalWalletI {
     available: string; // Available balance as a string
     locked: string; // Locked balance as a string
   };
-  walletType: "local"; // walletType is a specific string "local"
+  walletType: string; // walletType is a specific string "local"
   accountType: string; // accountType can be any string
   id: string; // Unique identifier
 }

@@ -126,6 +126,12 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
   const [showPinSheet, setShowPinSheet] = useState(false);
   const [paying, setPaying] = useState(false);
   const { post, state: payIdState } = useAxios();
+    const { query, state } = useGraphQL();
+    const userWalletState = state?.userWallets;
+    const localWallet: LocalWalletI | undefined =
+      userWalletState?.data?.userWallet?.find(
+        (wallet: LocalWalletI) => wallet.symbol === "PAY"
+      );
   const handlePayPayment = async (pin) => {
     setPin(pin);
     setPaying(true);
@@ -147,34 +153,32 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
         },
       }
     );
-
-    // try {
-    //   const data = {
-    //     amount: Number(inputValue),
-    //     app_id: activeUserApp?._id,
-    //     destination_wallet: "bank_account",
-    //     pin,
-    //     description: "payment",
-    //     account: {
-    //       account_number: bankDetails.account_number,
-    //       account_name: bankDetails.account_name,
-    //       bankCode: bank.code,
-    //       bank_name: bank.name,
-    //     },
-    //   };
-    //   const res = await bankTransfer(data, token);
-    //   if (res.data) {
-    //     showToast(res.message, "success");
-    //     navigation.reset({
-    //       index: 0,
-    //       routes: [{ name: "Home" }],
-    //     });
-    //   }
-    // } catch (err) {
-    //   setPaying(false);
-    //   showToast(err.message, "error");
-    // }
   };
+
+   const handleInternalTransfer = (pin: string) => {
+     const total = Number(inputValue);
+     if (total > Number(localWallet?.balance?.available)) {
+       showToast("Not enough balance please topup 😢", "error");
+     } else {
+       post(
+         "internalTransfer",
+         "/user/transfer-asset",
+         {
+           amount: Number(inputValue),
+           symbol: localWallet?.symbol,
+           appId: activeUserApp?._id,
+           to: pay?.referralCode,
+           transactionPin: pin,
+           transferType: "internal",
+         },
+         {
+           headers: {
+             "auth-token": token,
+           },
+         }
+       );
+     }
+   };
 
   useEffect(() => {
     if (!payIdState?.payIdPayment?.loading) {
@@ -250,12 +254,7 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
     setFilteredCoins(filtered); // Update filtered banks state
   };
 
-  const { query, state } = useGraphQL();
-  const userWalletState = state?.userWallets;
-  const localWallet: LocalWalletI | undefined =
-    userWalletState?.data?.userWallet?.find(
-      (wallet: LocalWalletI) => wallet.walletType === "local"
-    );
+
 
   useEffect(() => {
     query(
@@ -334,6 +333,48 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
     setShowSwithBalanceModal(true);
   };
 
+    useEffect(() => {
+      if (!payIdState?.internalTransfer?.loading) {
+        if (payIdState?.internalTransfer?.data) {
+          showToast("Transfer successful", "success");
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Home" }],
+          });
+        }
+        if (payIdState?.internalTransfer?.error?.message) {
+          const errorResponse =
+            payIdState?.internalTransfer?.error?.response?.data;
+          console.log(errorResponse);
+          if (errorResponse) {
+            showToast(`${errorResponse}`, "error");
+            // Display field-specific errors (email, username, etc.)
+            if (errorResponse.message) {
+              showToast(`${errorResponse.message}`, "error");
+            }
+            const errorData = errorResponse.data;
+            if (errorData) {
+              // Iterate over error fields to display each message
+              Object.keys(errorData).forEach((field) => {
+                const fieldErrors = errorData[field];
+                if (Array.isArray(fieldErrors)) {
+                  fieldErrors.forEach((error) => {
+                    showToast(`${error}`, "error");
+                  });
+                }
+              });
+            }
+          } else {
+            // Fallback to the generic error message if no specific response data
+            showToast(
+              `${payIdState?.internalTransfer?.error?.message}`,
+              "error"
+            );
+          }
+        }
+      }
+    }, [payIdState?.internalTransfer?.loading]);
+
   return (
     <CustomView>
       <CustomHeader
@@ -379,7 +420,7 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
                 paddingHorizontal: 5,
               }}
             >
-              Pay with
+              Balance
             </LightText>
             <BoldText style={{ fontSize: 15 / fontScale }}>
               {!userWalletState?.loading &&
@@ -742,10 +783,10 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
         subTxt="Enter your transaction pin to continue payment"
         isVisible={showPinSheet}
         onClose={setShowPinSheet}
-        onSubmit={bankDetails ? handleBankPayment : handlePayPayment}
+        onSubmit={bankDetails ? handleBankPayment : handleInternalTransfer}
       />
 
-      <Loader visible={paying} />
+      <Loader visible={paying || payIdState?.internalTransfer?.loading === true} />
     </CustomView>
   );
 }

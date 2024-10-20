@@ -26,7 +26,7 @@ import { RootState } from "../../../app/store";
 import { useSelector } from "react-redux";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../../routes/AppStacks";
-import { generateUniqueRandomId, truncateText } from "../../../utils";
+import { generateUniqueRandomId, getFirstName, truncateText } from "../../../utils";
 
 interface User {
   id: number;
@@ -55,6 +55,7 @@ const Memojis = ({ navigation }: MemojiT) => {
   const { beneficiaries, beneficiariesError, beneficiariesLoading } =
     useSelector((state: RootState) => state.account);
   const { fontScale } = useWindowDimensions();
+  console.log(beneficiaries)
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -69,39 +70,33 @@ const Memojis = ({ navigation }: MemojiT) => {
         </View>
       ) : (
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {beneficiaries && [...beneficiaries]?.reverse().map((user, i) => (
-            <Pressable
-              className=" space-y-3"
-              onPress={() =>
-                navigation.navigate("SendPayment", {
-                  bankDetails: {
-                    account_name: user?.account_name,
-                    account_number: user?.account_number,
-                    bank_id: user?._id,
-                  },
-                  bank: {
-                    name: user?.bank_name,
-                    code: user?.bank_code,
-                  },
-                })
-              }
-              key={generateUniqueRandomId()}
-              style={styles.userContainer}
-            >
-              <View style={styles.initialAvatar}>
-                <SemiBoldText
-                  style={{ fontSize: 10 / fontScale, color: Colors.white }}
-                >
-                  {truncateText(user?.bank_name, 4)}
-                </SemiBoldText>
-              </View>
-              <MediumText
-                style={[styles.username, { color: Colors.grayText }]}
+          {beneficiaries &&
+            [...beneficiaries]?.reverse().map((user, i) => (
+              <Pressable
+                className=" space-y-3"
+                onPress={() =>
+                  navigation.navigate("SendPayment", {
+                    pay: user?.account_number,
+                  })
+                }
+                key={generateUniqueRandomId()}
+                style={styles.userContainer}
               >
-                {truncateText(user?.account_name, 9)}
-              </MediumText>
-            </Pressable>
-          ))}
+                <View style={styles.initialAvatar}>
+                  <SemiBoldText
+                    style={{ fontSize: 15 / fontScale, color: Colors.white }}
+                  >
+                    {getInitials(user?.account_name)}
+                  </SemiBoldText>
+                </View>
+
+                <MediumText
+                  style={[styles.username, { color: Colors.grayText }]}
+                >
+                  {truncateText(user?.account_name, 9)}
+                </MediumText>
+              </Pressable>
+            ))}
         </ScrollView>
       )}
     </View>
@@ -150,7 +145,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 50,
-    padding: 20,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: Colors.primary,

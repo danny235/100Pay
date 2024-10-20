@@ -167,7 +167,7 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
            amount: Number(inputValue),
            symbol: localWallet?.symbol,
            appId: activeUserApp?._id,
-           to: pay?.referralCode,
+           to: pay?.referralCode ? pay?.referralCode : pay,
            transactionPin: pin,
            transferType: "internal",
          },

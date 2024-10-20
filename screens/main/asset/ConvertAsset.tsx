@@ -88,6 +88,7 @@ export default function ConvertAsset({ navigation, route }: ConvertAssetT) {
     }
   };
 
+
   const handleBackspace = () => {
     setInputValue((prevValue) => prevValue.slice(0, -1));
   };

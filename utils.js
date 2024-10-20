@@ -219,3 +219,10 @@ export function createSlug(str) {
     .replace(/[\s\W-]+/g, "-") // Replace spaces, non-word characters, and dashes with a single dash
     .replace(/^-+|-+$/g, ""); // Remove any leading or trailing dashes
 }
+
+export const getInitials = (name) => {
+  return name
+    .split(" ")
+    .map((word) => word[0].toUpperCase())
+    .join("");
+};

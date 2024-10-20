@@ -8,7 +8,7 @@ import CustomHeader from '../../../../components/headers/CustomHeaders';
 import { ArrowRightIcon, CopyIcon, PayIcon, TickCircleIcon } from '../../../../components/SvgAssets';
 import { BoldText, LightText, MediumText } from '../../../../components/styles/styledComponents';
 import { Colors } from '../../../../components/Colors';
-import { addCommas, truncateText } from '../../../../utils';
+import { addCommas, copyToClipboard, truncateText } from '../../../../utils';
 import { Pressable } from 'react-native';
 import UserAvatar from '../../../../assets/images/DashboardEmojis/Avatar-a.png';
 import { Clock } from 'iconsax-react-native';
@@ -143,13 +143,14 @@ export default function TransactionDetail({navigation, route}: TransactionsT) {
             ]}
           >
             <LightText style={[{ fontSize: 13 / fontScale }]}>
-              Payment Ref Code:
+              Reference:
             </LightText>
             <Pressable
+              onPress={() => copyToClipboard(detail?.transactionHash)}
               style={{ flexDirection: "row", gap: 5, alignItems: "center" }}
             >
               <BoldText style={[{ fontSize: 13 / fontScale }]}>
-                {truncateText(detail?.transactionHash)}
+                {truncateText(detail?.transactionHash, 20)}
               </BoldText>
 
               <CopyIcon />

@@ -27,7 +27,7 @@ type CurrencyConversionParams = {
   toPrice: number; // Price of the currency you're converting to
 };
 
-function convertCurrency({
+export function convertCurrency({
   amount,
   fromPrice,
   toPrice,

@@ -17,7 +17,15 @@ import React, {
 } from "react";
 import CustomView from "../../../components/Views/CustomView";
 import CustomHeader from "../../../components/headers/CustomHeaders";
-import { RecoveryConvert, TickCircle, WalletMoney } from "iconsax-react-native";
+import {
+  ArrowDown,
+  ArrowDown2,
+  ArrowDown3,
+  ArrowSquareDown,
+  RecoveryConvert,
+  TickCircle,
+  WalletMoney,
+} from "iconsax-react-native";
 import { Colors } from "../../../components/Colors";
 import { NavigationProp, RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../../routes/AppStacks";
@@ -40,6 +48,18 @@ import {
 import { CustomBackdrop } from "../../../components/ChooseAccountBalance/ChooseAccountBalance";
 import AlertModal from "../../../components/Alert/AlertModal";
 import { useToast } from "../../../components/CustomToast/ToastContext";
+import Loader from "../../../components/Loader/LogoLoader";
+import PinInputBottomSheet from "../../../components/CustomPin/PinInputBottomSheet";
+import { RootState } from "../../../app/store";
+import { useSelector } from "react-redux";
+import useGraphQL from "../../../components/hooks/useGraphQL";
+import useAxios from "../../../components/hooks/useAxios";
+import { UserWalletT } from "./Asset";
+import { UserWalletsQuery } from "../../../apis/lib/queries";
+import BottomSheetModalComponent from "../../../components/BottomSheetModal/BottomSheetModalComponent";
+import { addCommas } from "../../../utils";
+import { convertCurrency } from "../../../functions";
+import { CoinType } from "../../../features/account/accountSlice";
 
 type ConvertAssetT = {
   navigation: NavigationProp<RootStackParamList>;
@@ -50,12 +70,37 @@ export default function ConvertAsset({ navigation, route }: ConvertAssetT) {
   const [convertFrom, setConvertFrom] = useState("");
   const [convertTo, setConvertTo] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [showPinSheet, setShowPinSheet] = useState(false);
+  const [activeCoin, setActiveCoin] = useState<UserWalletT>(null);
+  const [convertFromAsset, setConvertFromAsset] = useState<UserWalletT>(null);
+  const [showAssets, setShowAssets] = useState(false);
   const { fontScale } = useWindowDimensions();
+
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const { activeUserApp, userAppsError, userAppsLoading, token } = useSelector(
+    (state: RootState) => state.user
+  );
+  const { coinPriceList, coinPriceListLoading } = useSelector(
+    (state: RootState) => state.account
+  );
+  const { query, state } = useGraphQL();
+  const { post, state: convertAsset } = useAxios();
   const { showToast } = useToast();
   const { symbol } = route.params as {
     symbol: string;
   };
+
+  /***--------------****/
+  const fromPrice = coinPriceList?.find(
+    (coin: CoinType) => coin?.symbol === symbol
+  ).price;
+  const toPrice =
+    convertFromAsset &&
+    coinPriceList?.find(
+      (coin: CoinType) => coin?.symbol === convertFromAsset?.symbol
+    ).price;
+  /***--------------****/
+
   const [snapTo, setSnapTo] = useState(["30%", "40%"]);
   const snapPoints = useMemo(() => snapTo, [snapTo]);
   const handlePresentModalPress = useCallback(() => {
@@ -68,6 +113,11 @@ export default function ConvertAsset({ navigation, route }: ConvertAssetT) {
     console.log("handleSheetChanges", index);
   }, []);
 
+  const userWallets = state?.userWallets;
+  const cryptoUserWallets = userWallets?.data?.userWallet?.filter(
+    (wallet: UserWalletT) =>
+      wallet?.walletType === "crypto" && wallet?.accountType === "mainaccount"
+  );
   /*-- -- -- -- -- - --- -- */
   const [showKeypad, setShowKeypad] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -88,16 +138,97 @@ export default function ConvertAsset({ navigation, route }: ConvertAssetT) {
     }
   };
 
+  const fetchWallets = () => {
+    if (userAppsLoading === "loading") return;
+    if (!activeUserApp?._id) return;
+    query(
+      "userWallets",
+      UserWalletsQuery,
+      { appId: activeUserApp?._id },
+      { "auth-token": token }
+    );
+  };
+
+  const handleConvert = (pin: string) => {
+    if (Number(inputValue) > Number(activeCoin?.balance?.available)) {
+      showToast("Insufficient funds please top up", "error");
+    } else {
+      post("convert", "/user/convert-asset", {
+        amount: Number(inputValue),
+        appId: activeUserApp?._id,
+        from_symbol: symbol,
+        to: convertFromAsset?.account?.address,
+        to_symbol: convertFromAsset?.symbol,
+        transactionPin: pin,
+      }, {
+        headers: {
+          "auth-token": token
+        }
+      });
+    }
+  };
 
   const handleBackspace = () => {
     setInputValue((prevValue) => prevValue.slice(0, -1));
   };
 
   /*  -- ------- --- -- -*/
+  useEffect(() => {
+    fetchWallets();
+  }, [activeUserApp?._id]);
 
   useEffect(() => {
-    setShowKeypad(true);
-  }, []);
+    if (userWallets?.loading) return;
+    if (userWallets?.data?.userWallet) {
+      setActiveCoin(
+        userWallets?.data?.userWallet?.find(
+          (coin: UserWalletT) => coin?.symbol === symbol
+        )
+      );
+    }
+  }, [userWallets?.loading, state?.createWallet?.loading, activeCoin]);
+
+  useEffect(() => {
+    if (!convertAsset?.convert?.loading) {
+      if (convertAsset?.convert?.data) {
+        showToast("Convertion successful", "success");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        });
+      }
+      if (convertAsset?.convert?.error?.message) {
+        const errorResponse =
+          convertAsset?.convert?.error?.response?.data;
+        console.log(errorResponse);
+        if (errorResponse) {
+          showToast(`${errorResponse}`, "error");
+          // Display field-specific errors (email, username, etc.)
+          if (errorResponse.message) {
+            showToast(`${errorResponse.message}`, "error");
+          }
+          const errorData = errorResponse.data;
+          if (errorData) {
+            // Iterate over error fields to display each message
+            Object.keys(errorData).forEach((field) => {
+              const fieldErrors = errorData[field];
+              if (Array.isArray(fieldErrors)) {
+                fieldErrors.forEach((error) => {
+                  showToast(`${error}`, "error");
+                });
+              }
+            });
+          }
+        } else {
+          // Fallback to the generic error message if no specific response data
+          showToast(
+            `${convertAsset?.convert?.error?.message}`,
+            "error"
+          );
+        }
+      }
+    }
+  }, [convertAsset?.convert?.loading]);
 
   return (
     <CustomView>
@@ -118,20 +249,29 @@ export default function ConvertAsset({ navigation, route }: ConvertAssetT) {
             marginBottom: 40,
           }}
         >
-          <Pressable
-            onPress={() => setShowKeypad(true)}
-            style={styles.inputGrayBox}
-          >
+          <Pressable style={styles.inputGrayBox}>
             <View style={styles.coinImgWrapper}>
-              <Image source={Bitcoin} style={styles.coinImg} />
+              <Image
+                source={{ uri: activeCoin?.logo }}
+                style={styles.coinImg}
+              />
               <MediumText
                 style={[styles.coinText, { fontSize: 15 / fontScale }]}
               >
-                BTC
+                {activeCoin ? activeCoin?.symbol : "---"}
               </MediumText>
             </View>
 
-            <View style={styles.amountWrapper}>
+            <Pressable
+              onPress={() => {
+                if (convertFromAsset) {
+                  setShowKeypad(true);
+                } else {
+                  showToast("Please select an asset to covert to", "error");
+                }
+              }}
+              style={styles.amountWrapper}
+            >
               <View style={styles.coinImgWrapper}>
                 <RegularText
                   style={{
@@ -148,7 +288,9 @@ export default function ConvertAsset({ navigation, route }: ConvertAssetT) {
                     { fontSize: 12 / fontScale, textAlign: "right" },
                   ]}
                 >
-                  0.000932 BTC
+                  {`${addCommas(
+                    Number(activeCoin?.balance.available).toFixed(3)
+                  )} ${activeCoin?.symbol}`}
                 </MediumText>
               </View>
 
@@ -156,14 +298,14 @@ export default function ConvertAsset({ navigation, route }: ConvertAssetT) {
                 style={[
                   styles.amountText,
                   {
-                    fontSize: 23 / fontScale,
+                    fontSize: 20 / fontScale,
                     color: convertFrom ? Colors.balanceBlack : Colors.grayText,
                   },
                 ]}
               >
-                {inputValue ? inputValue : "0.0000"}
+                {inputValue ? inputValue : "Click to convert"}
               </BoldText>
-            </View>
+            </Pressable>
           </Pressable>
 
           <View style={styles.iconWrapper}>
@@ -182,32 +324,49 @@ export default function ConvertAsset({ navigation, route }: ConvertAssetT) {
             </View>
           </View>
 
-          <Pressable
-            onPress={() => setShowKeypad(true)}
-            style={styles.inputGrayBox}
-          >
-            <View style={styles.coinImgWrapper}>
-              <Image source={PayToken} style={styles.coinImg} />
+          <Pressable style={styles.inputGrayBox}>
+            <Pressable
+              onPress={() => setShowAssets(true)}
+              style={styles.coinImgWrapper}
+            >
+              {convertFromAsset && (
+                <Image
+                  source={{ uri: convertFromAsset?.logo }}
+                  style={styles.coinImg}
+                />
+              )}
               <MediumText
                 style={[styles.coinText, { fontSize: 15 / fontScale }]}
               >
-                $Pay
+                {convertFromAsset ? convertFromAsset?.symbol : "----"}
               </MediumText>
-            </View>
+              <ArrowDown2 variant="TwoTone" color={Colors.primary} />
+            </Pressable>
 
-            <View style={styles.amountWrapper}>
+            <Pressable
+              onPress={() => setShowKeypad(true)}
+              style={styles.amountWrapper}
+            >
               <BoldText
                 style={[
                   styles.amountText,
                   {
-                    fontSize: 23 / fontScale,
+                    fontSize: 20 / fontScale,
                     color: convertTo ? Colors.balanceBlack : Colors.grayText,
                   },
                 ]}
               >
-                {inputValue ? Number(inputValue) / 10000 : "0.0000"}
+                {convertFromAsset !== null
+                  ? addCommas(
+                      convertCurrency({
+                        amount: Number(inputValue),
+                        fromPrice: Number(fromPrice),
+                        toPrice: Number(toPrice),
+                      })?.toFixed(7)
+                    )
+                  : "0.0000"}
               </BoldText>
-            </View>
+            </Pressable>
           </Pressable>
         </View>
         <Button
@@ -279,10 +438,9 @@ export default function ConvertAsset({ navigation, route }: ConvertAssetT) {
               }}
             >
               <RegularText>Total Conversion:</RegularText>
-              <LightText>-------------------------</LightText>
+              <LightText>------------------</LightText>
               <SemiBoldText>
-                {inputValue ? Math.floor(Number(inputValue) / 10000) : "0.0000"}{" "}
-                $Pay
+                {inputValue} {activeCoin?.symbol}
               </SemiBoldText>
             </View>
 
@@ -295,8 +453,18 @@ export default function ConvertAsset({ navigation, route }: ConvertAssetT) {
                 borderRadius: 10,
               }}
             >
-              <MediumText>BTC</MediumText>
-              <MediumText>{inputValue}</MediumText>
+              <MediumText>{convertFromAsset?.symbol}</MediumText>
+              <MediumText>
+                {inputValue
+                  ? addCommas(
+                      convertCurrency({
+                        amount: Number(inputValue),
+                        fromPrice: Number(fromPrice),
+                        toPrice: Number(toPrice),
+                      })?.toFixed(7)
+                    )
+                  : "0.0000"}
+              </MediumText>
             </View>
 
             <View style={styles.buttonGroup}>
@@ -310,7 +478,7 @@ export default function ConvertAsset({ navigation, route }: ConvertAssetT) {
               </Pressable>
               <Pressable
                 onPress={() => {
-                  setShowModal(true);
+                  setShowPinSheet(true);
                   handlePresentModalClose();
                 }}
                 style={[styles.grayButton, { backgroundColor: Colors.primary }]}
@@ -326,6 +494,42 @@ export default function ConvertAsset({ navigation, route }: ConvertAssetT) {
         </BottomSheetModal>
       </BottomSheetModalProvider>
 
+      <BottomSheetModalComponent
+        show={showAssets}
+        onClose={() => setShowAssets(false)}
+      >
+        <View className="p-5 flex-1">
+          <MediumText className="text-center">Select Asset</MediumText>
+          <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 25 }}>
+            {cryptoUserWallets
+              ?.filter((crypto: UserWalletT) => crypto?.symbol !== symbol)
+              .map((crypto: UserWalletT, i) => (
+                <Pressable
+                  key={crypto?.id}
+                  onPress={() => {
+                    setConvertFromAsset(crypto);
+                    setShowAssets(false);
+                  }}
+                  style={[
+                    styles.coinImgWrapper,
+                    { justifyContent: "flex-start" },
+                  ]}
+                >
+                  <Image
+                    source={{ uri: crypto?.logo }}
+                    style={styles.coinImg}
+                  />
+                  <MediumText
+                    style={[styles.coinText, { fontSize: 15 / fontScale }]}
+                  >
+                    {crypto?.symbol}
+                  </MediumText>
+                </Pressable>
+              ))}
+          </ScrollView>
+        </View>
+      </BottomSheetModalComponent>
+
       <CustomNumberKeypad
         isVisible={showKeypad}
         onClose={handleKeypadToggle}
@@ -339,6 +543,19 @@ export default function ConvertAsset({ navigation, route }: ConvertAssetT) {
         subText="You have successfully converted your asset to $Pay Token"
         buttonText="Close"
         onClose={() => setShowModal(false)}
+      />
+
+      <Loader
+        visible={userWallets?.loading || coinPriceListLoading === "loading" || convertAsset?.convert?.loading === true}
+      />
+
+      <PinInputBottomSheet
+        key={2}
+        mainTxt="Enter Pin"
+        subTxt="Enter your transaction pin to continue payment"
+        isVisible={showPinSheet}
+        onClose={setShowPinSheet}
+        onSubmit={(pin) => handleConvert(pin)}
       />
     </CustomView>
   );
@@ -372,8 +589,9 @@ const styles = StyleSheet.create({
   },
   coinImgWrapper: {
     flexDirection: "row",
-    gap: 10,
+    gap: 3,
     alignItems: "center",
+    justifyContent: "flex-end",
   },
   coinImg: { width: 27, height: 27, borderRadius: 27 },
   coinText: {

@@ -15,7 +15,7 @@ import {
 import { Colors } from "../../../../components/Colors";
 import { RootState } from "../../../../app/store";
 import { useSelector } from "react-redux";
-import { truncateText } from "../../../../utils";
+import { getInitials, truncateText } from "../../../../utils";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../../../routes/AppStacks";
 
@@ -46,15 +46,7 @@ const UserPayList: React.FC<UserPayListProps> = ({
         <Pressable
           onPress={() =>
             navigation.navigate("SendPayment", {
-              bankDetails: {
-                account_name: user?.account_name,
-                account_number: user?.account_number,
-                bank_id: user?._id,
-              },
-              bank: {
-                name: user?.bank_name,
-                code: user?.bank_code,
-              },
+              pay: user?.account_number,
             })
           }
           key={user._id}
@@ -62,9 +54,9 @@ const UserPayList: React.FC<UserPayListProps> = ({
         >
           <View style={styles.initialAvatar}>
             <SemiBoldText
-              style={{ fontSize: 10 / fontScale, color: Colors.white }}
+              style={{ fontSize: 15 / fontScale, color: Colors.white }}
             >
-              {truncateText(user?.bank_name, 4)}
+              {getInitials(user?.account_name)}
             </SemiBoldText>
           </View>
           <SemiBoldText style={[styles.username, { fontSize: 14 / fontScale }]}>
@@ -90,7 +82,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
-    gap: 3,
+    gap: 10,
   },
   avatar: {
     width: 50,
@@ -118,7 +110,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 50,
-    padding: 20,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: Colors.primary,

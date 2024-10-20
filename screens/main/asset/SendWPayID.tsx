@@ -58,7 +58,7 @@ export default function SendWPayID({
     <View className=" px-2 mt-3 flex-1">
       <View className=" flex-1 mb-auto">
         <InputView
-          label="Coin"
+          label="Asset"
           value={activeCoin ? activeCoin?.symbol : "---"}
           icon={
             <Image
@@ -93,7 +93,7 @@ export default function SendWPayID({
         <MediumText
           style={{ fontSize: 15 / fontScale, color: Colors.grayText }}
         >
-          Withdrawal Fees:{" "}
+          Withdrawal Fee:{" "}
           {fee
             ? `${addCommas(Number(fee).toFixed(2))} ${activeCoin?.symbol}`
             : "0.00"}

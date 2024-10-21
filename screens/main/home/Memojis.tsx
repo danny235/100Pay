@@ -55,7 +55,7 @@ const Memojis = ({ navigation }: MemojiT) => {
   const { beneficiaries, beneficiariesError, beneficiariesLoading } =
     useSelector((state: RootState) => state.account);
   const { fontScale } = useWindowDimensions();
-  console.log(beneficiaries)
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>

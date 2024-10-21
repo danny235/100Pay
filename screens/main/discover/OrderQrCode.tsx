@@ -118,11 +118,11 @@ export default function OrderQrCode({ navigation }: OrderQrCodeT) {
         onPress={() => navigation.goBack()}
       />
 
-      <RegularText style={{ fontSize: 15 / fontScale, color: Colors.grayText }}>
-        Get a PAY Qr sticker and showcase that you accept crypto payments.
+      <RegularText style={{ fontSize: 15 / fontScale, color: Colors.grayText, paddingBottom: 20 }}>
+        Get a PayCheckout QR code and showcase that you accept crypto payments.
       </RegularText>
 
-      <ScrollView style={{ flex: 1, paddingBottom: 10, paddingTop: 10 }}>
+      <ScrollView style={{ flex: 1, paddingBottom: 10, paddingTop: 10 }} contentContainerStyle={{paddingBottom: 100}}>
         <View className=" space-y-5">
           {qrCodes.map((qrCode, i) => {
             return (

@@ -72,8 +72,7 @@ export default function GenerateRequestLink({ navigation }: GenerateCodeT) {
       amount: "",
     },
     onSubmit: (values, actions) => {
-      console.log(values.name, values.amount.replace(/,/g, ""));
-
+      
       post(
         "payLink",
         "/pay/payment_page",

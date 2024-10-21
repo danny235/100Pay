@@ -72,7 +72,8 @@ export default function ManangePayLinks({ navigation }: ManangePayLinksT) {
 
       <ScrollView
         className=" mt-5 space-y-2"
-        contentContainerStyle={{ flex: 1, gap: 10 }}
+        style={{flex: 1}}
+        contentContainerStyle={{ gap: 10, paddingBottom: 100 }}
       >
         {!paymentLinks && paymentLinks?.length === 0 ? (
           <MediumText style={{ fontSize: 15 / fontScale }}>
@@ -81,6 +82,7 @@ export default function ManangePayLinks({ navigation }: ManangePayLinksT) {
         ) : (
           paymentLinks?.map((paymentLink) => (
             <Pressable
+              key={paymentLink?._id}
               onPress={() =>
                 navigation.navigate("GeneratedLink", {
                   detail: paymentLink?.code,

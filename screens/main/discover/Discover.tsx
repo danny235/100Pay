@@ -33,7 +33,7 @@ export default function Discover({ navigation }: DiscoverT): React.JSX.Element {
   const { fontScale } = useWindowDimensions();
   return (
     <CustomView>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 20, paddingBottom: 20 }}>
+      <ScrollView showsVerticalScrollIndicator={false} style={{paddingBottom: 50}} contentContainerStyle={{ gap: 20, paddingBottom: 100 }}>
       <View style={{ gap: 20, alignItems: "center", marginVertical: 50 }}>
         <DiscoverIcon color={Colors.primary} width={80} height={80} />
         <BoldText style={{ fontSize: 20 / fontScale }}>
@@ -80,7 +80,7 @@ export default function Discover({ navigation }: DiscoverT): React.JSX.Element {
                 width: "80%",
               }}
             >
-              Create pay link you can send to anyone to make payments.
+              Recieve crypto payments online with a unique paylink.
             </RegularText>
           </View>
           <ArrowForwardIcon color={Colors.iconColor} />
@@ -90,7 +90,7 @@ export default function Discover({ navigation }: DiscoverT): React.JSX.Element {
           onPress={() => navigation.navigate("ManagePayLinks")}
         >
           <LinkIcon color={Colors.primary} />
-          <View style={{ gap: 10, flexShrink: 1 }}>
+          <View style={{ gap: 10, flexShrink: 1, flex: 1 }}>
             <MediumText style={{ fontSize: 17 / fontScale }}>
               Manage Pay Links
             </MediumText>
@@ -101,7 +101,7 @@ export default function Discover({ navigation }: DiscoverT): React.JSX.Element {
                 width: "80%",
               }}
             >
-              Manage your pay links here, you can send to anyone to make payments.
+              Edit or share your paylinks.
             </RegularText>
           </View>
           <ArrowForwardIcon color={Colors.iconColor} />
@@ -143,7 +143,7 @@ export default function Discover({ navigation }: DiscoverT): React.JSX.Element {
                 width: "80%",
               }}
             >
-              Connect your payment QR Code to your 100Pay account
+             Link your PayCheckout QR Code to your Pay Wallet.
             </RegularText>
           </View>
           <View style={{ marginLeft: "auto" }}>
@@ -163,7 +163,7 @@ export default function Discover({ navigation }: DiscoverT): React.JSX.Element {
                 width: "80%",
               }}
             >
-              Order your payment QR Code for your 100Pay account
+              Recieve crypto payments in your physical stores.
             </RegularText>
           </View>
           <View style={{ marginLeft: "auto" }}>

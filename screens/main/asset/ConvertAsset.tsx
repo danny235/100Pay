@@ -102,7 +102,7 @@ export default function ConvertAsset({ navigation, route }: ConvertAssetT) {
     ).price;
   /***--------------****/
 
-  const [snapTo, setSnapTo] = useState(["30%", "40%"]);
+  const [snapTo, setSnapTo] = useState(["30%", "60%"]);
   const snapPoints = useMemo(() => snapTo, [snapTo]);
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();

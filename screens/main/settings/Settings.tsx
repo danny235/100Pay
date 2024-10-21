@@ -74,7 +74,7 @@ export default function Settings({ navigation }: SettingsT): React.JSX.Element {
   const settingList = [
     {
       id: 1,
-      title: "Business Settings",
+      title: "Account Settings",
       description: "Business Name, Country, Web Address, Web Hook...",
       icon: (
         <ProfileCircle

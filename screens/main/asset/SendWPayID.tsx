@@ -4,6 +4,7 @@ import {
   useWindowDimensions,
   Pressable,
   Image,
+  Platform,
 } from "react-native";
 import React, { useEffect } from "react";
 import { useFormik } from "formik";
@@ -93,7 +94,9 @@ export default function SendWPayID({
             maxLength={6}
           />
           <Pressable
-            className="absolute bottom-10 right-2"
+            className={`absolute ${
+              Platform.OS === "ios" ? "bottom-9" : "bottom-10"
+            } right-2`}
             onPress={onScanPress}
           >
             <Scan color={Colors.primary} variant="TwoTone" />

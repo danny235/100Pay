@@ -5,7 +5,7 @@ import {
   Pressable,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import Input from "../../../components/Input";
@@ -21,6 +21,7 @@ import { UserWalletT } from "./Asset";
 import { AddyT } from "./SendCrypto";
 import { addCommas } from "../../../utils";
 import { useToast } from "../../../components/CustomToast/ToastContext";
+import { Scan } from "iconsax-react-native";
 
 const SendSchema = yup.object().shape({
   address: yup.string().required().label("Address"),
@@ -30,28 +31,31 @@ const SendSchema = yup.object().shape({
 type SendWAddyT = {
   activeCoin: UserWalletT;
   fee: string;
+  wallet: string;
   onSubmit: (val: AddyT) => void;
   onCoinPress?: () => void;
   onNetworkPress?: () => void;
+  onScanPress: () => void;
 };
 
 export default function SendWAddy({
   activeCoin,
   fee,
+  wallet,
   onSubmit,
   onCoinPress,
   onNetworkPress,
+  onScanPress,
 }: SendWAddyT) {
   const { fontScale } = useWindowDimensions();
   const { showToast } = useToast();
   const formikProps = useFormik({
     initialValues: {
-      address: "",
+      address: wallet ? wallet : "",
       amount: "0.00",
     },
     validationSchema: SendSchema,
     onSubmit: (values, action) => {
-      
       if (Number(values.amount) === 0) {
         showToast("Amount must be greater than zero", "error");
       } else {
@@ -62,6 +66,12 @@ export default function SendWAddy({
       }
     },
   });
+
+  useEffect(() => {
+    if (wallet) {
+      formikProps?.setFieldValue("address", wallet);
+    }
+  }, [wallet]);
 
   return (
     <View className=" px-2 mt-3 flex-1">
@@ -78,14 +88,21 @@ export default function SendWAddy({
           onPress={() => null}
         />
 
-        <View>
+        <View className=" relative">
           <Input
             formikKey="address"
             formikProps={formikProps}
             label="Address"
             value={formikProps.values.address}
-            placeholder="Input or press and hold to paste the withdrawal address"
+            style={{ paddingRight: 25 }}
+            placeholder="Input or Press and hold to paste wallet"
           />
+          <Pressable
+            className="absolute bottom-10 right-2"
+            onPress={onScanPress}
+          >
+            <Scan color={Colors.primary} variant="TwoTone" />
+          </Pressable>
         </View>
 
         {/* <InputView label="Network" value="Bep20" onPress={() => null} /> */}
@@ -106,7 +123,11 @@ export default function SendWAddy({
         >
           Withdrawal Fee:{" "}
           {fee
-            ? `${addCommas(Number(fee).toFixed(6))} ${activeCoin?.symbol}`
+            ? `${
+                activeCoin?.symbol === "BTC"
+                  ? addCommas(Number(fee).toFixed(6))
+                  : addCommas(Number(fee).toFixed(2))
+              } ${activeCoin?.symbol}`
             : "0.00"}
         </MediumText>
         <Button

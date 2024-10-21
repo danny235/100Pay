@@ -43,6 +43,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../app/store";
 import { UserAppType } from "../../../../features/user/userSlice";
 import PayLogo from "../../../../components/Logo/PayLogo";
+import WalletScan from "../Scan/WalletScan";
 
 
 const validationSchema = yup.object().shape({
@@ -99,10 +100,10 @@ export default function PayHome({ navigation }: PayHomeT) {
   const fetchTimeoutRef = useRef(null);
   const resetTimeoutRef = useRef(null);
   const { showToast } = useToast();
+  const [showScanner, setShowScanner] = useState(false)
+  const [scannedData, setScannedData] = useState("")
   const {
-  
-    token,
-   
+    token
   } = useSelector((state: RootState) => state.user);
 
   const validateId = async (payId) => {
@@ -218,7 +219,7 @@ export default function PayHome({ navigation }: PayHomeT) {
             <Pressable
               style={styles.qrBtn}
               onPress={() => {
-                navigation.navigate("Scan");
+                setShowScanner(true)
               }}
             >
               <ScanIcon width={15} height={15} color="#fff" />
@@ -440,6 +441,11 @@ export default function PayHome({ navigation }: PayHomeT) {
       />
 
       <Loader visible={fetching} />
+      <WalletScan
+        isVisible={showScanner}
+        onClose={() => setShowScanner(false)}
+        onScan={(code) => setAccountNum(code)}
+      />
     </CustomView>
   );
 }

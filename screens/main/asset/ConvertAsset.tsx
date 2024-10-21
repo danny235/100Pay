@@ -44,6 +44,7 @@ import CustomNumberKeypad from "../../../components/Keypad/CustomNumberKeypad";
 import {
   BottomSheetModal,
   BottomSheetModalProvider,
+  BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import { CustomBackdrop } from "../../../components/ChooseAccountBalance/ChooseAccountBalance";
 import AlertModal from "../../../components/Alert/AlertModal";
@@ -500,7 +501,8 @@ export default function ConvertAsset({ navigation, route }: ConvertAssetT) {
       >
         <View className="p-5 flex-1">
           <MediumText className="text-center">Select Asset</MediumText>
-          <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 25 }}>
+          <BottomSheetScrollView
+          showsVerticalScrollIndicator={false} style={{ flex: 1 }} contentContainerStyle={{ gap: 25 }}>
             {cryptoUserWallets
               ?.filter((crypto: UserWalletT) => crypto?.symbol !== symbol)
               .map((crypto: UserWalletT, i) => (
@@ -526,7 +528,7 @@ export default function ConvertAsset({ navigation, route }: ConvertAssetT) {
                   </MediumText>
                 </Pressable>
               ))}
-          </ScrollView>
+          </BottomSheetScrollView>
         </View>
       </BottomSheetModalComponent>
 

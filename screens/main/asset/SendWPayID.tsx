@@ -1,5 +1,11 @@
-import { View, Text, useWindowDimensions, Pressable, Image } from "react-native";
-import React from "react";
+import {
+  View,
+  Text,
+  useWindowDimensions,
+  Pressable,
+  Image,
+} from "react-native";
+import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import Input from "../../../components/Input";
@@ -12,9 +18,9 @@ import { UserWalletT } from "./Asset";
 import { PayT } from "./SendCrypto";
 import { addCommas } from "../../../utils";
 import { useToast } from "../../../components/CustomToast/ToastContext";
+import { Scan } from "iconsax-react-native";
 
 const SendSchema = yup.object().shape({
-
   payId: yup.string().required().label("Pay ID"),
   amount: yup.string().required().label("Amount"),
 });
@@ -22,28 +28,31 @@ const SendSchema = yup.object().shape({
 type SendWPayT = {
   activeCoin: UserWalletT;
   fee: string;
+  payId: string;
   onSubmit: (val: PayT) => void;
   onCoinPress?: () => void;
   onNetworkPress?: () => void;
+  onScanPress: () => void;
 };
 
 export default function SendWPayID({
   activeCoin,
   fee,
+  payId,
   onSubmit,
   onCoinPress,
   onNetworkPress,
+  onScanPress
 }: SendWPayT) {
   const { fontScale } = useWindowDimensions();
   const { showToast } = useToast();
   const formikProps = useFormik({
     initialValues: {
-      payId: "",
+      payId: payId ? payId : "",
       amount: "",
     },
     validationSchema: SendSchema,
     onSubmit: (values, action) => {
-       
       if (Number(values.amount) === 0) {
         showToast("Amount must be greater than zero", "error");
       } else {
@@ -54,6 +63,12 @@ export default function SendWPayID({
       }
     },
   });
+
+  useEffect(() => {
+    if (payId) {
+      formikProps?.setFieldValue("payId", payId);
+    }
+  }, [payId]);
   return (
     <View className=" px-2 mt-3 flex-1">
       <View className=" flex-1 mb-auto">
@@ -68,7 +83,7 @@ export default function SendWPayID({
           }
           onPress={() => null}
         />
-        <View>
+        <View className="relate">
           <Input
             formikKey="payId"
             formikProps={formikProps}
@@ -77,6 +92,12 @@ export default function SendWPayID({
             placeholder="Input or press and hold to paste id"
             maxLength={6}
           />
+          <Pressable
+            className="absolute bottom-10 right-2"
+            onPress={onScanPress}
+          >
+            <Scan color={Colors.primary} variant="TwoTone" />
+          </Pressable>
         </View>
 
         <AmountInput

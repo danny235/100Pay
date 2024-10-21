@@ -34,7 +34,7 @@ export default function Action({
       <Pressable onPress={onRecievePress} style={styles.btn}>
         <ImportSquare variant="TwoTone" color={Colors.white} />
         <MediumText style={{ fontSize: 15 / fontScale, color: Colors.white }}>
-          Add Money
+          Deposit
         </MediumText>
       </Pressable>
       {/* <Pressable

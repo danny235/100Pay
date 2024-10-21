@@ -25,13 +25,12 @@ import { NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../../../routes/AppStacks";
 
 type Props = {
-  navigation: NavigationProp<RootStackParamList>;
   isVisible: boolean;
   onClose: () => void;
   onScan: (code: string) => void;
 };
 
-function Scan({ navigation, isVisible, onClose }: Props) {
+function WalletScan({ isVisible, onClose, onScan }: Props) {
   const { fontScale, height } = useWindowDimensions();
   const [flashOn, setFlashOn] = useState(false);
   const [isInitialised, setIsInitialised] = useState(false);
@@ -60,7 +59,7 @@ function Scan({ navigation, isVisible, onClose }: Props) {
     return (
       <View style={styles.permissionContainer}>
         <CustomHeader
-          text="Scan to pay"
+          text="Scan wallet"
           icon={<ScanRedIcon color={Colors.primary} />}
           onPress={onClose}
         />
@@ -91,9 +90,10 @@ function Scan({ navigation, isVisible, onClose }: Props) {
             barcodeScannerSettings={{
               barcodeTypes: ["qr"],
             }}
-            onBarcodeScanned={(scanningResult) =>
-              console.log(scanningResult?.data)
-            }
+            onBarcodeScanned={(scanningResult) =>{
+               onScan(scanningResult?.data)
+               onClose()
+            }}
             ref={cameraRef}
             style={StyleSheet.absoluteFillObject}
           />
@@ -104,7 +104,7 @@ function Scan({ navigation, isVisible, onClose }: Props) {
             colors={["rgba(17, 24, 39, 1)", "rgba(17, 24, 39, 0)"]}
           >
             <CustomHeader
-              text="Scan pay id"
+              text="Scan wallet"
               icon={<ScanRedIcon color={Colors.white} />}
               onPress={onClose}
               textColor={Colors.white}
@@ -156,7 +156,7 @@ function Scan({ navigation, isVisible, onClose }: Props) {
   );
 }
 
-export default Scan;
+export default WalletScan;
 
 const styles = StyleSheet.create({
   loadingContainer: {

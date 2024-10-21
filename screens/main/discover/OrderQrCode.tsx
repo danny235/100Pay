@@ -5,6 +5,7 @@ import {
   ScrollView,
   Pressable,
   Image,
+  Linking,
 } from "react-native";
 import React, { useState } from "react";
 import CustomView from "../../../components/Views/CustomView";
@@ -61,29 +62,31 @@ export default function OrderQrCode({ navigation }: OrderQrCodeT) {
   const { fontScale } = useWindowDimensions();
   const [showOrder, setShowOrder] = useState(false);
   const [activeQrCode, setActiveQrCode] = useState<qrCodesT>(null);
-  const { userProfile } = useSelector((state: RootState) => state.user);
+  const { userProfile, activeUserApp } = useSelector(
+    (state: RootState) => state.user
+  );
   const [showSuccesToast, setShowSuccessToast] = useState(false);
   const qrCodes: qrCodesT[] = [
     {
       id: 1,
       title: "Sticker",
-      price: "N 5,000",
+      price: "PAY 110",
       img: StickerImg,
-      amount: 5000,
+      amount: 110,
     },
     {
       id: 2,
       title: "Roll up banners",
-      price: "N 1,500",
+      price: "PAY 70",
       img: RollUpImg,
-      amount: 1500,
+      amount: 70,
     },
     {
       id: 3,
       title: "Banner",
-      price: "N 1,500",
+      price: "PAY 70",
       img: BannerImg,
-      amount: 1500,
+      amount: 70,
     },
   ];
   const formikProps = useFormik({
@@ -125,7 +128,10 @@ export default function OrderQrCode({ navigation }: OrderQrCodeT) {
             return (
               <Pressable
                 key={qrCode.id}
-                onPress={() => handleCodePress(qrCode)}
+                onPress={() =>
+                  Linking?.openURL(`https://wa.me/16282812947?text=Hello%20my%20name%20is%20${userProfile?.first_name}%20from%20${userProfile?.country}%20with%20the%20ID%3A%20${activeUserApp?.referralCode}%20and%20I'm%20interested%20in%20the%20Pay%20Checkout%20QR%20code%2C%20how%20do%20I%20get%20it%3F
+`)
+                }
                 style={{ borderWidth: 1, borderColor: Colors.ash }}
                 className="space-y-1 items-center rounded-lg p-5"
               >

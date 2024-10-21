@@ -117,7 +117,7 @@ export default function GeneratedCode({ navigation }: GenerateCodeT) {
 
       <ViewShot ref={qrRef}>
         <View style={styles.qrContainer}>
-          <QRCode size={280} value={code} />
+          <QRCode size={280} value={activeUserApp?.referralCode} />
         </View>
       </ViewShot>
 

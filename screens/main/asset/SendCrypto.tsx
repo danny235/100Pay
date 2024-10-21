@@ -28,6 +28,7 @@ import { SupportedWalletT, UserWalletT } from "./Asset";
 import PinInputBottomSheet from "../../../components/CustomPin/PinInputBottomSheet";
 import useAxios from "../../../components/hooks/useAxios";
 import { useToast } from "../../../components/CustomToast/ToastContext";
+import WalletScan from "../home/Scan/WalletScan";
 
 type SendCryptoT = {
   navigation: NavigationProp<RootStackParamList>;
@@ -58,6 +59,8 @@ export default function SendCrypto({ navigation, route }: SendCryptoT) {
     (state: RootState) => state.user
   );
   const [cryptoForm, setCrypto] = useState<AddyT>(null);
+  const [showScanner, setShowScanner] = useState(false);
+  const [scannedData, setScannedData] = useState<string>("");
   const [payForm, setPayForm] = useState<PayT>(null);
   const { fontScale } = useWindowDimensions();
   const { query, state } = useGraphQL();
@@ -317,19 +320,23 @@ export default function SendCrypto({ navigation, route }: SendCryptoT) {
               <SendWAddy
                 activeCoin={activeCoin}
                 fee={currentFee?.fee.transfer}
+                wallet={scannedData}
                 onSubmit={(val: AddyT) => {
                   setCrypto(val);
                   setShowPinSheet(true);
                 }}
+                onScanPress={()=> setShowScanner(true)}
               />
             ) : (
               <SendWPayID
                 activeCoin={activeCoin}
                 fee="0.00"
+                payId={scannedData}
                 onSubmit={(val: PayT) => {
                   setPayForm(val);
                   setShowPinSheet(true);
                 }}
+                onScanPress={()=> setShowScanner(true)}
               />
             )}
           </ScrollView>
@@ -356,6 +363,12 @@ export default function SendCrypto({ navigation, route }: SendCryptoT) {
             ? handleExternalTransfer(pin)
             : handleInternalTransfer(pin)
         }
+      />
+
+      <WalletScan
+        isVisible={showScanner}
+        onClose={() => setShowScanner(false)}
+        onScan={(code) => setScannedData(code)}
       />
     </CustomView>
   );

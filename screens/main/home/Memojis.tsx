@@ -55,7 +55,7 @@ const Memojis = ({ navigation }: MemojiT) => {
   const { beneficiaries, beneficiariesError, beneficiariesLoading } =
     useSelector((state: RootState) => state.account);
   const { fontScale } = useWindowDimensions();
-
+  console.log(beneficiaries)
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -82,13 +82,21 @@ const Memojis = ({ navigation }: MemojiT) => {
                 key={generateUniqueRandomId()}
                 style={styles.userContainer}
               >
-                <View style={styles.initialAvatar}>
+                <Image
+                  style={{ borderRadius: 50, height: 50, width: 50 }}
+                  source={
+                    user?.photo && user?.photo !== null
+                      ? { uri: user?.photo }
+                      : AvatarA
+                  }
+                />
+                {/* <View style={styles.initialAvatar}>
                   <SemiBoldText
                     style={{ fontSize: 15 / fontScale, color: Colors.white }}
                   >
                     {getInitials(user?.account_name)}
                   </SemiBoldText>
-                </View>
+                </View> */}
 
                 <MediumText
                   style={[styles.username, { color: Colors.grayText }]}

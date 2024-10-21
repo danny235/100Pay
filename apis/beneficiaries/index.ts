@@ -10,6 +10,7 @@ export type BenefeciariesT = {
   bank_name: string;
   bank_code: string;
   userId: string;
+  photo: string | null;
   __v: number;
 };
 

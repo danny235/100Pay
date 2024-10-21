@@ -52,13 +52,14 @@ const UserPayList: React.FC<UserPayListProps> = ({
           key={user._id}
           style={styles.userContainer}
         >
-          <View style={styles.initialAvatar}>
-            <SemiBoldText
-              style={{ fontSize: 15 / fontScale, color: Colors.white }}
-            >
-              {getInitials(user?.account_name)}
-            </SemiBoldText>
-          </View>
+          <Image
+            style={{ borderRadius: 50, height: 50, width: 50 }}
+            source={
+              user?.photo && user?.photo !== null
+                ? { uri: user?.photo }
+                : AvatarE
+            }
+          />
           <SemiBoldText style={[styles.username, { fontSize: 14 / fontScale }]}>
             {truncateText(user?.account_name, 10)}
           </SemiBoldText>

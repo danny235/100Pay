@@ -173,18 +173,21 @@ export default function RecieveModal({
   const recieveItems = [
     {
       id: 1,
-      name: "Bank Transfer",
-      subTitle: "Receive money via bank transfer",
+      name: "Deposit Crypto",
+      subTitle: "Receive crypto with a wallet address",
       icon: <Bank variant="TwoTone" color={Colors.primary} />,
       cb: () => {
+        navigation.navigate("MainTabs", {
+          screen: "Asset"
+        })
         onClose();
 
-        // setShowBVNForm(true);
-        if (vbas === null || vbas?.length === 0) {
-          setShowBVNForm(true);
-        } else {
-          setShowBankAccountDetails(true);
-        }
+        // // setShowBVNForm(true);
+        // if (vbas === null || vbas?.length === 0) {
+        //   setShowBVNForm(true);
+        // } else {
+        //   setShowBankAccountDetails(true);
+        // }
 
         // handlePresentRecieveModalClose();
       },
@@ -192,7 +195,7 @@ export default function RecieveModal({
     {
       id: 2,
       name: "Pay ID",
-      subTitle: "Receive with your Pay ID",
+      subTitle: "Receive from other 100Pay users",
       icon: <Profile color={Colors.primary} variant="TwoTone" />,
       cb: () => {
         onClose();

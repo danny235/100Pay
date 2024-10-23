@@ -22,6 +22,7 @@ import {
   PaymentCompleteScreen,
   PayoutScreen,
   RecieveModalScreen,
+  ReferralScreen,
   RootAuth,
   ScanFaceScreen,
   ScanScreen,
@@ -96,6 +97,7 @@ export type RootStackParamList = {
   EditProfile: undefined;
   EditPhoto: undefined;
   EditBusiness: undefined;
+  Referrals: undefined;
   SingleCoin: {
     userWallet?: UserWalletT;
   };
@@ -240,6 +242,7 @@ export function SettingsStackScreen(): React.JSX.Element {
         component={TransactionDetailScreen}
       />
       <SettingsStack.Screen name="EditBusiness" component={EditBusinessScreen} />
+      <SettingsStack.Screen name="Referrals" component={ReferralScreen} />
     </SettingsStack.Navigator>
   );
 }

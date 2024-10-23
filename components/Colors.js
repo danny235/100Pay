@@ -21,6 +21,7 @@ export const Colors = {
   memojiBackground: "#F9FAFB",
   iconColor: "#6B7280",
   warning: "#F29339",
+  lightAsh: "#F5F5F5"
 };
 
 // border-#E5E7EB

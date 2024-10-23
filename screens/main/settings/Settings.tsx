@@ -112,7 +112,7 @@ export default function Settings({ navigation }: SettingsT): React.JSX.Element {
       title: "Referrals",
       description: "Refer your friends and earn $Pay Tokens",
       icon: <ProfileAdd variant="TwoTone" color={Colors.primary} />,
-      onPress: () => null,
+      onPress: () => navigation.navigate("Referrals"),
     },
     {
       id: 5,

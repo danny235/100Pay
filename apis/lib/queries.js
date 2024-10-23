@@ -56,3 +56,17 @@ export const SupportedWalletsQuery = `
         }
     }
 `;
+
+export const GetApp = `
+    query App($appId: String!) {
+      app(appId: $appId) {
+        referrals {
+          first_name
+          last_name
+          email
+          photo
+          phone
+        }
+      }
+    }
+  `;

@@ -406,7 +406,7 @@ export default function SendPayment({ navigation, route }: SendPaymentT) {
                   textAlign: "center",
                 }}
               >
-                {bankDetails ? bankDetails.account_name : pay.app_name}
+                {bankDetails ? bankDetails.account_name : pay?.app_name}
               </MediumText>
             </View>
           </View>

@@ -46,7 +46,10 @@ const UserPayList: React.FC<UserPayListProps> = ({
         <Pressable
           onPress={() =>
             navigation.navigate("SendPayment", {
-              pay: user?.account_number,
+              pay: {
+                referralCode: user.account_number,
+                app_name: user?.account_name,
+              },
             })
           }
           key={user._id}

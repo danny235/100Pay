@@ -84,7 +84,7 @@ export default function Settings({ navigation }: SettingsT): React.JSX.Element {
           color={Colors.primary}
         />
       ),
-      onPress: () => null,
+      onPress: () => navigation.navigate("EditBusiness"),
     },
     {
       id: 2,

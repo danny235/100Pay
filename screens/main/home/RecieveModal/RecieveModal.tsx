@@ -530,7 +530,7 @@ export default function RecieveModal({
         onClose={onClose}
         snapPoints={["38%", "50%"]}
       >
-        <ScrollView contentContainerStyle={{ gap: 20, flex: 1, padding: 20 }}>
+        <ScrollView style={{flex: 1}} contentContainerStyle={{ gap: 20, padding: 20 }}>
           <View className="flex flex-row items-center gap-3">
             <ImportSquare variant="TwoTone" color={Colors.primary} />
             <MediumText
@@ -545,7 +545,7 @@ export default function RecieveModal({
           <LightText
             style={{ fontSize: 15 / fontScale, color: Colors.grayText }}
           >
-            Select how you want to receive money to your paylens account.
+            Select how you want to receive money to your 100Pay account.
           </LightText>
           <View style={{ gap: 10 }}>
             {recieveItems.map((item, i) => (

@@ -76,7 +76,10 @@ const Memojis = ({ navigation }: MemojiT) => {
                 className=" space-y-3"
                 onPress={() =>
                   navigation.navigate("SendPayment", {
-                    pay: user?.account_number,
+                    pay: {
+                      referralCode: user.account_number,
+                      app_name: user?.account_name
+                    },
                   })
                 }
                 key={generateUniqueRandomId()}

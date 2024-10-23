@@ -13,7 +13,7 @@ type ContestT = {
 };
 
 export default function Contest({navigation}: ContestT ) {
-    const contestLink = "https://play.joincontest.app"
+    const contestLink = "https://pay-p2p.netlify.app/?payId=160005";
      const [webViewLoading, setWebViewLoading] = useState(false);
      const webViewRef = useRef<WebView>(null);
 

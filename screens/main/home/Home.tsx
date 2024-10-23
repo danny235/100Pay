@@ -25,7 +25,6 @@ import Balance from "./Balance";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import * as Clipboard from "expo-clipboard";
 import {
-
   SharedValue,
   interpolate,
   useAnimatedStyle,
@@ -77,15 +76,11 @@ import useAxios from "../../../components/hooks/useAxios";
 import { RefreshCircle } from "iconsax-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-interface CustomBackdropProps {
-  animatedIndex: SharedValue<number>;
-  style: StyleProp<ViewStyle>;
-  onPress: () => void;
-}
-
-interface HomeProps {
+export type BaseNavigationT = {
   navigation: NativeStackNavigationProp<RootStackParamList>;
-}
+};
+
+interface HomeProps extends BaseNavigationT {}
 
 export default function Home({ navigation }: HomeProps): React.JSX.Element {
   const { fontScale } = useWindowDimensions();
@@ -116,7 +111,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
   const [confirmTPin, setConfirmTPin] = useState("");
   const [creatingPin, setCreatingPin] = useState(false);
   const { post, state } = useAxios();
-  const insets = useSafeAreaInsets()
+  const insets = useSafeAreaInsets();
 
   const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity value for camera is 1
 
@@ -240,7 +235,6 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     dispatch(
       fetchBanks({ token, apiKey: activeUserApp?.keys?.pub_keys[0]?.value })
     );
-    
   }, [activeUserApp, userAppsLoading, userProfileLoading, activeUserApp]);
 
   useEffect(() => {
@@ -248,14 +242,11 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
     if (userProfileLoading === "loading") return;
     if (userProfile?.hasSetPin) return;
     setIsPinSheetVisible(true);
-    
   }, [isPinSheetVisible, userProfile?.hasSetPin, userProfileLoading]);
 
   useEffect(() => {
     if (!state?.vbas?.loading) {
-
       if (state?.vbas?.data) {
-        
         dispatch(updateVBAS(state?.vbas?.data));
       }
     }
@@ -263,8 +254,6 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
   // console.log(activeUserApp?.keys.pub_keys[0].value)
 
   // THIS IS THE CAMERA CHILDREN PROPS
-
-
 
   const CameraChildren = () => {
     return (
@@ -275,7 +264,7 @@ export default function Home({ navigation }: HomeProps): React.JSX.Element {
             justifyContent: "space-between",
             alignItems: "center",
             paddingHorizontal: 10,
-            paddingTop: insets.top
+            paddingTop: insets.top,
           }}
         >
           <Pressable

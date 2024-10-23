@@ -7,6 +7,7 @@ import {
   ConvertAssetScreen,
   CreateBankScreen,
   DiscoverScreen,
+  EditBusinessScreen,
   EditPhotoScreen,
   EditProfileScreen,
   FaceInfoScreen,
@@ -94,6 +95,7 @@ export type RootStackParamList = {
   Assets: undefined;
   EditProfile: undefined;
   EditPhoto: undefined;
+  EditBusiness: undefined;
   SingleCoin: {
     userWallet?: UserWalletT;
   };
@@ -237,6 +239,7 @@ export function SettingsStackScreen(): React.JSX.Element {
         name="TransactionDetail"
         component={TransactionDetailScreen}
       />
+      <SettingsStack.Screen name="EditBusiness" component={EditBusinessScreen} />
     </SettingsStack.Navigator>
   );
 }

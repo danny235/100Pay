@@ -67,6 +67,7 @@ export default function EditBusiness({navigation}: EditBusinessI) {
         "editBusiness",
         "/user/support_coin",
         {
+          ...activeUserApp,
           support_email: values?.businessEmail,
           phone: values?.businessPhone,
           country: values?.country,
@@ -79,8 +80,9 @@ export default function EditBusiness({navigation}: EditBusinessI) {
         },
         {
           headers: {
-            "api-key": activeUserApp?.keys?.pub_keys[0].value,
-            "auth-token": token,
+            "Content-Type": "application/json",
+            "Api-Key": activeUserApp?.keys?.pub_keys[0].value,
+            "Auth-Token": token,
           },
         }
       );

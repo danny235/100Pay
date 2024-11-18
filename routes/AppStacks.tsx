@@ -26,6 +26,7 @@ import {
   RootAuth,
   ScanFaceScreen,
   ScanScreen,
+  SecurityScreen,
   SettingsScreen,
   SignIn,
   SingleCoinViewScreen,
@@ -66,7 +67,6 @@ export type RootStackParamList = {
   SetPassword: undefined;
   PersonalInfo: undefined;
   DiscoverS: undefined;
-  Referral: undefined;
   ForgotPassword: undefined;
   SecureCode: undefined;
   NewPassword: undefined;
@@ -98,6 +98,7 @@ export type RootStackParamList = {
   EditPhoto: undefined;
   EditBusiness: undefined;
   Referrals: undefined;
+  Security: undefined;
   SingleCoin: {
     userWallet?: UserWalletT;
   };
@@ -243,6 +244,7 @@ export function SettingsStackScreen(): React.JSX.Element {
       />
       <SettingsStack.Screen name="EditBusiness" component={EditBusinessScreen} />
       <SettingsStack.Screen name="Referrals" component={ReferralScreen} />
+      <SettingsStack.Screen name="Security" component={SecurityScreen} />
     </SettingsStack.Navigator>
   );
 }
@@ -260,6 +262,8 @@ export function AssetStackScreen(): React.JSX.Element {
 
       <AssetStack.Screen name="ConvertAsset" component={ConvertAssetScreen} />
       <AssetStack.Screen name="SendCrypto" component={SendCrypto} />
+      <AssetStack.Screen name="Payouts" component={PayoutScreen} />
+      <AssetStack.Screen name="AddBank" component={AddBankScreen} />
     </AssetStack.Navigator>
   );
 }

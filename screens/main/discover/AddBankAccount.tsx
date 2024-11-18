@@ -116,7 +116,7 @@ export default function AddBankAccount({ navigation }: AddBankAccountT) {
         onPress={() => navigation.goBack()}
       />
 
-      <View style={styles.grayBg}>
+      {/* <View style={styles.grayBg}>
         <MediumText
           style={{
             fontSize: 17 / fontScale,
@@ -135,7 +135,7 @@ export default function AddBankAccount({ navigation }: AddBankAccountT) {
             thumbColor={Colors.white}
           />
         </View>
-      </View>
+      </View> */}
 
       <KeyboardAwareScrollView
         showsVerticalScrollIndicator={true}
@@ -181,7 +181,7 @@ export default function AddBankAccount({ navigation }: AddBankAccountT) {
                     Bank
                   </RegularText>
                   <Pressable
-                    onPress={handlePresentModalPress}
+                    onPress={()=> setBankOpen(true)}
                     style={styles.bankSelect}
                   >
                     <RegularText style={{ fontSize: 15 / fontScale }}>

@@ -166,9 +166,9 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
   const quickAction = [
     {
       id: 1,
-      title: "Deposit",
+      title: userWallet?.walletType === "crypto" ?"Deposit": "Send",
       icon: <ImportSquare color={Colors.primary} size={20} />,
-      onPress: () => setShowRecieveModal(true),
+      onPress: () => userWallet?.walletType === "crypto" ? setShowRecieveModal(true) : navigation.navigate("Payouts"),
     },
     {
       id: 2,
@@ -244,15 +244,16 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
           <LightText
             style={{ fontSize: 14 / fontScale, color: Colors.grayText }}
           >
-            ≈{" "}
-            {coinPriceList
-              ? addCommas(
-                  (
-                    getCoinBySymbol(coinPriceList, userWallet?.symbol)?.price *
-                    Number(userWallet?.balance?.available)
-                  ).toFixed(2)
-                )
-              : "0.00"}
+            {userWallet?.walletType === "crypto"
+              ? coinPriceList
+                ? ` ≈ $ ${addCommas(
+                    (
+                      getCoinBySymbol(coinPriceList, userWallet.symbol)?.price *
+                      Number(userWallet.balance.available)
+                    ).toFixed(2)
+                  )}`
+                : "0.00"
+              : ""}
           </LightText>
         </View>
 
@@ -315,7 +316,7 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
       <ScrollView
         style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{  paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 20 }}
       >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
           <Clock size={25} color={Colors.primary} />
@@ -388,7 +389,7 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
                     <MediumText
                       style={{ fontSize: 15 / fontScale, textAlign: "right" }}
                     >
-                      {addCommas(Number(transaction.amount).toFixed(2))}
+                      {addCommas(Number(transaction?.amount).toFixed(2))}
                     </MediumText>
                     <LightText
                       style={{
@@ -399,15 +400,19 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
                         textAlign: "right",
                       }}
                     >
-                      ≈{" "}
-                      {coinPriceList
-                        ? addCommas(
-                            (
-                              getCoinBySymbol(coinPriceList, userWallet?.symbol)
-                                ?.price * Number(transaction.amount)
-                            ).toFixed(2)
-                          )
-                        : "0.00"}
+                  
+                      {userWallet?.walletType === "crypto"
+                        ? coinPriceList
+                          ? ` ≈ $ ${addCommas(
+                              (
+                                getCoinBySymbol(
+                                  coinPriceList,
+                                  userWallet.symbol
+                                )?.price * Number(userWallet.balance.available)
+                              ).toFixed(2)
+                            )}`
+                          : "0.00"
+                        : ""}
                     </LightText>
                   </View>
                 </Pressable>
@@ -450,12 +455,11 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
       >
         <BottomSheetScrollView
           showsVerticalScrollIndicator={false}
-          style={{flex: 1}}
+          style={{ flex: 1 }}
           contentContainerStyle={{
             paddingHorizontal: 20,
             paddingVertical: 10,
             gap: 20,
-            
           }}
         >
           <View style={{ flexDirection: "row", gap: 10 }}>
@@ -512,7 +516,7 @@ export default function SingleCoinView({ navigation, route }: SingleCoinViewT) {
             <LightText
               style={[styles.borderSubText, { fontSize: 15 / fontScale }]}
             >
-              {truncateText(userWallet?.account?.address, 18)}
+              {userWallet?.walletType === "crypto" && (truncateText(userWallet?.account?.address, 18))}
             </LightText>
             <Pressable
               onPress={() => {

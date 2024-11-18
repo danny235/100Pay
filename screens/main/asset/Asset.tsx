@@ -97,9 +97,7 @@ export default function Assets({ navigation }: AssetT) {
 
   // Filter out non-crypto wallets (those without an account address)
  const cryptoUserWallets = userWallets?.data?.userWallet?.filter(
-   (wallet: UserWalletT) =>
-     wallet?.walletType === "crypto" && wallet?.accountType === "mainaccount"
- );
+   (wallet: UserWalletT) => wallet?.accountType === "mainaccount" && wallet?.walletType === "local" || wallet?.walletType === "crypto");
 
 
   // Compare supportedWallets and userWallets
@@ -274,11 +272,16 @@ export default function Assets({ navigation }: AssetT) {
                   <LightText
                     style={{ fontSize: 12 / fontScale, color: Colors.grayText }}
                   >
-                    ≈ $
-                    {coinPriceList
-                      ? addCommas((getCoinBySymbol(coinPriceList, crypto.symbol)?.price *
-                        Number(crypto.balance.available)).toFixed(2))
-                      : "0.00"}
+                    {crypto?.walletType === "crypto"
+                      ? coinPriceList
+                        ? ` ≈ $ ${addCommas(
+                            (
+                              getCoinBySymbol(coinPriceList, crypto.symbol)
+                                ?.price * Number(crypto.balance.available)
+                            ).toFixed(2)
+                          )}`
+                        : "0.00"
+                      : ""}
                   </LightText>
                 </Pressable>
               );
@@ -389,15 +392,14 @@ export default function Assets({ navigation }: AssetT) {
                         color: Colors.grayText,
                       }}
                     >
-                      ≈ $
-                      {coinPriceList
-                        ? addCommas(
+                      {crypto?.walletType=== "crypto" ? (coinPriceList
+                        ? ` ≈ $ ${addCommas(
                             (
                               getCoinBySymbol(coinPriceList, crypto.symbol)
                                 ?.price * Number(crypto.balance.available)
                             ).toFixed(2)
-                          )
-                        : "0.00"}
+                          )}`
+                        : "0.00") : ""}
                     </LightText>
                   </View>
                 </Pressable>

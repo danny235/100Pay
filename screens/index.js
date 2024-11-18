@@ -33,3 +33,4 @@ export { default as ManagePayLinksScreen } from "./main/discover/ManangePayLinks
 export { default as SendCrytoScreen } from "./main/asset/SendCrypto";
 export { default as EditBusinessScreen } from "./main/settings/EditBusiness";
 export { default as ReferralScreen } from "./main/settings/Referrals";
+export {default as SecurityScreen } from "./main/settings/Security"

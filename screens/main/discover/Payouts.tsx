@@ -156,7 +156,7 @@ export default function Payouts({ navigation }: PayoutsT) {
       />
       <View style={styles.searchBox}>
         <TextInput
-          placeholder="Search assets here"
+          placeholder="Search banks here"
           style={{
             fontFamily: "SpaceGrotesk-SemiBold",
             color: Colors.black,

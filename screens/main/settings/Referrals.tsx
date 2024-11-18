@@ -107,7 +107,7 @@ export default function Referrals({ navigation }: ReferralsI) {
       </View>
       <ScrollView
         style={{
-          backgroundColor: Colors?.lightAsh,
+          backgroundColor: "#F9FAFB",
           paddingVertical: 20,
           flex: 1,
         }}
@@ -121,7 +121,7 @@ export default function Referrals({ navigation }: ReferralsI) {
             <RegularText
               style={{ fontSize: 16 / fontScale, color: Colors.grayText }}
             >
-              Select the category you want to display
+              Copy and share your referral code to earn $Pay tokens
             </RegularText>
           </View>
           <View className="w-[40%]">
@@ -242,7 +242,7 @@ export default function Referrals({ navigation }: ReferralsI) {
                 className="text-center"
                 style={[{ fontSize: 14 / fontScale, color: Colors.grayText }]}
               >
-                You have no referrers
+                You have no referrals
               </MediumText>
             )}
           </View>
@@ -261,5 +261,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 15,
     gap: 10,
+    
   },
 });

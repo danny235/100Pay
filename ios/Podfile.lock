@@ -22,7 +22,7 @@ PODS:
     - ExpoModulesCore
   - ExpoBlur (13.0.2):
     - ExpoModulesCore
-  - ExpoCamera (15.0.13):
+  - ExpoCamera (15.0.16):
     - ExpoModulesCore
     - ZXingObjC/OneD
     - ZXingObjC/PDF417
@@ -1816,7 +1816,7 @@ SPEC CHECKSUMS:
   Expo: 0cab4b4dc73f263c0d4297e993686973725adb7f
   ExpoAsset: 323700f291684f110fb55f0d4022a3362ea9f875
   ExpoBlur: fa53f874e7b208bc3756d1bf07903c12e790beb1
-  ExpoCamera: c5be8a28a769c4dee3a02e017e5b55415d9beb2c
+  ExpoCamera: 929be541d1c1319fcf32f9f5d9df8b97804346b5
   ExpoClipboard: 23d203f5d4843699fbc45be1cc4fe1fbd811a6fa
   ExpoFileSystem: 80bfe850b1f9922c16905822ecbf97acd711dc51
   ExpoFont: b3630aff6bfb29ae3c261412f0796813a522cca9
@@ -1905,9 +1905,9 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   sqlite3: 02d1f07eaaa01f80a1c16b4b31dfcbb3345ee01a
-  Yoga: 88480008ccacea6301ff7bf58726e27a72931c8d
+  Yoga: 04f1db30bb810187397fa4c37dd1868a27af229c
   ZXingObjC: 8898711ab495761b2dbbdec76d90164a6d7e14c5
 
 PODFILE CHECKSUM: a3a14292c348c468c857e35ecb5098fbb68862c8
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

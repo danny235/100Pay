@@ -5,11 +5,13 @@ import {Colors} from '../components/Colors';
 import {AssetIcon, DiscoverIcon, HomeIcon, SettingsIcon} from '../components/SvgAssets';
 import {
   AssetStackScreen,
+  CardStackScreen,
   DiscoverStackScreen,
   HomeStackScreen,
   SettingsStackScreen,
 } from './AppStacks';
 import { useWindowDimensions } from 'react-native';
+import { Card } from 'iconsax-react-native';
 
 const Tab = createBottomTabNavigator();
 
@@ -51,6 +53,23 @@ export default function MainTabs(): React.JSX.Element {
         }}
         name="Home"
         component={HomeStackScreen}
+      />
+      <Tab.Screen
+        options={({ route }) => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+          const isTabVisible = ["Cards", "CardS", ""].includes(routeName);
+
+          return {
+            headerShown: false,
+            tabBarIcon: ({ color }) => <Card color={color} />,
+            tabBarStyle: isTabVisible
+              ? {display: "flex"}
+              : { height:0, display: "none" },
+              
+          };
+        }}
+        name="Cards"
+        component={CardStackScreen}
       />
       <Tab.Screen
         options={({ route }) => {

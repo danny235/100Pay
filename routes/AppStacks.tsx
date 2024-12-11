@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   AddBankScreen,
   AssetScreen,
+  CardScreen,
   ConnectQRCodeScreen,
   ContestScreen,
   ConvertAssetScreen,
@@ -134,12 +135,14 @@ export type RootStackParamList = {
     };
     initial?: boolean;
   };
+  CardS: undefined
 
   // Define other screens and their parameters here
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const HomeStack = createNativeStackNavigator<RootStackParamList>();
+const CardStack = createNativeStackNavigator<RootStackParamList>();
 const SettingsStack = createNativeStackNavigator<RootStackParamList>();
 const DiscoverStack = createNativeStackNavigator<RootStackParamList>();
 const AssetStack = createNativeStackNavigator<RootStackParamList>();
@@ -185,6 +188,20 @@ export function HomeStackScreen(): React.JSX.Element {
         component={GeneratedCodeScreen}
       />
     </HomeStack.Navigator>
+  );
+}
+
+export function CardStackScreen(): React.JSX.Element { 
+
+  return (
+    <CardStack.Navigator
+      screenOptions={{
+        headerShown: false,
+        animation: "ios",
+      }}
+    >
+      <CardStack.Screen name="CardS" component={CardScreen} />
+    </CardStack.Navigator>
   );
 }
 

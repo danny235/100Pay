@@ -1816,6 +1816,27 @@ export const DotIcon = ({
   );
 };
 
+export const DoubleArrowForward = ({
+  width = 19,
+  height = 18,
+  color = "#6B7280",
+}: Props) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 19 18" fill="none">
+      <Path
+        opacity="0.4"
+        d="M10.5492 6.38989L6.76172 9.23239V13.4399C6.76172 14.1599 7.63172 14.5199 8.14172 14.0099L12.0267 10.1249C12.6492 9.50239 12.6492 8.48989 12.0267 7.86739L10.5492 6.38989Z"
+        fill={color}
+      />
+      <Path
+        d="M9.78814 6.33598L7.26172 8.23205V4.55995C7.26172 4.28687 7.59369 4.14603 7.78977 4.3376L9.78814 6.33598Z"
+        fill={color}
+        stroke={color}
+      />
+    </Svg>
+  );
+};
+
 export const GreenNairaIcon = ({
   width = 23,
   height = 22,

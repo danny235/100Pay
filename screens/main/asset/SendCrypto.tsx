@@ -266,7 +266,7 @@ export default function SendCrypto({ navigation, route }: SendCryptoT) {
             style={{ backgroundColor: Colors.white }}
             className="flex-row space-x-4  rounded-[50px] px-1 py-1 items-center justify-between"
           >
-            <Pressable
+            {activeCoin?.walletType === "crypto" && <Pressable
               className="  py-2 items-center justify-center"
               onPress={() => setSelectedTab("External")}
               style={{
@@ -283,7 +283,7 @@ export default function SendCrypto({ navigation, route }: SendCryptoT) {
               >
                 External
               </MediumText>
-            </Pressable>
+            </Pressable>}
             <Pressable
               className="  py-2 items-center justify-center"
               onPress={() => setSelectedTab("Internal")}

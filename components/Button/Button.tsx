@@ -12,12 +12,11 @@ type ButtonProps = {
 
 const StyledButton = styled.Pressable<ButtonProps>`
   background-color: ${({variant}) =>
-    variant === 'primary' ? Colors.primary : Colors.white};
+    variant === 'primary' ? Colors.primary : Colors.lightAsh};
   color: ${({variant}) =>
     variant === 'primary' ? Colors.white : Colors.primary};
   padding: ${({isLarge}) => (isLarge ? '15px' : '9px')};
-  border: ${({variant}) =>
-    variant === 'primary' ? 'none' : `2px solid ${Colors.ash}`};
+  
   width: ${({isWide}) => (isWide ? '100%' : null)};
   border-radius: 10px;
   display: flex;

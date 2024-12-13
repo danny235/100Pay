@@ -24,7 +24,11 @@ const data = [
   { id: "3", title: "BlackCard", img: Blackcard },
 ];
 
-const Cards = () => {
+interface CardsI {
+  onCardChange?: (index: number) => void
+}
+
+const Cards = ({onCardChange}: CardsI) => {
   const scrollX = useRef(new Animated.Value(0)).current;
   const scrollViewRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -63,7 +67,7 @@ const Cards = () => {
         resizeMode="contain"
       />
       <MediumText
-        style={{ fontSize: 20 / fontScale, color: Colors.white }}
+        style={{ fontSize: 20 / fontScale, color: item.title === "standardCard" ? Colors.black : Colors.white }}
         className="absolute z-10 bottom-5 left-12"
       >
         {userProfile?.first_name} {userProfile?.last_name}
@@ -115,6 +119,7 @@ const Cards = () => {
           onMomentumScrollEnd={(event) => {
             const index = Math.floor(event.nativeEvent.contentOffset.x / width);
             setActiveIndex(index);
+            onCardChange && onCardChange(index);
           }}
           contentContainerStyle={styles.scrollViewContent}
         >

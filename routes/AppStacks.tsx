@@ -2,7 +2,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   AddBankScreen,
   AssetScreen,
+  CardLimitScreen,
   CardScreen,
+  CardSettingScreen,
+  ChangeCardPinScreen,
   ConnectQRCodeScreen,
   ContestScreen,
   ConvertAssetScreen,
@@ -24,6 +27,7 @@ import {
   PayoutScreen,
   RecieveModalScreen,
   ReferralScreen,
+  ResetCardPinScreen,
   RootAuth,
   ScanFaceScreen,
   ScanScreen,
@@ -108,7 +112,7 @@ export type RootStackParamList = {
   };
   SendCrypto: {
     symbol?: string;
-  }
+  };
   Transactions: undefined;
   TransactionDetail: {
     screen?: string;
@@ -135,7 +139,11 @@ export type RootStackParamList = {
     };
     initial?: boolean;
   };
-  CardS: undefined
+  CardS: undefined;
+  CardSetting: undefined;
+  ChangeCardPin: undefined;
+  ResetCardPin: undefined;
+  CardLimit: undefined;
 
   // Define other screens and their parameters here
 };
@@ -201,6 +209,10 @@ export function CardStackScreen(): React.JSX.Element {
       }}
     >
       <CardStack.Screen name="CardS" component={CardScreen} />
+      <CardStack.Screen name="CardSetting" component={CardSettingScreen} />
+      <CardStack.Screen name="ChangeCardPin" component={ChangeCardPinScreen} />
+      <CardStack.Screen name="ResetCardPin" component={ResetCardPinScreen} />
+      <CardStack.Screen name="CardLimit" component={CardLimitScreen} />
     </CardStack.Navigator>
   );
 }

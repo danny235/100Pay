@@ -35,3 +35,7 @@ export { default as EditBusinessScreen } from "./main/settings/EditBusiness";
 export { default as ReferralScreen } from "./main/settings/Referrals";
 export { default as SecurityScreen } from "./main/settings/Security";
 export { default as CardScreen } from "./main/card/";
+export {default as CardSettingScreen} from "./main/card/settings"
+export {default as ChangeCardPinScreen} from "./main/card/settings/changecardpin"
+export {default as ResetCardPinScreen} from "./main/card/settings/resetcardpin"
+export {default as CardLimitScreen} from "./main/card/settings/cardlimits"

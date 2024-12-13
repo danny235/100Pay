@@ -26,7 +26,7 @@ export default function Virtual({navigation}: VirtualI) {
   const { fontScale } = useWindowDimensions();
    const [selectedTab, setSelectedTab] = useState("All");
   return (
-    <View>
+    <View className="px-5">
       <Cards />
 
       <View className="justify-center space-y-2 items-center my-5">
@@ -68,10 +68,10 @@ export default function Virtual({navigation}: VirtualI) {
           borderBottomColor: Colors.ash,
           borderBottomWidth: 1,
         }}
-        className="flex-row space-x-1 rounded-[50px]  items-center mt-5 mb-2"
+        className="flex-row space-x-1 rounded-[50px] items-center mt-5 mb-2"
       >
         <Pressable
-          className="  py-2 items-center justify-center px-2"
+          className="py-2 items-center justify-center px-2"
           onPress={() => setSelectedTab("All")}
           style={{
             borderBottomColor: selectedTab === "All" ? Colors.primary : "white",
